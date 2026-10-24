@@ -1,0 +1,35 @@
+{
+  "name": "xp12-pylon-racer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Design air-race pylon courses on a map, install them in X-Plane 12, and race them",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run test",
+    "probe:listen": "tsx probes/H0/listen.ts",
+    "probe:analyze": "tsx probes/H0/analyze.ts",
+    "probe:fake": "tsx probes/H0/fake-xplane.ts",
+    "probe:pack": "tsx probes/H1/make.ts",
+    "probe:gates": "tsx probes/H2/gates.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "author": {
+    "name": "Juan Luis Gabriel"
+  },
+  "homepage": "https://github.com/jlgabriel/xp12-pylon-racer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlgabriel/xp12-pylon-racer.git"
+  }
+}

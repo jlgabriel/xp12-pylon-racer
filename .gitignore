@@ -1,0 +1,20 @@
+node_modules/
+dist/
+out/
+build/
+coverage/
+*.tsbuildinfo
+
+# Scratch. Anything you need to keep out of the history goes here.
+scratch/
+
+# Local machine paths, never committed
+.env
+.env.local
+# Agent notes name this computer's drives and installs; local, as in Pylon Racer
+.claude/CLAUDE.md
+
+# Probe output: packs are rebuilt by `npm run probe:pack`, runs are one flight's raw log.
+# A run worth keeping is summarised into its probe's FLIGHT.md, not committed raw.
+probes/H1/XPR_*/
+probes/H0/runs/
