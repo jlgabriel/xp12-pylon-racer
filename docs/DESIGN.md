@@ -7,7 +7,24 @@
 
 ---
 
-## 0. Estado (2026-10-24, v0.2: los hallazgos del vuelo, volada)
+## 0. Estado (2026-10-25, v1.0: volada y publicada)
+
+**1.0.0, publicada el 2026-10-25.** Tag `v1.0.0`; el workflow `release.yml` armó los cinco
+instaladores (Windows setup y portable, macOS x64 y arm64, AppImage) y el release
+[XP Pylon Racer 1.0.0](https://github.com/jlgabriel/xp12-pylon-racer/releases/tag/v1.0.0) se
+publicó a pedido de Juan. Juan la subió a X-Plane.org (Downloads › Utilities):
+[XP Pylon Racer](https://forums.x-plane.org/files/file/102104-xp-pylon-racer/).
+
+La 1.0 es la 0.2 más los pilones altos (D15), sin cambios de comportamiento desde el último vuelo.
+Juan confirmó el nombre (D2) y que esta app también registra `.pylonrace` (D14), y el README pasó a
+ser la guía de la 1.0: instalación de un build sin firmar en cada sistema, tamaño de pilones, RPOS a
+~30 Hz y cómo se comparte una pista Tall con Pylon Racer. Typecheck, 287 tests unitarios (284 sin
+DSFTool: 3 son la lectura de vuelta), 3 e2e y los builds de Windows en verde; la app empaquetada
+abre como "XP Pylon Racer 1.0.0".
+
+Lo que sigue es cómo se llegó.
+
+### Hasta la 0.2
 
 La app completa está portada: diseñador, carrera en vivo, ranking por clase, compartir
 `.pylonrace`, demo e instalación del pack. Typecheck, 271 tests unitarios (con la lectura de vuelta
@@ -70,7 +87,9 @@ log de la app y corrida H0 `runs/2026-10-25T02-32-07`, local):
 | Al salir del replay | "X-Plane is flying again": la app vuelve a seguir el vuelo y a quedar armada. |
 | Ids de la Web API | Cambian en cada sesión de X-Plane (1626080912064 → 3170083268528 para `is_in_replay`): bien que el hub los busque por nombre. |
 
-**Después de la 0.2: pilones altos, volados el 2026-10-25.** Juan: el tamaño actual está bien, pero
+### Después de la 0.2: pilones altos, volados el 2026-10-25
+
+Juan: el tamaño actual está bien, pero
 en un sim cuesta verlos. Cada pista elige ahora el tamaño de sus pilones en el diseñador (*Pylons*:
 Standard o Tall ×2), todos a la vez; decisión D15. Typecheck, 287 tests y 3 e2e en verde (el e2e del
 diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj` de 30 m).
@@ -82,7 +101,9 @@ diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj
 | Ranking | Revisión nueva (`3959655537af3ac1`): la carrera abrió su propio ranking, aparte de los 29,02 s en Standard. |
 | Pilón tocado | 41,93 s: 35,93 de vuelo y dos toques. Puerta 3 a 4,3 m del centro y puerta 4 a **5,73 m**, que sólo es toque con el radio de Tall (6,2 m; en Standard serían 5 m). Los dos fueron a 12–15 m de altura, también bajo un pilón Standard, así que la altura nueva (30 m) no quedó separada de la vieja en este vuelo. |
 
-**RREF como alternativa a RPOS (no adoptada en la 0.2).** Comparte sin pelear, pero cada valor llega
+### RREF como alternativa a RPOS (no adoptada)
+
+Comparte sin pelear, pero cada valor llega
 como **float de 32 bits**: lat/lon perderían precisión (~0,7 m de paso a 117° de longitud, contra el
 double de RPOS), y una muestra son ~10 datarefs sueltos sin garantía de llegar en el mismo paquete.
 Sirve para leer banderas (el replay, sin HTTP) o como fuente de respaldo con posición
