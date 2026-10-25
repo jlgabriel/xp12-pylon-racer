@@ -1,13 +1,13 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 0.2 · 2026-10-24 · en definición con Juan. Nombre provisional.
+> Versión 0.2 · 2026-10-24 · volada · en definición con Juan. Nombre provisional.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-24, v0.2: los hallazgos del vuelo, sin volar todavía)
+## 0. Estado (2026-10-24, v0.2: los hallazgos del vuelo, volada)
 
 La app completa está portada: diseñador, carrera en vivo, ranking por clase, compartir
 `.pylonrace`, demo e instalación del pack. Typecheck, 271 tests unitarios (con la lectura de vuelta
@@ -29,7 +29,7 @@ sin cambiar una línea de la app (detalle en cada `probes/H*/FLIGHT.md`):
 las cinco pasadas a menos de 6 m del centro, entre 10 y 20 m de altura, y una carrera guardada con
 `source: rpos 30 Hz` y la clase Aerobatic.
 
-**Lo que dejó el vuelo, resuelto en la 0.2** (typecheck, 280 tests y 3 e2e en verde; falta volarla):
+**Lo que dejó el vuelo, resuelto en la 0.2** (typecheck, 280 tests y 3 e2e en verde; volada el mismo día, abajo):
 
 1. **RPOS compartido.** RPOS tiene un solo suscriptor: X-Plane lo manda sólo al último que lo pidió.
    `src/core/telemetry/rposShare.ts` (puro, `tests/rposShare.test.ts`) reconoce la pelea por su firma:
@@ -56,6 +56,19 @@ las cinco pasadas a menos de 6 m del centro, entre 10 y 20 m de altura, y una ca
 | RPOS con dos sockets | El segundo que pide se lo queda entero (75 paquetes en 2 s contra 0). |
 | ¿Un `RPOS 0` de quien no es dueño? | **Corta el flujo del dueño.** Por eso la app (y la grabadora H0) sólo piden 0 al cerrar si el flujo les está llegando. |
 | ¿RREF admite varios suscriptores? | **Sí**: dos sockets pidiendo `sim/flightmodel/position/latitude` a 20 Hz reciben ~19 Hz cada uno, y el 0 de uno no corta al otro. |
+
+**Volada el 2026-10-24** (X-Plane 12.4.3, KDAG, Extra de Vertigo, la 0.2 corriendo con `npm run dev`;
+log de la app y corrida H0 `runs/2026-10-25T02-32-07`, local):
+
+| Prueba | Resultado |
+|---|---|
+| Carrera normal | Daggett Sprint, **29,02 s** limpia (la 0.1: 29,13 s). |
+| Otro programa pidiendo RPOS (`npm run probe:listen`) | *RPOS taken* **7 s** después de que arrancó la grabadora. |
+| Backoff | Funciona, pero rinde menos que en la simulación: la grabadora tuvo RPOS **6,4 s de cada ~10 (63 %)**, no el 80 %, porque tarda ~4 s en volver a pedirlo (revisa cada 2 s si lleva 2 s callada). Se deja el máximo en 10 s (Juan): subirlo a 20 s daría ~80 % pero hasta ~30 s para recuperar RPOS. |
+| Al cerrar la grabadora | La app recupera RPOS en ~2 s y despeja el aviso a los ~12 s. |
+| Replay | Detectado al entrar; el replay pasó por las puertas y **no se guardó ninguna carrera**; la pantalla muestra *Replay: not racing* y los valores de vuelo en "—". |
+| Al salir del replay | "X-Plane is flying again": la app vuelve a seguir el vuelo y a quedar armada. |
+| Ids de la Web API | Cambian en cada sesión de X-Plane (1626080912064 → 3170083268528 para `is_in_replay`): bien que el hub los busque por nombre. |
 
 **RREF como alternativa a RPOS (no adoptada en la 0.2).** Comparte sin pelear, pero cada valor llega
 como **float de 32 bits**: lat/lon perderían precisión (~0,7 m de paso a 117° de longitud, contra el
@@ -189,7 +202,7 @@ Igual que Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite
 | v0.2 | Diseñador + instalación del pack | ✅ la Daggett Sprint instalada por la app se ve en X-Plane |
 | v0.3 | Carrera en vivo + ranking por clase | ✅ primera carrera: 29,13 s, Aerobatic |
 | v0.4 | Abrir `.pylonrace` de Pylon Racer | ✅ mismo formato, mismos ids de pilón, mismas pistas de ejemplo |
-| 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | ✅ hecho y probado sin sim; falta volarlo |
+| 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | ✅ volada: aviso en 7 s, replay ignorado, 29,02 s |
 | 1.0 | Pulido, release | Mismo ciclo que XOP y PCT |
 
 ---
