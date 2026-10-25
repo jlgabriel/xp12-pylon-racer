@@ -101,6 +101,21 @@ diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj
 | Ranking | Revisión nueva (`3959655537af3ac1`): la carrera abrió su propio ranking, aparte de los 29,02 s en Standard. |
 | Pilón tocado | 41,93 s: 35,93 de vuelo y dos toques. Puerta 3 a 4,3 m del centro y puerta 4 a **5,73 m**, que sólo es toque con el radio de Tall (6,2 m; en Standard serían 5 m). Los dos fueron a 12–15 m de altura, también bajo un pilón Standard, así que la altura nueva (30 m) no quedó separada de la vieja en este vuelo. |
 
+### Después de la 1.0: la primera pista sobre agua, volada el 2026-10-25
+
+La *Queenstown Lake Race* (9 puertas, Tall, sobre el lago Wakatipu cerca de NZQN) la diseñó ChatGPT
+y Juan la importó desde Descargas con la 1.0.0 portable. Antes de volarla Juan corrió el viraje g5
+~335 m al suroeste: en la posición original quedaba a ~400 m de la orilla este, con la ladera a
++30–60 m sobre el lago (elevaciones de Open-Meteo), y pasar por el este con un radio de ~400 m
+podía sacar al avión sobre ella.
+
+| Prueba (Extra de Vertigo, la 1.0.0 portable) | Resultado |
+|---|---|
+| Pack sobre agua | El DSF `-46+168` carga sin errores en `Log.txt` (0 tris: sólo objetos). |
+| Verlos sobre el lago | Apoyados en la superficie, ni hundidos ni flotando, con su reflejo en el agua: captura del replay en la meta, los dos `home` Tall de 50 m. |
+| Altura sobre el suelo en el lago | La AGL de RPOS se mide **desde la superficie del agua**: `altMslM − aglM` = 311,0 m en las nueve pasadas (el lago, 310 m). Las ventanas de altura sirven sobre agua. |
+| Carrera | **2:44,71**: 2:42,71 de vuelo y +2 s en g3 por pasar a 52 m (el piso es 55 m). g5 rodeado a 45 m del pilón, con 56° de alabeo a 239 km/h; g6 a 156 m (ventana 70–160). |
+
 ### RREF como alternativa a RPOS (no adoptada)
 
 Comparte sin pelear, pero cada valor llega
