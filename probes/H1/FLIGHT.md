@@ -39,6 +39,18 @@ de los extremos de la pista tomadas del `apt.dat` 12.4.3).
 Además, para el diseño: **desde qué distancia se distinguen los pilones** en la carrera de
 despegue. Sin `ATTR_LOD`, X-Plane decide.
 
-## Resultado
+## Resultado: volado el 2026-10-24, X-Plane 12.4.3 ✅
 
-Pendiente: lo vuela Juan.
+- **El pack carga:** el `Log.txt` registra `DSF load time … for file Custom Scenery/XPR_H1_Pylons/…`
+  sin un solo error de objeto ni de textura. **`OBJECT_DEF` relativo al pack funciona.**
+- **Se ven, con su pintura:** en las capturas de Juan (desde la cabecera y en el replay) los tres
+  pares tienen franjas nítidas en verde, rojo y naranja. El cono que se angosta hacia arriba se ve
+  como un pilón, sin costuras ni caras invertidas a 15–20 m.
+- **Apoyados en el pavimento**, con su sombra. Ni flotan ni se entierran.
+- **Distancia:** desde la cabecera ya se distinguen los pares a 1,5–2,5 km (la captura muestra el
+  verde y el rojo pista abajo).
+- La torre de control: no quedó en las capturas. No hizo falta como control, porque los pilones
+  mismos cargaron.
+
+Lo mismo pasó con la **Daggett Sprint instalada por la app** (`XPR_daggett-sprint`, KDAG): se corrió
+completa ese mismo día. El instalador real, no sólo la sonda, deja pilones que X-Plane carga.

@@ -110,6 +110,8 @@ const webLog = open('webapi-log.txt');
 const names = new Map<number, string>();
 let socket: WebSocket | null = null;
 let webConnecting = false;
+const WS_PATHS = ['/api/v1', '/api/v3', '/api/v2'];
+let wsAttempt = 0;
 
 async function lookup(name: string): Promise<{ id: number; type: string } | string> {
   const errors: string[] = [];
@@ -146,10 +148,13 @@ async function connectWeb(): Promise<void> {
     }
     if (ids.length === 0) return; // no flight loaded yet, or the API is off: try again later
 
-    const ws = new WebSocket(`ws://${HOST}:${WEB_PORT}/api/v3`);
+    // Measured on 12.4.3 (2026-10-24): REST answers on v3, the WebSocket opens ONLY on /api/v1 (v2
+    // and v3 fail with 1006). Try v1 first, and the next path after each failure.
+    const path = WS_PATHS[wsAttempt++ % WS_PATHS.length]!;
+    const ws = new WebSocket(`ws://${HOST}:${WEB_PORT}${path}`);
     socket = ws;
     ws.onopen = () => {
-      webLog.write(`${now()} websocket open\n`);
+      webLog.write(`${now()} websocket open on ${path}\n`);
       ws.send(JSON.stringify({ req_id: 1, type: 'dataref_subscribe_values', params: { datarefs: ids.map((id) => ({ id })) } }));
     };
     ws.onmessage = (event) => {
@@ -167,7 +172,7 @@ async function connectWeb(): Promise<void> {
       webLog.write(`${now()} websocket closed\n`);
       socket = null;
     };
-    ws.onerror = () => webLog.write(`${now()} websocket error\n`);
+    ws.onerror = () => webLog.write(`${now()} websocket error on ${path}\n`);
   } finally {
     webConnecting = false;
   }

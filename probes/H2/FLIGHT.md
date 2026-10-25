@@ -33,6 +33,17 @@ Las tres coinciden ⇒ ✅ el mundo de RPOS y el del DSF coinciden a la escala q
 de XOP cuantizan a ~21 cm). Una puerta que no coincide por mucho ⇒ revisar con la captura antes de
 sacar conclusiones.
 
-## Resultado
+## Resultado: volado el 2026-10-24, X-Plane 12.4.3 ✅
 
-Pendiente: lo vuela Juan.
+| Puerta | Desde el izquierdo | AGL | Lo que muestra el replay de Juan |
+|---|---|---|---|
+| 1 verde | 20,0 m (centro exacto) | 12,7 m | el avión centrado entre los dos pilones |
+| 2 roja | 15,1 m (5 m a la izquierda) | 9,7 m | el avión claramente a la izquierda del centro |
+| 3 naranja | 18,9 m (casi al centro) | 9,0 m | apenas a la izquierda |
+
+En vez de notas, Juan mandó tres capturas del replay de X-Plane con la cámara detrás del avión en
+cada puerta. Es mejor referencia que una nota de memoria, y las tres coinciden con el log en lado y
+en orden de magnitud. **La posición de RPOS y los pilones del DSF son el mismo mundo.**
+
+Lo confirmó después la carrera real en KDAG: la Daggett Sprint, en el mismo Extra, terminó limpia en
+29,13 s, con las cinco pasadas a menos de 6 m del centro de cada puerta.

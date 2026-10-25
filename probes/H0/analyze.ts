@@ -110,8 +110,15 @@ export function analyzeRun(runDir: string): string {
   const log = join(runDir, 'webapi-log.txt');
   if (existsSync(log)) {
     const lines = readFileSync(log, 'utf8').split('\n').filter(Boolean);
-    const missing = lines.filter((l) => /lookup .*: v3:/.test(l)).map((l) => l.replace(/^[\d.]+ lookup /, '').split(':')[0]);
-    if (missing.length > 0) out.push(`- Datarefs that never resolved: ${[...new Set(missing)].map((m) => `\`${m}\``).join(', ')}`);
+    // Lookups fail until a flight is loaded and are retried, so "never" means no success at any time.
+    const name = (l: string): string => l.replace(/^[\d.]+ lookup /, '').split(':')[0]!;
+    const resolved = new Set(lines.filter((l) => /lookup .*: id /.test(l)).map(name));
+    const missing = new Set(lines.filter((l) => /lookup .*: v3:/.test(l)).map(name).filter((n) => !resolved.has(n)));
+    const rest = lines.find((l) => /\(REST v\d\)/.test(l))?.match(/REST (v\d)/)?.[1];
+    if (rest) out.push(`- REST lookups answered on **${rest}** (${resolved.size} datarefs).`);
+    if (missing.size > 0) out.push(`- Datarefs that never resolved: ${[...missing].map((m) => `\`${m}\``).join(', ')}`);
+    const ws = lines.filter((l) => /websocket (open|error) on/.test(l)).map((l) => l.replace(/^[\d.]+ /, ''));
+    if (ws.length > 0) out.push(`- WebSocket: ${[...new Set(ws)].join('; ')}`);
   }
   out.push('');
 
@@ -170,6 +177,11 @@ function signChecks(rows: RposRow[]): string[] {
   const velDiff: number[] = [];
   let rollAgree = 0;
   let rollTotal = 0;
+  /** Steep and inverted bank, and the instant of a roll, reported apart: there the turn follows the
+   *  bank late or the other way round, which is physics, not a sign. Flown 2026-10-24 in an Extra:
+   *  95% agreement at 15–60°, 46% at 60–90°, 31% at 90–120°. */
+  let steepAgree = 0;
+  let steepTotal = 0;
   let pitchAgree = 0;
   let pitchTotal = 0;
 
@@ -197,9 +209,17 @@ function signChecks(rows: RposRow[]): string[] {
     const c = rows[Math.min(rows.length - 1, j + (j - i))];
     if (c && c !== b) {
       const turnRate = wrap180(initialBearing(b, c) - track);
+      // Only a steady turn says which way the bank points: the bank no faster than 15°/s.
+      const rollRate = Math.abs(wrap180(b.rollDeg - a.rollDeg)) / dt;
       if (Math.abs(a.rollDeg) > 15 && Math.abs(turnRate) > 3) {
-        rollTotal++;
-        if (Math.sign(a.rollDeg) === Math.sign(turnRate)) rollAgree++;
+        const agrees = Math.sign(a.rollDeg) === Math.sign(turnRate);
+        if (Math.abs(a.rollDeg) <= 60 && rollRate < 15) {
+          rollTotal++;
+          if (agrees) rollAgree++;
+        } else {
+          steepTotal++;
+          if (agrees) steepAgree++;
+        }
       }
     }
     const climb = (b.eleM - a.eleM) / dt;
@@ -221,8 +241,9 @@ function signChecks(rows: RposRow[]): string[] {
   );
   out.push(
     rollTotal === 0
-      ? '- ❓ **Roll sign**: no turn with more than 15° of bank. Fly the two turns.'
-      : `- ${verdict(rollAgree / rollTotal > 0.9)} **Roll positive = right wing down** (turning right): ${rollAgree} of ${rollTotal} banked samples agree.`,
+      ? '- ❓ **Roll sign**: no steady turn with 15–60° of bank. Fly the two turns.'
+      : `- ${verdict(rollAgree / rollTotal > 0.9)} **Roll positive = right wing down** (turning right): ${rollAgree} of ${rollTotal} samples in steady 15–60° turns agree.` +
+          (steepTotal > 0 ? ` (Steep, inverted or rolling, not judged: ${steepAgree} of ${steepTotal}.)` : ''),
   );
   out.push(
     pitchTotal === 0

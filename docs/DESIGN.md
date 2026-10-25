@@ -7,25 +7,35 @@
 
 ---
 
-## 0. Estado (2026-10-24, v0.1, sin vuelo)
+## 0. Estado (2026-10-24, v0.1, volada)
 
-Juan pidió avanzar todo lo posible sin prueba de vuelo. **La app completa está portada y corre**:
-diseñador, carrera en vivo, ranking por clase, compartir `.pylonrace`, demo, e instalación del pack
-en X-Plane. Typecheck, 271 tests unitarios (con la lectura de vuelta por DSFTool) y 3 e2e sobre
-Electron en verde. La instalación se probó
-de punta a punta contra una carpeta de X-Plane desechable, y DSFTool lee los DSF que escribe la app,
-incluido uno de una pista que cruza dos tiles.
+La app completa está portada: diseñador, carrera en vivo, ranking por clase, compartir
+`.pylonrace`, demo e instalación del pack. Typecheck, 271 tests unitarios (con la lectura de vuelta
+por DSFTool) y 3 e2e sobre Electron en verde.
 
-**Lo que es supuesto hasta que vuele H0–H2** (todo está aislado en un solo lugar para corregirlo):
+**El mismo día Juan voló las sondas y una carrera real.** Todo lo que era supuesto quedó confirmado
+sin cambiar una línea de la app (detalle en cada `probes/H*/FLIGHT.md`):
 
-| Supuesto | Dónde vive | Lo confirma |
+| Supuesto | Dónde vive | Resultado |
 |---|---|---|
-| RPOS llega a ~40 Hz con los campos y signos del documento de Laminar | `src/core/telemetry/rpos.ts` | H0 |
-| La Web API responde en `/api/v3` (o v2/v1) y da `acf_ICAO` | `src/core/telemetry/webapi.ts`, `src/main/telemetry.ts` | H0 |
-| X-Plane carga `OBJECT_DEF` relativos al pack, con textura PNG | `src/core/export/pack.ts` | H1 |
-| Los pilones se ven apoyados en el suelo, con su pintura | `src/core/pylon/` | H1 |
-| La posición de RPOS y la de los pilones coinciden al metro | — | H2 |
-| Qué manda X-Plane en el menú, en pausa y tras un choque | `isNullIsland`, el motor (`STILL_S`) | H0 |
+| RPOS con los campos y signos del documento de Laminar | `src/core/telemetry/rpos.ts` | ✅ rumbo de brújula, vz al sur, roll + = derecha, pitch + = arriba. **~29,5 Hz**, no 40 (H0) |
+| La Web API da `acf_ICAO` | `src/core/telemetry/webapi.ts`, `src/main/telemetry.ts` | ✅ REST en `/api/v3`; el Vertigo dice `Extra` → Aerobatic (H0) |
+| X-Plane carga `OBJECT_DEF` relativos al pack, con textura PNG | `src/core/export/pack.ts` | ✅ sin errores en `Log.txt` (H1) |
+| Los pilones se ven apoyados en el suelo, con su pintura | `src/core/pylon/` | ✅ capturas y replay (H1) |
+| La posición de RPOS y la de los pilones coinciden al metro | — | ✅ tres puertas, lado y medida coinciden con el replay (H2) |
+| Qué manda X-Plane en el menú y en pausa | `isNullIsland`, el motor (`STILL_S`) | menú: nada; pausa: posición congelada a 30 Hz (H0) |
+
+**Primera carrera:** Daggett Sprint, instalada por la app, en KDAG con el Extra. **29,13 s, limpia**:
+las cinco pasadas a menos de 6 m del centro, entre 10 y 20 m de altura, y una carrera guardada con
+`source: rpos 30 Hz` y la clase Aerobatic.
+
+**Lo que dejó el vuelo para la próxima versión:**
+
+1. **RPOS tiene un solo suscriptor** (H0): con otro programa que también lo pida, se pelean. Detectarlo
+   y avisar, o buscar otra fuente.
+2. **Replay:** ignorar los datos mientras X-Plane reproduce (`replay_mode` por la Web API).
+3. El WebSocket de la Web API sólo abre en `/api/v1` en 12.4.3. La app no lo usa; la grabadora ya
+   lo sabe.
 
 ---
 
@@ -146,15 +156,13 @@ Igual que Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite
 
 | Versión | Qué | Estado (2026-10-24) |
 |---|---|---|
-| v0.0 | Este documento + sondas H0–H2 | ✅ hecho; **falta el vuelo de Juan** |
-| v0.1 | Core portado de Pylon Racer + fuente RPOS | ✅ código y tests; el demo corre |
-| v0.2 | Diseñador + instalación del pack | ✅ código, tests y e2e; falta verlo en X-Plane (H1) |
-| v0.3 | Carrera en vivo + ranking por clase | ✅ código; falta la primera carrera en el sim |
+| v0.0 | Este documento + sondas H0–H2 | ✅ volado el 2026-10-24 |
+| v0.1 | Core portado de Pylon Racer + fuente RPOS | ✅ ~29,5 Hz en el sim |
+| v0.2 | Diseñador + instalación del pack | ✅ la Daggett Sprint instalada por la app se ve en X-Plane |
+| v0.3 | Carrera en vivo + ranking por clase | ✅ primera carrera: 29,13 s, Aerobatic |
 | v0.4 | Abrir `.pylonrace` de Pylon Racer | ✅ mismo formato, mismos ids de pilón, mismas pistas de ejemplo |
-| 1.0 | Pulido, release | Cuando H0–H2 y una carrera real salgan bien. Mismo ciclo que XOP y PCT |
-
-Después del vuelo, lo que quede de las sondas se corrige en los lugares de la tabla del §0, y la
-primera carrera de verdad es la Munich Sprint o la Daggett Sprint (rectas, fáciles de leer).
+| 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | Pendiente |
+| 1.0 | Pulido, release | Mismo ciclo que XOP y PCT |
 
 ---
 
