@@ -70,12 +70,17 @@ log de la app y corrida H0 `runs/2026-10-25T02-32-07`, local):
 | Al salir del replay | "X-Plane is flying again": la app vuelve a seguir el vuelo y a quedar armada. |
 | Ids de la Web API | Cambian en cada sesión de X-Plane (1626080912064 → 3170083268528 para `is_in_replay`): bien que el hub los busque por nombre. |
 
-**Después de la 0.2: pilones altos (sin volar).** Juan: el tamaño actual está bien, pero en un sim
-cuesta verlos. Cada pista elige ahora el tamaño de sus pilones en el diseñador (*Pylons*: Standard
-o Tall ×2), todos a la vez; decisión D15. Typecheck, 287 tests y 3 e2e en verde (el e2e del
-diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj` de 30 m). Falta
-volarlo: reinstalar una pista con pilones altos, ver que estén apoyados en el suelo y que "pilón
-tocado" use la altura y el radio nuevos.
+**Después de la 0.2: pilones altos, volados el 2026-10-25.** Juan: el tamaño actual está bien, pero
+en un sim cuesta verlos. Cada pista elige ahora el tamaño de sus pilones en el diseñador (*Pylons*:
+Standard o Tall ×2), todos a la vez; decisión D15. Typecheck, 287 tests y 3 e2e en verde (el e2e del
+diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj` de 30 m).
+
+| Prueba (KDAG, Extra de Vertigo, `npm run dev`) | Resultado |
+|---|---|
+| Reinstalar la Daggett Sprint en Tall | El pack trae sólo `pylon_{blue,green,home,red}_tall`: 30 m × 2,4 m de radio y 50 m × 4 m la meta; el DSF apunta sólo a ellos. Sin errores en `Log.txt`. |
+| Verlos en el sim | "Muy buen tamaño" (Juan). |
+| Ranking | Revisión nueva (`3959655537af3ac1`): la carrera abrió su propio ranking, aparte de los 29,02 s en Standard. |
+| Pilón tocado | 41,93 s: 35,93 de vuelo y dos toques. Puerta 3 a 4,3 m del centro y puerta 4 a **5,73 m**, que sólo es toque con el radio de Tall (6,2 m; en Standard serían 5 m). Los dos fueron a 12–15 m de altura, también bajo un pilón Standard, así que la altura nueva (30 m) no quedó separada de la vieja en este vuelo. |
 
 **RREF como alternativa a RPOS (no adoptada en la 0.2).** Comparte sin pelear, pero cada valor llega
 como **float de 32 bits**: lat/lon perderían precisión (~0,7 m de paso a 117° de longitud, contra el
