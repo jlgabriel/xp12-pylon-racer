@@ -1,13 +1,16 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 1.0 · 2026-10-25 · volada · publicada.
+> Versión 1.1 · 2026-10-25 · volada · publicada.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-25, v1.0: volada y publicada)
+## 0. Estado (2026-10-25, v1.1: volada y publicada)
+
+**1.1.0, 2026-10-25.** La 1.0 más la *Queenstown Lake Race* como novena pista incluida y
+**Export to Shirley…** (abajo, ambas voladas el mismo día). Tag `v1.1.0`, mismo workflow.
 
 **1.0.0, publicada el 2026-10-25.** Tag `v1.0.0`; el workflow `release.yml` armó los cinco
 instaladores (Windows setup y portable, macOS x64 y arm64, AppImage) y el release
