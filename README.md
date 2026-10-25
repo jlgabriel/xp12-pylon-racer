@@ -10,15 +10,29 @@ share them with other pilots as a file.
 It is the X-Plane sibling of [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) for
 Aerofly FS 4: same races, same rules, same `.pylonrace` course files.
 
-> **Status: in development (0.1).** The app runs and installs courses, but it has not been flown in
-> X-Plane yet: the flight data and the pylons are built from Laminar's documentation and are being
-> checked in the simulator with the probes in [`probes/`](probes/README.md).
-
 ![A finished run on Daggett Air Show, with the splits against the pilot's best](media/race-result.png)
+
+## Install
+
+Grab the latest build from [**Releases**](https://github.com/jlgabriel/xp12-pylon-racer/releases):
+
+| System | File |
+|--------|------|
+| Windows | `xp12-pylon-racer-<version>-setup.exe` (installer) or `-portable.exe` |
+| macOS (Apple silicon / Intel) | `xp12-pylon-racer-<version>-arm64.dmg` / `-x64.dmg` |
+| Linux | `xp12-pylon-racer-<version>.AppImage` |
+
+Needs **X-Plane 12** (12.1.1 or later to read the aircraft type). The builds are not signed with a
+paid certificate:
+
+- **Windows**: if SmartScreen appears, click *More info* → *Run anyway*.
+- **macOS**: the first time, macOS says it could not verify the app. Open *System Settings* →
+  *Privacy & Security* and click *Open Anyway*.
+- **Linux**: make the AppImage executable (`chmod +x`) and run it.
 
 ## Get started
 
-1. **Install XP Pylon Racer** and start it. It finds X-Plane 12 by itself (from Laminar's own list of
+1. **[Install](#install) XP Pylon Racer** and start it. It finds X-Plane 12 by itself (from Laminar's own list of
    installations); if you have several, or it finds none, it lets you choose the folder.
 2. **Pick a course** on the left and click **Install pylons**. X-Plane reads scenery when it starts,
    so start it (or restart it) after installing.
@@ -93,6 +107,11 @@ XP Pylon Racer draws its own pylons: tapered, striped tubes generated when you i
 ten colours and heights from 15 to 25 m. Each gate can use any of them. Because the app makes them,
 it knows exactly how tall and how wide every pylon is, which is what the pylon-hit rule needs.
 
+Pylons are hard to spot from a distance in a simulator, so every course also picks a **pylon size**:
+**Standard**, or **Tall ×2**, every pylon twice as tall and twice as wide (30 to 50 m). The pylon-hit
+distance grows with the pylon, and a Tall course has its own ranking, since times around bigger
+pylons do not compare.
+
 Installing a course writes one scenery pack, `Custom Scenery/XPR_<course>/`, and one line in
 `scenery_packs.ini`, just below `*GLOBAL_AIRPORTS*` (the file is backed up first, and nothing else in
 it is touched). **Remove** takes both out again. The app never touches a folder it did not create.
@@ -115,8 +134,8 @@ it is touched). **Remove** takes both out again. The app never touches a folder 
 
 - **Course designer on a satellite map**: search for an airport or a place, click to place gates, drag
   a gate to move it, drag its arrow to turn it, drag a pylon to make it wider or narrower.
-- **Gate kinds**, **laps**, **height limits**, the **pylon** of each gate and the course's
-  **penalties and tolerances**.
+- **Gate kinds**, **laps**, **height limits**, the **pylon** of each gate, the **pylon size** and the
+  course's **penalties and tolerances**.
 
 ## Sharing
 
@@ -126,14 +145,16 @@ There is no server: courses travel as files. Your runs stay on your computer.
   window, or double-click it.
 - **Courses made in Pylon Racer for Aerofly FS 4 open here, and the other way round.** A course keeps
   its gates and its look; its rankings are separate in each app, since times from two simulators do
-  not compare.
+  not compare. Pylon Racer has no Tall pylons: a Tall course opens there with Standard ones.
+- With both apps installed, double-clicking a `.pylonrace` opens the one installed last. **Import…**
+  works in either.
 
 ## Connecting to X-Plane 12
 
 There is nothing to install in X-Plane and nothing to switch on:
 
-- **Position (RPOS, UDP port 49000).** The app asks X-Plane for its position 40 times a second, the
-  way moving maps do (documented in X-Plane's `Instructions/Exchanging Data with X-Plane`). It asks
+- **Position (RPOS, UDP port 49000).** The app asks X-Plane for its position (it arrives about 30
+  times a second), the way moving maps do (documented in X-Plane's `Instructions/Exchanging Data with X-Plane`). It asks
   again whenever the stream stops, so X-Plane can be started before or after the app.
 - **Aircraft and replay (Web API, port 8086, X-Plane 12.1.1 or later).** To read which aircraft you
   fly, and whether X-Plane is playing a replay: positions from a replay are not raced.
@@ -144,7 +165,7 @@ X-Plane, untick it. The top bar shows whether X-Plane is sending and at what rat
 **X-Plane sends RPOS to one program only**, the last one that asked. If another program on this
 computer also asks for it (some moving maps do), the two keep taking it from each other: the top bar
 then says *RPOS taken*. Close the other program, or switch it to another X-Plane output; the app
-takes RPOS back on its own within about 20 seconds.
+takes RPOS back on its own within about 10 seconds.
 
 ## Building from source
 
