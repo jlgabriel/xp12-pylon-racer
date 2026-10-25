@@ -1,9 +1,31 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 0.0 · 2026-10-24 · en definición con Juan. Nombre provisional.
+> Versión 0.1 · 2026-10-24 · en definición con Juan. Nombre provisional.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
+
+---
+
+## 0. Estado (2026-10-24, v0.1, sin vuelo)
+
+Juan pidió avanzar todo lo posible sin prueba de vuelo. **La app completa está portada y corre**:
+diseñador, carrera en vivo, ranking por clase, compartir `.pylonrace`, demo, e instalación del pack
+en X-Plane. Typecheck, 271 tests unitarios (con la lectura de vuelta por DSFTool) y 3 e2e sobre
+Electron en verde. La instalación se probó
+de punta a punta contra una carpeta de X-Plane desechable, y DSFTool lee los DSF que escribe la app,
+incluido uno de una pista que cruza dos tiles.
+
+**Lo que es supuesto hasta que vuele H0–H2** (todo está aislado en un solo lugar para corregirlo):
+
+| Supuesto | Dónde vive | Lo confirma |
+|---|---|---|
+| RPOS llega a ~40 Hz con los campos y signos del documento de Laminar | `src/core/telemetry/rpos.ts` | H0 |
+| La Web API responde en `/api/v3` (o v2/v1) y da `acf_ICAO` | `src/core/telemetry/webapi.ts`, `src/main/telemetry.ts` | H0 |
+| X-Plane carga `OBJECT_DEF` relativos al pack, con textura PNG | `src/core/export/pack.ts` | H1 |
+| Los pilones se ven apoyados en el suelo, con su pintura | `src/core/pylon/` | H1 |
+| La posición de RPOS y la de los pilones coinciden al metro | — | H2 |
+| Qué manda X-Plane en el menú, en pausa y tras un choque | `isNullIsland`, el motor (`STILL_S`) | H0 |
 
 ---
 
@@ -35,6 +57,10 @@ resultado → reintentar.** Lo que cambia es todo lo que toca al simulador.
 | D8 | **Rankings separados por simulador.** Ni se importan ni se comparan tiempos de Aerofly. | Física, terreno y tasa de datos distintos: un tiempo de AFS4 y uno de X-Plane no miden lo mismo. |
 | D9 | **Heredadas de Pylon Racer sin reabrir:** sin servidor; app individual (se comparten sólo pistas); sin medallas, fantasma ni sonido; UI en inglés y docs en español con "tú"; diseño sobre tokens. | Decisiones de Juan del 2026-10-24 para Pylon Racer. |
 | D10 | **Heredadas de XOP sin reabrir:** el DSF binario lo escribe la app, sin DSFTool (XOP D10); la línea de `scenery_packs.ini` la escribe el instalador, con respaldo (XOP D8); instalar y desinstalar con X-Plane cerrado (XOP D16); el instalador sólo toca carpetas propias con marcador. | Medido y publicado en XOP 1.0–1.4. |
+| D11 | **Cada modelo de pilón sabe su altura; el `pylonHeightM` de la pista no se usa** (sigue en el formato, por compatibilidad). El diseñador ya no lo muestra. | Pilones generados. Consecuencia: la **revisión** de una misma pista es distinta en cada app (la altura entra en cómo se puntúa), lo que calza con D8. |
+| D12 | **Clase de avión por código ICAO** (`acf_ICAO`), sin distinguir mayúsculas. La tabla se leyó de los `.acf` de la instalación 12.4.3 de Juan, nunca de memoria. | En X-Plane no hay ids de carpeta fijos. Un avión desconocido: el piloto elige la clase, recordada por su código. |
+| D13 | **X-Plane se encuentra solo** (primera instalación usable de `x-plane_install_12.txt`); el piloto puede elegir otra. Los e2e usan `XPR_XPLANE_DIR` para no tocar nunca un X-Plane real. | Código de XOP (`findInstallations`). |
+| D14 | **Pendiente para Juan:** las dos apps registran `.pylonrace`; con ambas instaladas, el doble clic abre la que se instaló última. Ambas importan el archivo igual. | Alternativa: que esta app no registre la extensión. |
 
 ---
 
@@ -118,14 +144,17 @@ Igual que Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite
 
 ## 5. Plan de versiones
 
-| Versión | Qué | Termina cuando |
+| Versión | Qué | Estado (2026-10-24) |
 |---|---|---|
-| **v0.0** | Este documento + sondas H0–H2 | Juan vuela las sondas y los resultados quedan en cada `FLIGHT.md` |
-| v0.1 | Core portado de Pylon Racer + fuente RPOS real | Los tests de Pylon Racer pasan aquí; el demo corre |
-| v0.2 | Diseñador + instalación del pack | Una pista hecha en el mapa aparece en X-Plane |
-| v0.3 | Carrera en vivo + ranking por clase | Primera carrera cronometrada en el sim |
-| v0.4 | Abrir `.pylonrace` de Pylon Racer | Munich Sprint, hecha en AFS4, se corre en X-Plane |
-| 1.0 | Pulido, README, release | Mismo ciclo que XOP y PCT |
+| v0.0 | Este documento + sondas H0–H2 | ✅ hecho; **falta el vuelo de Juan** |
+| v0.1 | Core portado de Pylon Racer + fuente RPOS | ✅ código y tests; el demo corre |
+| v0.2 | Diseñador + instalación del pack | ✅ código, tests y e2e; falta verlo en X-Plane (H1) |
+| v0.3 | Carrera en vivo + ranking por clase | ✅ código; falta la primera carrera en el sim |
+| v0.4 | Abrir `.pylonrace` de Pylon Racer | ✅ mismo formato, mismos ids de pilón, mismas pistas de ejemplo |
+| 1.0 | Pulido, release | Cuando H0–H2 y una carrera real salgan bien. Mismo ciclo que XOP y PCT |
+
+Después del vuelo, lo que quede de las sondas se corrige en los lugares de la tabla del §0, y la
+primera carrera de verdad es la Munich Sprint o la Daggett Sprint (rectas, fáciles de leer).
 
 ---
 

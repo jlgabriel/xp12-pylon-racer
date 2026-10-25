@@ -1,83 +1,125 @@
-// Copied from xp12-object-placer (XOP), (c) Juan Luis Gabriel, GPL-3.0-or-later. Line for line on
-// purpose: see docs/LINEAGE.md before changing it.
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 import {
+  ecefToGeodetic,
   destination,
+  fromLocal,
   haversine,
   initialBearing,
-  normalizeDegrees,
-  snapAngle,
-  wrapLon,
-} from '../src/core/geo/geo.js';
+  lerpAngle,
+  pylonsOfGate,
+  relativeBearing,
+  segmentIntersection,
+  toLocal,
+  wrap180,
+} from "../src/core/geo/geo";
 
-const SCEL = { lon: -70.7858, lat: -33.393 };
+const REF = { lon: -119.88, lat: 39.66 };
 
-describe('haversine and destination', () => {
-  it('round-trip: walk a distance on a bearing and it is that far away, on that bearing', () => {
-    for (const bearing of [0, 37, 90, 183, 271, 359]) {
-      const there = destination(SCEL, 250, bearing);
-      expect(haversine(SCEL, there)).toBeCloseTo(250, 6);
-      expect(initialBearing(SCEL, there)).toBeCloseTo(bearing, 4);
+describe("distance and bearing", () => {
+  it("one degree of latitude is ~111.2 km", () => {
+    expect(haversine({ lon: 0, lat: 0 }, { lon: 0, lat: 1 })).toBeCloseTo(111195, -2);
+  });
+
+  it("bearings due east and due north", () => {
+    expect(initialBearing({ lon: 0, lat: 0 }, { lon: 1, lat: 0 })).toBeCloseTo(90, 3);
+    expect(initialBearing({ lon: 0, lat: 0 }, { lon: 0, lat: 1 })).toBeCloseTo(0, 3);
+  });
+
+  it("destination round-trips distance and bearing", () => {
+    for (const b of [0, 45, 90, 180, 270, 333]) {
+      const d = destination(REF, 500, b);
+      expect(haversine(REF, d)).toBeCloseTo(500, 0);
+      expect(wrap180(initialBearing(REF, d) - b)).toBeCloseTo(0, 0);
     }
-  });
-
-  it('walks north into a bigger latitude and east into a bigger longitude', () => {
-    expect(destination(SCEL, 1000, 0).lat).toBeGreaterThan(SCEL.lat);
-    expect(destination(SCEL, 1000, 180).lat).toBeLessThan(SCEL.lat);
-    expect(destination(SCEL, 1000, 90).lon).toBeGreaterThan(SCEL.lon);
-    expect(destination(SCEL, 1000, 270).lon).toBeLessThan(SCEL.lon);
-  });
-
-  it('a degree of latitude is about 111 km, anywhere', () => {
-    expect(haversine({ lon: 0, lat: 0 }, { lon: 0, lat: 1 })).toBeCloseTo(111195, 0);
-    expect(haversine({ lon: -70, lat: -33 }, { lon: -70, lat: -34 })).toBeCloseTo(111195, 0);
-  });
-
-  it('a degree of longitude shrinks toward the poles', () => {
-    const equator = haversine({ lon: 0, lat: 0 }, { lon: 1, lat: 0 });
-    const sixty = haversine({ lon: 0, lat: 60 }, { lon: 1, lat: 60 });
-    expect(sixty / equator).toBeCloseTo(0.5, 3); // cos 60 degrees
-  });
-
-  it('a zero walk stays put', () => {
-    expect(haversine(SCEL, destination(SCEL, 0, 45))).toBeCloseTo(0, 9);
   });
 });
 
-describe('wrapLon', () => {
-  it('leaves an in-range longitude byte-identical', () => {
-    // Not "close to": a coordinate that was already valid must not pick up float noise on its way
-    // through, or every saved project would drift a little every time it was touched.
-    for (const lon of [0, -70.78462, 179.9999999, -180]) {
-      expect(wrapLon(lon)).toBe(lon);
-    }
+describe("local projection", () => {
+  it("round-trips", () => {
+    const p = destination(REF, 800, 60);
+    const back = fromLocal(toLocal(p, REF), REF);
+    expect(back.lat).toBeCloseTo(p.lat, 9);
+    expect(back.lon).toBeCloseTo(p.lon, 9);
   });
 
-  it('folds a world-copy longitude back onto the same real place', () => {
-    // Leaflet hands these out when the map is panned into a repeated copy of the world.
-    expect(wrapLon(181)).toBeCloseTo(-179, 9);
-    expect(wrapLon(-181)).toBeCloseTo(179, 9);
-    expect(wrapLon(360 - 70.5)).toBeCloseTo(-70.5, 9);
-    expect(wrapLon(-360 + 12.25)).toBeCloseTo(12.25, 9);
-  });
-
-  it('sends exactly 180 to the -180 edge, which is the same meridian', () => {
-    expect(wrapLon(180)).toBe(-180);
+  it("local distance matches haversine", () => {
+    const p = destination(REF, 1000, 123);
+    const q = toLocal(p, REF);
+    expect(Math.hypot(q.x, q.y)).toBeCloseTo(1000, 0);
   });
 });
 
-describe('normalizeDegrees and snapAngle', () => {
-  it('normalizes into [0, 360)', () => {
-    expect(normalizeDegrees(-90)).toBe(270);
-    expect(normalizeDegrees(370)).toBe(10);
-    expect(normalizeDegrees(360)).toBe(0);
-    expect(normalizeDegrees(0)).toBe(0);
+describe("segment intersection", () => {
+  it("finds a simple crossing with both parameters", () => {
+    const x = segmentIntersection({ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 });
+    expect(x).not.toBeNull();
+    expect(x!.t).toBeCloseTo(0.5, 9);
+    expect(x!.u).toBeCloseTo(0.5, 9);
   });
 
-  it('snaps to the step and wraps 360 back to 0', () => {
-    expect(snapAngle(43, 5)).toBe(45);
-    expect(snapAngle(42, 5)).toBe(40);
-    expect(snapAngle(358.5, 5)).toBe(0);
-    expect(snapAngle(-2, 5)).toBe(0);
+  it("reports where along the first segment the crossing is", () => {
+    const x = segmentIntersection({ x: -3, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 });
+    expect(x!.t).toBeCloseTo(0.75, 9);
+  });
+
+  it("returns null for disjoint and parallel segments", () => {
+    expect(segmentIntersection({ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 })).toBeNull();
+    expect(segmentIntersection({ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: -1 }, { x: 2, y: -0.5 })).toBeNull();
+  });
+});
+
+describe("gate pylons", () => {
+  it("flying north, the left pylon is west and the span equals the width", () => {
+    const { left, right } = pylonsOfGate(REF, 80, 0);
+    expect(left.lon).toBeLessThan(REF.lon);
+    expect(right.lon).toBeGreaterThan(REF.lon);
+    expect(haversine(left, right)).toBeCloseTo(80, 0);
+  });
+
+  it("flying east, the left pylon is north", () => {
+    const { left, right } = pylonsOfGate(REF, 100, 90);
+    expect(left.lat).toBeGreaterThan(REF.lat);
+    expect(right.lat).toBeLessThan(REF.lat);
+  });
+});
+
+describe("angles", () => {
+  it("wraps and interpolates the short way round", () => {
+    expect(wrap180(270)).toBe(-90);
+    expect(lerpAngle(170, -170, 0.5)).toBeCloseTo(180, 9);
+    expect(lerpAngle(-10, 10, 0.25)).toBeCloseTo(-5, 9);
+  });
+});
+
+describe("relative bearing", () => {
+  const north = destination(REF, 1000, 0);
+  it("is zero dead ahead and negative to the left", () => {
+    expect(relativeBearing(REF, 0, north)).toBeCloseTo(0, 3);
+    expect(relativeBearing(REF, 90, north)).toBeCloseTo(-90, 3); // heading east, the gate is north
+    expect(relativeBearing(REF, 270, north)).toBeCloseTo(90, 3); // heading west, it is to the right
+  });
+  it("wraps across north", () => {
+    expect(relativeBearing(REF, 350, destination(REF, 1000, 10))).toBeCloseTo(20, 1);
+    expect(relativeBearing(REF, 10, destination(REF, 1000, 350))).toBeCloseTo(-20, 1);
+  });
+  it("reports a gate behind as about ±180", () => {
+    expect(Math.abs(relativeBearing(REF, 180, north))).toBeCloseTo(180, 3);
+  });
+});
+
+describe("ecefToGeodetic", () => {
+  it("matches AFS4's own altitude for its world position (WGS84)", () => {
+    // Live at KDAG, 2026-10-19: the DLL said altitude 652.34 m for this position.
+    const g = ecefToGeodetic(-2366833.23, -4674369.61, 3626115.78);
+    expect(g.lat).toBeCloseTo(34.8666958, 6);
+    expect(g.lon).toBeCloseTo(-116.8550439, 6);
+    expect(g.heightM).toBeCloseTo(652.34, 1);
+  });
+
+  it("handles the equator and the prime meridian", () => {
+    const g = ecefToGeodetic(6378137 + 100, 0, 0);
+    expect(g.lat).toBeCloseTo(0, 9);
+    expect(g.lon).toBeCloseTo(0, 9);
+    expect(g.heightM).toBeCloseTo(100, 6);
   });
 });

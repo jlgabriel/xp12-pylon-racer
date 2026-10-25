@@ -1,0 +1,80 @@
+<[file][][]
+    <[tmsimulator_scenery_place_simple][][]
+        <[string8][name][Munich Multicolor (pylon test)]>
+        <[string8u][coordinate_system][lonlat]>
+        <[bool][autoheight][true]>
+        <[string8u][geometry][]>
+        <[string8u][cultivation][]>
+        <[list_tmsimulator_scenery_object][objects][]
+            <[tmsimulator_scenery_object][element][0]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_green/_pylongreen]>
+                <[vector3_float64][position][11.8500000 48.3763597 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][1]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_green/_pylongreen]>
+                <[vector3_float64][position][11.8500000 48.3756403 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][2]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_red/_pylonred]>
+                <[vector3_float64][position][11.8581000 48.3763597 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][3]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_red/_pylonred]>
+                <[vector3_float64][position][11.8581000 48.3756403 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][4]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_blue/_pylonblue]>
+                <[vector3_float64][position][11.8662000 48.3763597 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][5]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_blue/_pylonblue]>
+                <[vector3_float64][position][11.8662000 48.3756403 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][6]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_red/_pylonred]>
+                <[vector3_float64][position][11.8743000 48.3763597 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][7]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_red/_pylonred]>
+                <[vector3_float64][position][11.8743000 48.3756403 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][8]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_1/_pylon1]>
+                <[vector3_float64][position][11.8824000 48.3763597 0]>
+                <[int32][autoheight_override][-1]>
+            >
+
+            <[tmsimulator_scenery_object][element][9]
+                <[string8][type][object]>
+                <[string8][geometry][pylon_1/_pylon1]>
+                <[vector3_float64][position][11.8824000 48.3756403 0]>
+                <[int32][autoheight_override][-1]>
+            >
+        >
+    >
+>

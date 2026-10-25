@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: typecheck · unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Typecheck (both tsconfigs)
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+
+  e2e:
+    name: electron smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      # Playwright drives Electron's own Chromium: only its system libraries and a virtual display
+      # are needed, no browser download.
+      - name: Install Chromium/Electron system libraries
+        run: npx --yes playwright install-deps chromium
+      - name: e2e — build + Electron smoke under xvfb
+        run: xvfb-run -a npm run test:e2e

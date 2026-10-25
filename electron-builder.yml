@@ -1,0 +1,77 @@
+# electron-builder — installers land in dist/ (gitignored). Unsigned on Windows; ad-hoc signed on
+# macOS (see the mac section). Production node_modules are pulled in automatically.
+appId: com.jlgabriel.xppylonracer
+productName: XP Pylon Racer
+copyright: © 2026 Juan Luis Gabriel — GPL-3.0-or-later
+
+directories:
+  buildResources: resources
+  output: dist
+
+files:
+  - out/**
+  - package.json
+  - LICENSE
+  - THIRD_PARTY_NOTICES.md
+  - resources/icon.png # the window icon (main imports it with ?asset)
+  - "!**/*.map"
+
+# No extraResources: the pylon models are generated when a course is installed (src/core/pylon).
+
+# Double-clicking a shared course opens it in the app (main/index.ts imports it). On macOS
+# this becomes CFBundleDocumentTypes; on Windows the NSIS installer registers the extensions.
+# ⚠️ Pylon Racer (Aerofly) registers .pylonrace too: with both installed, the one installed last
+# opens a double-clicked file. Both can import it either way.
+fileAssociations:
+  - ext: pylonrace
+    name: Pylon Racer course
+    description: Pylon Racer course
+    role: Viewer
+    icon: pylonrace # resources/pylonrace.ico and .icns (npm run icons)
+
+asar: true
+# No native modules → nothing to rebuild against Electron's ABI.
+npmRebuild: false
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+
+portable:
+  artifactName: ${name}-${version}-portable.${ext}
+
+# `identity: "-"` is load-bearing: electron-builder does NOT fall back to ad-hoc signing on its own.
+# With no identity and no certificate it skips signing entirely, and on Apple silicon an unsigned
+# bundle around a framework signed by someone else is reported as "damaged" — a dialog that only
+# offers Move to Trash. Ad-hoc signing gives a coherent bundle ("Apple could not verify…", which the
+# user can allow once). hardenedRuntime must be off with it: it enforces library validation, which
+# rejects the pre-signed Electron framework, and earns nothing without notarization.
+mac:
+  identity: "-"
+  hardenedRuntime: false
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+  category: public.app-category.games
+
+dmg:
+  artifactName: ${name}-${version}-${arch}.${ext}
+
+linux:
+  target:
+    - AppImage
+  category: Game
+  artifactName: ${name}-${version}.${ext}

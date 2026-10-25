@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- The icon of .pylonrace files: a page with the app's pylon. Source of pylonrace.ico/.icns. -->
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e3e8f2"/>
+    </linearGradient>
+    <linearGradient id="pylon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff8a4c"/>
+      <stop offset="0.5" stop-color="#ff5a1f"/>
+      <stop offset="1" stop-color="#c2380f"/>
+    </linearGradient>
+    <clipPath id="body"><path d="M446 760 L482 340 Q512 320 542 340 L578 760 Z"/></clipPath>
+    <clipPath id="front"><rect x="0" y="560" width="1024" height="464"/></clipPath>
+    <clipPath id="back"><rect x="0" y="0" width="1024" height="560"/></clipPath>
+    <pattern id="checker" width="44" height="44" patternUnits="userSpaceOnUse" x="468" y="380">
+      <rect width="44" height="44" fill="#ff5a1f"/>
+      <rect width="22" height="22" fill="#fff"/>
+      <rect x="22" y="22" width="22" height="22" fill="#fff"/>
+    </pattern>
+  </defs>
+  <path d="M232 72 H640 L816 248 V904 Q816 952 768 952 H232 Q184 952 184 904 V120 Q184 72 232 72 Z" fill="url(#page)" stroke="#9aa6bd" stroke-width="12"/>
+  <path d="M640 72 V200 Q640 248 688 248 H816" fill="#cfd6e4" stroke="#9aa6bd" stroke-width="12" stroke-linejoin="round"/>
+  <rect x="184" y="824" width="632" height="128" rx="0" fill="#16213f" clip-path="inset(0 round 0 0 48px 48px)"/>
+  <g transform="rotate(-16 512 560)">
+    <ellipse cx="512" cy="560" rx="230" ry="74" fill="none" stroke="#16213f" stroke-opacity="0.3" stroke-width="22" clip-path="url(#back)"/>
+  </g>
+  <path d="M446 760 L482 340 Q512 320 542 340 L578 760 Z" fill="url(#pylon)"/>
+  <rect x="430" y="380" width="170" height="66" fill="url(#checker)" clip-path="url(#body)"/>
+  <g transform="rotate(-16 512 560)">
+    <ellipse cx="512" cy="560" rx="230" ry="74" fill="none" stroke="#16213f" stroke-width="28" clip-path="url(#front)"/>
+    <circle cx="742" cy="560" r="26" fill="#16213f"/>
+  </g>
+</svg>

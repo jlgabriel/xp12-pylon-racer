@@ -1,0 +1,107 @@
+name: Release
+
+# Builds the cross-platform installers and publishes them as a *draft* GitHub Release when a version
+# tag is pushed. Trigger it with:
+#
+#     git tag v0.1.0 && git push origin v0.1.0
+#
+# Each installer is built on its OWN native runner: electron-builder cannot cross-compile the macOS
+# .dmg from Windows/Linux, so the Mac artifacts must come from a macOS runner. GitHub-hosted macOS
+# runners are FREE for public repos (10x-metered on private ones) — flip the repo public before
+# tagging. The result lands as a DRAFT: review it, paste in the "unidentified developer" install
+# notes (Windows builds are unsigned; macOS is ad-hoc signed — see electron-builder.yml), then hit Publish.
+#
+# This workflow only packages + publishes; ci.yml already runs typecheck/unit/e2e on the commit.
+
+on:
+  push:
+    tags:
+      - "v*"
+  # Build the installers without committing to a version. A packaging change — signing, targets,
+  # anything that exists only in the artifact — cannot be verified from the source, so finding out
+  # after the tag costs a version number to learn the fix did not work. Run this from the Actions
+  # tab, download the artifact, try it, then tag.
+  workflow_dispatch:
+
+# GITHUB_TOKEN needs write access to create the release and attach the installers.
+permissions:
+  contents: write
+
+# Never cancel a half-finished release — queue instead. (ci.yml cancels in-progress; a release must not.)
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # One OS hiccup shouldn't sink the others — keep the Windows/Linux artifacts even if macOS fails.
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            run: npm run build:win     # NSIS setup .exe + portable .exe (x64)
+          - os: macos-latest
+            run: npm run build:mac     # .dmg (arm64 + x64) — the arm runner cross-builds the x64 slice.
+                                       # It also produces .zip files; those are not published (see Upload).
+          - os: ubuntu-latest
+            run: npm run build:linux   # .AppImage (x64)
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+
+      - run: npm ci
+
+      # electron-vite build → electron-builder, which picks up the app icons from resources/ (icon.ico /
+      # icon.icns / icon.png) automatically.
+      - name: Build installers
+        run: ${{ matrix.run }}
+
+      # Upload only the user-facing installers — skip electron-builder's *.yml / *.blockmap auto-update
+      # sidecars and the unpacked app dirs. Artifact names must be unique per job (since v4).
+      #
+      # The macOS .zip is built (electron-builder's mac target defaults to dmg+zip) but deliberately NOT
+      # uploaded: the .dmg is the one macOS users want, and shipping both put two near-identical assets per
+      # architecture on the release page for no benefit. We drop it HERE rather than in electron-builder.yml
+      # so the change is one line and needs no macOS machine to verify.
+      - name: Upload installers
+        uses: actions/upload-artifact@v6
+        with:
+          name: installers-${{ matrix.os }}
+          if-no-files-found: error
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+
+  release:
+    name: draft GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    # Only a tag makes a release. A manual run stops after the artifacts, which is the point of it —
+    # gh release create against a branch name would produce a release called "main".
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      # Pull every OS's installers back into one flat dist/ folder (merge-multiple flattens them).
+      - name: Download installers
+        uses: actions/download-artifact@v7
+        with:
+          path: dist
+          pattern: installers-*
+          merge-multiple: true
+
+      # Preinstalled GitHub CLI (first-party — no third-party action holding a write token). The pushed
+      # tag becomes both the release tag and its title; --generate-notes seeds the body from the commits
+      # since the previous tag. Draft, so nothing goes public until you review and click Publish.
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # --repo is required because this job has no checkout (only the downloaded artifacts), so gh has
+        # no local git remote to infer the target repository from — without it: "not a git repository".
+        run: gh release create "$GITHUB_REF_NAME" dist/* --draft --generate-notes --repo "$GITHUB_REPOSITORY"

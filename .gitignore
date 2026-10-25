@@ -3,6 +3,9 @@ dist/
 out/
 build/
 coverage/
+test-results/
+playwright-report/
+*.log
 *.tsbuildinfo
 
 # Scratch. Anything you need to keep out of the history goes here.

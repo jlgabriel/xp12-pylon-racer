@@ -1,17 +1,35 @@
 {
   "name": "xp12-pylon-racer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "Design air-race pylon courses on a map, install them in X-Plane 12, and race them",
-  "license": "GPL-3.0-or-later",
   "type": "module",
+  "description": "XP Pylon Racer — design pylon race courses for X-Plane 12, fly them, and race the clock.",
+  "license": "GPL-3.0-or-later",
+  "author": "Juan Luis Gabriel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlgabriel/xp12-pylon-racer.git"
+  },
+  "homepage": "https://github.com/jlgabriel/xp12-pylon-racer#readme",
+  "bugs": "https://github.com/jlgabriel/xp12-pylon-racer/issues",
   "engines": {
     "node": ">=22"
   },
+  "main": "./out/main/index.js",
   "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "build:unpack": "electron-vite build && electron-builder --dir",
+    "build:win": "electron-vite build && electron-builder --win --publish never",
+    "build:mac": "electron-vite build && electron-builder --mac --publish never",
+    "build:linux": "electron-vite build && electron-builder --linux --publish never",
+    "preview": "electron-vite preview",
+    "preview:renderer": "vite --config vite.preview.mts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run test",
+    "test:watch": "vitest",
+    "test:e2e": "electron-vite build && playwright test",
+    "icons": "electron scripts/icons.cjs",
     "probe:listen": "tsx probes/H0/listen.ts",
     "probe:analyze": "tsx probes/H0/analyze.ts",
     "probe:fake": "tsx probes/H0/fake-xplane.ts",
@@ -19,17 +37,32 @@
     "probe:gates": "tsx probes/H2/gates.ts"
   },
   "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/barlow-semi-condensed": "^5.3.0",
+    "@playwright/test": "^1.61.1",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^26.1.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^43.0.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
     "tsx": "^4.23.12",
     "typescript": "^6.0.3",
+    "vite": "^7.3.6",
     "vitest": "^4.1.10"
   },
-  "author": {
-    "name": "Juan Luis Gabriel"
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
-  "homepage": "https://github.com/jlgabriel/xp12-pylon-racer",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jlgabriel/xp12-pylon-racer.git"
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "electron-winstaller@5.4.0": true
   }
 }

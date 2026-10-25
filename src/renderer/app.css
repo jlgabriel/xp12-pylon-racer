@@ -1,0 +1,1212 @@
+/* Layout and the look of every screen. Tokens only (theme/tokens.css). */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+/* A file dragged over the window: it imports on drop. */
+.app.dropping {
+  outline: 2px dashed var(--accent);
+  outline-offset: calc(-1 * var(--space-2));
+}
+
+/* --- top bar ---------------------------------------------------------------------------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: 52px;
+  flex-shrink: 0;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-1);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* "XP": which simulator this Pylon Racer is for, in the pylon's orange. */
+.brand-sim {
+  color: var(--accent);
+}
+.brand-version {
+  font-size: var(--size-xs);
+  color: var(--text-3);
+  margin-left: 2px;
+  align-self: flex-end;
+  padding-bottom: 15px;
+}
+.logo-pylon {
+  fill: var(--accent);
+}
+.logo-check {
+  fill: var(--text-1);
+}
+.logo-line {
+  stroke: var(--text-1);
+}
+.logo-line-far {
+  stroke: var(--text-1);
+  stroke-opacity: 0.35;
+}
+.logo-plane {
+  fill: var(--text-1);
+}
+.topbar-right,
+.pills {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.toggle.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Who is flying: the pilots of this computer. */
+.pilot {
+  position: relative;
+}
+.pilot-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 3px var(--space-3) 3px 3px;
+  border-radius: 999px;
+}
+.pilot-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--size-sm);
+}
+.pilot-caret {
+  color: var(--text-3);
+  font-size: var(--size-xs);
+}
+.pilot-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--space-2));
+  z-index: 1000;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+}
+.pilot-menu button {
+  border: none;
+  background: transparent;
+  text-align: left;
+}
+.pilot-menu button:hover {
+  background: var(--surface-3);
+}
+.pilot-item {
+  display: flex;
+  align-items: center;
+}
+.pilot-item > button:first-child {
+  flex: 1;
+}
+.pilot-item.active > button:first-child {
+  color: var(--accent);
+  font-weight: 600;
+}
+.pilot-remove {
+  color: var(--text-3);
+}
+.pilot-menu .pilot-new {
+  color: var(--text-2);
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+}
+.pilot-menu input {
+  width: 100%;
+}
+/* An aircraft the app does not know: pick the class it is ranked in. */
+.class-pick select {
+  font-size: var(--size-xs);
+  padding: 0 var(--space-1);
+  background: var(--surface-1);
+}
+
+/* --- messages --------------------------------------------------------------------------------- */
+.message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  border-left: 3px solid var(--bad);
+  font-size: var(--size-sm);
+}
+.message-info {
+  border-left-color: var(--info);
+}
+/* An import reports one line per file. */
+.message > span:first-child {
+  white-space: pre-line;
+}
+.message-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+/* --- course list ------------------------------------------------------------------------------ */
+.courses {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  background: var(--surface-1);
+  overflow-y: auto;
+}
+.courses-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+}
+.courses-tools {
+  display: flex;
+  gap: var(--space-1);
+}
+.courses ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-2) var(--space-3);
+}
+.course {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  margin-bottom: 2px;
+}
+.course:hover {
+  background: var(--surface-2);
+}
+.course.active {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.course-sketch {
+  flex-shrink: 0;
+  background: var(--surface-0);
+  border-radius: var(--radius-sm);
+}
+.course-sketch path {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.course-sketch circle {
+  fill: var(--gate-color);
+}
+.course-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.course-name {
+  font-size: var(--size-md);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.course-meta {
+  font-size: var(--size-xs);
+  color: var(--text-2);
+}
+.course-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 2px;
+}
+.course-best {
+  font-size: var(--size-md);
+  color: var(--text-1);
+}
+.course-nobest {
+  font-size: var(--size-xs);
+  color: var(--text-3);
+}
+
+/* --- race ------------------------------------------------------------------------------------- */
+.race {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.race-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.race-head h1 {
+  font-size: var(--size-xxl);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+.race-meta {
+  font-size: var(--size-sm);
+  color: var(--text-2);
+  margin-top: var(--space-1);
+}
+.race-desc {
+  font-size: var(--size-sm);
+  color: var(--text-2);
+  max-width: 760px;
+  margin: var(--space-2) 0 0;
+  white-space: pre-line; /* keep the author's paragraphs */
+  user-select: text;
+}
+.race-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+.race-actions button {
+  padding: 7px var(--space-4);
+}
+.course-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+.course-tools-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+.install-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--size-sm);
+  color: var(--text-2);
+  margin-right: var(--space-2);
+}
+.install-state .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-3);
+}
+.install-state.current {
+  color: var(--good);
+}
+.install-state.current .dot {
+  background: var(--good);
+}
+.install-state.outdated {
+  color: var(--warn);
+}
+.install-state.outdated .dot {
+  background: var(--warn);
+}
+
+.race-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--space-4);
+}
+.race-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.race-main.status-running {
+  border-color: var(--accent-soft);
+}
+
+.status-line {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  font-size: var(--size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 3px 12px 3px 10px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-3);
+}
+.status-line.live .status-dot {
+  background: var(--warn);
+}
+.status-line.status-running {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.status-line.status-running .status-dot {
+  background: var(--accent);
+  animation: pulse 1s ease-in-out infinite;
+}
+.status-line.status-finished {
+  color: var(--good);
+  background: var(--good-soft);
+}
+.status-line.status-finished .status-dot {
+  background: var(--good);
+}
+.status-line.status-dnf {
+  color: var(--bad);
+  background: var(--bad-soft);
+}
+.status-line.status-dnf .status-dot {
+  background: var(--bad);
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.timer {
+  font-size: var(--size-timer);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+.status-none .timer,
+.status-waiting .timer {
+  color: var(--text-3);
+}
+.deltas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: var(--size-sm);
+  min-height: 1.45em;
+}
+.delta {
+  font-weight: 600;
+}
+
+.gate-strip {
+  display: flex;
+  flex-wrap: wrap; /* long, multi-lap courses take a second row */
+  gap: 3px;
+}
+.gate-cell {
+  flex: 1;
+  max-width: 48px;
+  min-width: 6px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  transition: background var(--dur-base);
+}
+.gate-cell.done {
+  background: var(--good);
+}
+.gate-cell.missed {
+  background: var(--bad);
+}
+.gate-cell.penalized {
+  background: var(--warn);
+}
+.gate-cell.next {
+  background: var(--text-1);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.live-penalties {
+  font-size: var(--size-sm);
+}
+
+.next-gate {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--gate-color);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.next-gate-name {
+  font-family: var(--font-display);
+  font-size: var(--size-xl);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.next-gate-needs {
+  color: var(--warn);
+  font-size: var(--size-lg);
+  font-weight: 600;
+}
+.next-gate-where {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-1);
+}
+.next-gate-dist {
+  font-size: var(--size-lg);
+  color: var(--text-2);
+}
+.turn-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--warn);
+  font-size: var(--size-lg);
+  font-weight: 600;
+}
+.turn-cue.on-course {
+  color: var(--good);
+}
+.turn-cue-arrow {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+}
+
+/* Before the start: data, pylons, class, where to start. */
+.ready {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--size-sm);
+}
+.ready-item {
+  display: grid;
+  grid-template-columns: 20px 76px minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--text-2);
+}
+.ready-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: var(--size-xs);
+  font-weight: 700;
+  background: var(--surface-3);
+  color: var(--text-2);
+  align-self: center;
+}
+.ready-item.ok .ready-mark {
+  background: var(--good-soft);
+  color: var(--good);
+}
+.ready-item.missing .ready-mark {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.ready-item.todo .ready-mark {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.ready-label {
+  color: var(--text-1);
+  font-weight: 600;
+}
+.ready-text a {
+  color: var(--info);
+}
+
+.result {
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.result.new-best {
+  background: linear-gradient(135deg, var(--best-soft), var(--surface-2) 60%);
+  box-shadow: inset 0 0 0 1px var(--best-soft);
+}
+.result.dnf {
+  background: linear-gradient(135deg, var(--bad-soft), var(--surface-2) 60%);
+}
+.result-title {
+  font-family: var(--font-display);
+  font-size: var(--size-xl);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.result-rows {
+  display: grid;
+  /* The reason wraps instead of pushing the seconds out of the card. */
+  grid-template-columns: minmax(0, max-content) max-content;
+  column-gap: var(--space-5);
+  row-gap: 3px;
+  font-size: var(--size-sm);
+  align-items: baseline;
+}
+.result-total-label,
+.result-total {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--line-strong);
+  padding-top: var(--space-2);
+  margin-top: var(--space-1);
+}
+.result-total-label {
+  color: var(--text-2);
+}
+.result-total {
+  font-size: var(--size-xl);
+  line-height: 1;
+}
+.laps {
+  font-size: var(--size-sm);
+}
+
+.race-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+.minimap-box {
+  position: relative;
+}
+.minimap {
+  display: block;
+  width: 100%;
+  background: var(--surface-0);
+  border-radius: var(--radius-md);
+}
+.minimap-label {
+  fill: var(--text-1);
+  font-size: 11px;
+  font-family: var(--font-num);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--surface-0);
+  stroke-width: 3px;
+}
+.minimap-credit {
+  fill: var(--text-2);
+  font-size: 8px;
+  font-family: var(--font-ui);
+  paint-order: stroke;
+  stroke: var(--surface-0);
+  stroke-width: 2px;
+}
+.minimap-toggle {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  font-size: var(--size-xs);
+  padding: 2px var(--space-2);
+  background: var(--surface-glass);
+}
+.flight-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+.value {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+.value-n {
+  font-size: 30px;
+  line-height: 1.1;
+}
+.value-u {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--size-xs);
+}
+
+/* --- ranking ---------------------------------------------------------------------------------- */
+.runs-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.class-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.class-tab {
+  font-size: var(--size-xs);
+  padding: 3px var(--space-3);
+  border-radius: 999px;
+  background: transparent;
+}
+.class-tab.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.runs-sub {
+  margin-top: var(--space-5);
+}
+.runs-empty {
+  margin-top: var(--space-2);
+  font-size: var(--size-sm);
+}
+.runs table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--size-sm);
+  margin-top: var(--space-2);
+}
+.runs th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-3);
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--line);
+  padding: var(--space-2);
+}
+.runs td {
+  padding: 7px var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+.runs tbody tr:hover td {
+  background: var(--surface-2);
+}
+.runs tr.me td {
+  background: var(--accent-soft);
+}
+.runs tr.me .pilot-cell {
+  color: var(--accent);
+  font-weight: 600;
+}
+.rank {
+  width: 40px;
+  font-size: var(--size-lg);
+  color: var(--text-2);
+}
+.rank-1 {
+  color: var(--accent);
+}
+.time-cell {
+  font-size: var(--size-lg);
+}
+
+/* --- designer ---------------------------------------------------------------------------------- */
+.designer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.designer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-1);
+}
+.designer-name {
+  font-family: var(--font-display);
+  font-size: var(--size-xl);
+  font-weight: 700;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 2px var(--space-2);
+  flex: 1;
+}
+.designer-name:hover {
+  border-color: var(--line-strong);
+}
+.designer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.designer-status {
+  font-size: var(--size-sm);
+  margin-right: var(--space-2);
+}
+.designer-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.designer-side {
+  width: 360px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  border-left: 1px solid var(--line);
+  background: var(--surface-0);
+}
+.designer-side .panel {
+  padding: var(--space-3) var(--space-4);
+}
+.designer-length,
+.designer-note {
+  font-size: var(--size-sm);
+  margin-top: var(--space-2);
+}
+.field {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-size: var(--size-sm);
+}
+.field > span:first-child {
+  color: var(--text-2);
+}
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.field input[type="number"] {
+  width: 76px;
+}
+.field textarea {
+  resize: vertical;
+}
+/* A field whose input needs the whole width: the label goes on top. */
+.field-stacked {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1);
+}
+.designer-desc {
+  min-height: 140px;
+  line-height: 1.45;
+  field-sizing: content; /* grows with the text, up to max-height */
+  max-height: 360px;
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-2);
+}
+.designer-rules summary {
+  cursor: pointer;
+  margin-bottom: var(--space-2);
+}
+.designer-gates ol {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+}
+.gate-row {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-1);
+  cursor: pointer;
+  background: var(--surface-1);
+}
+.gate-row:hover {
+  border-color: var(--line-strong);
+}
+.gate-row.selected {
+  border-color: var(--gate-color, var(--text-2));
+  background: var(--surface-2);
+  cursor: default;
+}
+.gate-row-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--size-sm);
+}
+.gate-row-title {
+  flex: 1;
+}
+.gate-row-tools {
+  display: flex;
+  gap: 2px;
+}
+.gate-row-tools button {
+  padding: 0 6px;
+  font-size: var(--size-xs);
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-2);
+}
+.gate-row-tools button:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+.gate-row-body {
+  padding-bottom: var(--space-2);
+}
+.gate-row-elev {
+  font-size: var(--size-xs);
+  margin-top: var(--space-2);
+}
+.gate-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gate-gate);
+}
+
+/* gate colors, shared by the list dots, the course sketches and the map */
+.type-start {
+  --gate-color: var(--gate-start);
+}
+.type-finish {
+  --gate-color: var(--gate-finish);
+}
+.type-gate {
+  --gate-color: var(--gate-gate);
+}
+.type-level {
+  --gate-color: var(--gate-level);
+}
+.type-knife {
+  --gate-color: var(--gate-knife);
+}
+.type-inverted {
+  --gate-color: var(--gate-inverted);
+}
+.type-turn {
+  --gate-color: var(--gate-turn);
+}
+.gate-dot[class*="type-"] {
+  background: var(--gate-color);
+}
+
+/* --- designer map -------------------------------------------------------------------------------- */
+.design-map-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.design-map {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-0);
+}
+.design-hint {
+  position: absolute;
+  bottom: var(--space-5);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: none;
+  background: var(--surface-glass);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  box-shadow: var(--shadow-pop);
+}
+.design-fit {
+  position: absolute;
+  bottom: var(--space-5);
+  right: var(--space-3);
+  z-index: 500;
+  background: var(--surface-glass);
+}
+.design-search {
+  position: absolute;
+  top: var(--space-3);
+  left: 56px;
+  z-index: 600;
+  width: 320px;
+}
+.design-search input {
+  width: 100%;
+  background: var(--surface-glass);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-pop);
+}
+.design-search-list {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: var(--space-1);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--size-sm);
+  box-shadow: var(--shadow-pop);
+}
+.design-search-list button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: var(--space-1) var(--space-2);
+}
+.design-route {
+  stroke: var(--text-1);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+  opacity: 0.7;
+  fill: none;
+}
+.design-line {
+  stroke: var(--gate-color);
+  stroke-width: 4;
+}
+.design-line.selected {
+  stroke-width: 7;
+}
+.design-center {
+  width: 22px !important;
+  height: 22px !important;
+  margin: -11px 0 0 -11px !important;
+  border-radius: 50%;
+  background: var(--surface-0);
+  border: 2px solid var(--gate-color);
+  color: var(--text-1);
+  font: 600 11px var(--font-num);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+}
+.design-center.selected {
+  background: var(--gate-color);
+  color: var(--surface-0);
+}
+.design-pylon {
+  width: 12px !important;
+  height: 12px !important;
+  margin: -6px 0 0 -6px !important;
+  border-radius: 50%;
+  background: var(--text-1);
+  border: 2px solid var(--surface-0);
+  cursor: ew-resize;
+}
+.design-handle {
+  width: 18px !important;
+  height: 18px !important;
+  margin: -9px 0 0 -9px !important;
+  cursor: grab;
+}
+.design-handle span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--accent);
+  text-shadow: 0 0 2px var(--surface-0);
+}
+.leaflet-container {
+  font-family: var(--font-ui);
+}
+
+/* --- narrow window: pinned in a corner over the simulator ------------------------------------- */
+/* Only what is needed while flying: timer, next gate, minimap and flight values. */
+@media (max-width: 760px) {
+  .courses,
+  .race-desc,
+  .course-tools,
+  .runs,
+  .ready,
+  .brand,
+  .pills {
+    display: none;
+  }
+  .topbar {
+    justify-content: flex-end;
+    height: auto;
+    padding: var(--space-1) var(--space-2);
+  }
+  .race {
+    padding: var(--space-2);
+    gap: var(--space-2);
+  }
+  .race-head h1 {
+    font-size: var(--size-lg);
+  }
+  .race-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+}
+
+/* --- pinned on top of the simulator: only what is needed while flying ------------------------- */
+.app.pinned .courses,
+.app.pinned .race-title,
+.app.pinned .course-tools,
+.app.pinned .ready,
+.app.pinned .runs,
+.app.pinned .brand,
+.app.pinned .pills,
+.app.pinned .pilot {
+  display: none;
+}
+.app.pinned .topbar {
+  justify-content: flex-end;
+  height: auto;
+  padding: var(--space-1) var(--space-2);
+}
+.app.pinned .race {
+  padding: var(--space-2);
+  gap: var(--space-2);
+}
+.app.pinned .race-head {
+  justify-content: flex-end;
+}
+.app.pinned .race-main,
+.app.pinned .race-side {
+  padding: var(--space-3);
+}
+/* Smaller still: a compact race panel (time, deltas, next gate with its turn arrow) over the map.
+ * Without a voice, the next gate is the only place that says where to go and what it asks for. */
+@media (max-width: 560px) {
+  .app.pinned .race-main {
+    gap: var(--space-1);
+  }
+  .app.pinned .gate-strip {
+    display: none;
+  }
+  .app.pinned .timer {
+    font-size: calc(var(--size-timer) * 0.6);
+  }
+  .app.pinned .next-gate {
+    padding: var(--space-2) var(--space-3);
+  }
+  .app.pinned .next-gate-name {
+    font-size: var(--size-lg);
+  }
+}
+
+/* Leaflet's own controls, in the app's colors. */
+.leaflet-bar a,
+.leaflet-bar a:hover,
+.leaflet-control-layers {
+  background: var(--surface-glass);
+  color: var(--text-1);
+  border-color: var(--line-strong) !important;
+}
+.leaflet-bar a:hover {
+  background: var(--surface-3);
+}
+.leaflet-bar,
+.leaflet-control-layers {
+  border: 1px solid var(--line-strong) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-pop) !important;
+}
+.leaflet-control-layers-expanded {
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-1);
+}
+.leaflet-control-attribution {
+  background: var(--surface-glass) !important;
+  color: var(--text-2) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--text-1) !important;
+}
+.leaflet-control-layers-toggle {
+  filter: invert(1); /* Leaflet's icon is drawn for a light button */
+}
+
+/* --- splits in the result --------------------------------------------------------------------- */
+.splits summary {
+  cursor: pointer;
+}
+.splits table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--size-sm);
+  margin-top: var(--space-2);
+}
+.splits th {
+  text-align: right;
+  font-weight: 600;
+  font-size: var(--size-xs);
+  color: var(--text-3);
+  padding: 2px var(--space-2);
+  border-bottom: 1px solid var(--line-strong);
+}
+.splits td {
+  text-align: right;
+  padding: 3px var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+.splits th:first-child,
+.splits td:first-child {
+  text-align: left;
+}
+.splits tr.worst td {
+  background: var(--bad-soft);
+}

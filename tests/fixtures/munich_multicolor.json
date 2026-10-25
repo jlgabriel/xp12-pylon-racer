@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "course_id": "munich_multicolor",
+  "course_name": "Munich Multicolor (pylon test)",
+  "simulator": "Aerofly FS4",
+  "_note": "5 gates running due east (~660 m N of the munich_demo line), 600 m apart, 80 m wide. Tests per-gate pylons: start=green, then red, blue, red, finish=home (4 distinct models). Fly to ~48.376 N, 11.850 E and head east through the gates.",
+  "location": { "name": "Munich area", "country": "Germany", "reference_airport": "EDDM" },
+  "units": { "distance": "meters", "altitude": "meters", "speed": "knots" },
+  "rules": {
+    "gate_crossing_mode": "line_crossing",
+    "require_order": true,
+    "missed_gate_penalty_seconds": 3,
+    "wrong_direction_penalty_seconds": 3
+  },
+  "gates": [
+    { "id": 1, "name": "Start Gate", "type": "start", "sequence": 1,
+      "center": { "lon": 11.8500, "lat": 48.3760 }, "width_m": 80, "orientation_deg": 90,
+      "pylon": "green", "min_agl_m": 5, "max_agl_m": 80 },
+    { "id": 2, "name": "Gate 2", "type": "checkpoint", "sequence": 2,
+      "center": { "lon": 11.8581, "lat": 48.3760 }, "width_m": 80, "orientation_deg": 90,
+      "pylon": "red", "min_agl_m": 5, "max_agl_m": 80 },
+    { "id": 3, "name": "Gate 3", "type": "checkpoint", "sequence": 3,
+      "center": { "lon": 11.8662, "lat": 48.3760 }, "width_m": 80, "orientation_deg": 90,
+      "pylon": "blue", "min_agl_m": 5, "max_agl_m": 80 },
+    { "id": 4, "name": "Gate 4", "type": "checkpoint", "sequence": 4,
+      "center": { "lon": 11.8743, "lat": 48.3760 }, "width_m": 80, "orientation_deg": 90,
+      "pylon": "red", "min_agl_m": 5, "max_agl_m": 80 },
+    { "id": 5, "name": "Finish Gate", "type": "finish", "sequence": 5,
+      "center": { "lon": 11.8824, "lat": 48.3760 }, "width_m": 80, "orientation_deg": 90,
+      "pylon": "home", "min_agl_m": 5, "max_agl_m": 80 }
+  ]
+}

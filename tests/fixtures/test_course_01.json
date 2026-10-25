@@ -1,0 +1,60 @@
+{
+  "schema_version": "0.1",
+  "course_id": "test_course_01",
+  "course_name": "Test Pylon Race 01 (Reno-Stead area)",
+  "simulator": "Aerofly FS4",
+  "_note": "PLACEHOLDER LOCATION near KRTS Reno-Stead (flat high desert, has runways, where real air races are held). Straight northbound course, 3 gates ~500 m apart, 80 m wide. Adjust lat/lon to your preferred flat area near an AFS4 airport before flying.",
+  "location": {
+    "name": "Reno-Stead area",
+    "country": "United States",
+    "reference_airport": "KRTS"
+  },
+  "units": {
+    "distance": "meters",
+    "altitude": "meters",
+    "speed": "knots"
+  },
+  "rules": {
+    "gate_crossing_mode": "line_crossing",
+    "require_order": true,
+    "missed_gate_penalty_seconds": 3,
+    "wrong_direction_penalty_seconds": 3,
+    "max_gate_crossing_altitude_agl_m": 80,
+    "min_gate_crossing_altitude_agl_m": 5
+  },
+  "gates": [
+    {
+      "id": 1,
+      "name": "Start Gate",
+      "type": "start",
+      "sequence": 1,
+      "center": { "lon": -119.8800, "lat": 39.6600 },
+      "width_m": 80,
+      "orientation_deg": 0,
+      "min_agl_m": 5,
+      "max_agl_m": 80
+    },
+    {
+      "id": 2,
+      "name": "Gate 2",
+      "type": "checkpoint",
+      "sequence": 2,
+      "center": { "lon": -119.8800, "lat": 39.6645 },
+      "width_m": 80,
+      "orientation_deg": 0,
+      "min_agl_m": 5,
+      "max_agl_m": 80
+    },
+    {
+      "id": 3,
+      "name": "Finish Gate",
+      "type": "finish",
+      "sequence": 3,
+      "center": { "lon": -119.8800, "lat": 39.6690 },
+      "width_m": 80,
+      "orientation_deg": 0,
+      "min_agl_m": 5,
+      "max_agl_m": 80
+    }
+  ]
+}
