@@ -49,6 +49,7 @@ Want to see it first? **Watch demo** flies any course for you, no simulator need
 | Course | Where | What it asks |
 |--------|-------|--------------|
 | **Grand Canyon West River Run** | Grand Canyon West, **1G4** | 21 km along the Colorado River, 1,000 m below the rim, by Jugac64 |
+| **Queenstown Lake Race** | Queenstown, **NZQN** | 11 km over Lake Wakatipu with tall pylons, designed by ChatGPT |
 | **Stead Pylon Oval** | Reno Stead, **KRTS** | Three laps of a Reno-style oval, every pylon on your left |
 | **Daggett Air Show** | Daggett, **KDAG** | Wings level, knife edge, inverted, a height window and turn pylons |
 | **Daggett Sprint** | Daggett, **KDAG** | Five gates in a straight line: the quickest way to learn |

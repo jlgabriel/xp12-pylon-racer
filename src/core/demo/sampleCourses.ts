@@ -1,10 +1,11 @@
 // Courses seeded so there is something to fly (or to watch in demo mode) from the first launch.
-// The same eight Pylon Racer (Aerofly) ships, gate for gate. Their revisions differ between the two
-// apps, as they should: here every pylon has a known height, which is part of how a course is scored.
-// Two sit just north-east of EDDM (Munich); four are in the open Mojave desert at KDAG: a sprint,
-// a flight test of every rule, a flight test of the three air-race pylons and an aerobatic showcase.
-// Then a Reno-style pylon oval at Reno Stead (KRTS) and Juan's river run at the bottom of the Grand
-// Canyon.
+// The first eight are the ones Pylon Racer (Aerofly) ships, gate for gate. Their revisions differ
+// between the two apps, as they should: here every pylon has a known height, which is part of how a
+// course is scored. Two sit just north-east of EDDM (Munich); four are in the open Mojave desert at
+// KDAG: a sprint, a flight test of every rule, a flight test of the three air-race pylons and an
+// aerobatic showcase. Then a Reno-style pylon oval at Reno Stead (KRTS) and Juan's river run at the
+// bottom of the Grand Canyon. The ninth is only here: a lake race at Queenstown (NZQN) with tall
+// pylons, the first course flown on water.
 import { COURSE_FORMAT, COURSE_VERSION, parseCourse, type Course } from "../course/course";
 
 const STAMP = "2026-10-18T00:00:00Z";
@@ -13,11 +14,13 @@ const STAMP = "2026-10-18T00:00:00Z";
  * The `updatedAt` of earlier copies of a sample that the app itself put on disk (or, for Juan's
  * Grand Canyon run, his own copy before it shipped). A stored sample still carrying one of these was
  * never saved by the user, so it may take the shipped text; anything else is the user's and is left
- * alone. Add the old stamp here whenever a sample's text changes.
+ * alone. Add the old stamp here whenever a sample's text changes. (Queenstown's is Juan's copy, as
+ * he flew it, from before it shipped.)
  */
 export const SAMPLE_EARLIER_STAMPS: Readonly<Record<string, readonly string[]>> = {
   "kdag-rules-test": [STAMP],
   "grand-canyon-west-river-run": ["2026-10-24T10:53:37.241Z"],
+  "queenstown-lake-race-01": ["2026-10-25T21:43:34.997Z"],
 };
 
 export function sampleCourses(): Course[] {
@@ -201,6 +204,34 @@ export function sampleCourses(): Course[] {
         { id: "g14", type: "gate", center: { lon: -113.906898, lat: 36.092404 }, widthM: 100, headingDeg: 270, pylon: "rodeo-25", groundElevM: 354 },
         { id: "g15", type: "finish", center: { lon: -113.922547, lat: 36.097332 }, widthM: 100, headingDeg: 321, pylon: "rodeo-reno", groundElevM: 353 },
       ],
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "queenstown-lake-race-01",
+      name: "Queenstown Lake Race",
+      author: "ChatGPT",
+      description:
+        "11 km over the open water of Lake Wakatipu, south of the Kelvin Peninsula, with tall pylons that stand out on the lake. Take off from Queenstown (NZQN) and fly south-west across the peninsula: the start is on the lake 6.7 km south-west of the airport, flown east-south-east, with only 1 km of water behind it, so swing round over the lake to line up. 3 wings level between 55 and 180 m, 5 a turn pylon kept on your right, 6 between 70 and 160 m, 7 wings level.",
+      createdAt: "2026-10-25T13:00:00Z",
+      updatedAt: "2026-10-25T23:00:00Z",
+      laps: 1,
+      // Designed by ChatGPT; Juan moved the turn pylon (g5) ~335 m south-west, away from the east
+      // shore, and flew it on 2026-10-25 (02:44.71). The lake at 310 m (Open-Meteo); X-Plane measures
+      // the height above its surface. The id keeps the "-01" of the shared file, so a copy already
+      // imported is this course, not a second one.
+      gates: [
+        { id: "g1", type: "start", center: { lon: 168.664, lat: -45.049 }, widthM: 160, headingDeg: 119, pylon: "green", groundElevM: 309 },
+        { id: "g2", type: "gate", center: { lon: 168.677, lat: -45.054 }, widthM: 145, headingDeg: 119, pylon: "rodeo-18", groundElevM: 309 },
+        { id: "g3", type: "level", center: { lon: 168.69, lat: -45.059 }, widthM: 130, headingDeg: 116, pylon: "blue", groundElevM: 309, topM: 180, bottomM: 55 },
+        { id: "g4", type: "gate", center: { lon: 168.707, lat: -45.064 }, widthM: 145, headingDeg: 119, pylon: "rodeo-25", groundElevM: 309 },
+        { id: "g5", type: "turn", center: { lon: 168.7140376, lat: -45.071156 }, widthM: 250, headingDeg: 182, pylon: "home2", groundElevM: 310, turnSide: "right" },
+        { id: "g6", type: "gate", center: { lon: 168.701, lat: -45.076 }, widthM: 145, headingDeg: 260, pylon: "rodeo-25", groundElevM: 309, topM: 160, bottomM: 70 },
+        { id: "g7", type: "level", center: { lon: 168.68, lat: -45.073 }, widthM: 130, headingDeg: 290, pylon: "blue", groundElevM: 309 },
+        { id: "g8", type: "gate", center: { lon: 168.657, lat: -45.064 }, widthM: 145, headingDeg: 331, pylon: "red", groundElevM: 309 },
+        { id: "g9", type: "finish", center: { lon: 168.658, lat: -45.05 }, widthM: 160, headingDeg: 3, pylon: "home", groundElevM: 309 },
+      ],
+      rules: { pylonSize: "tall" },
     }),
   ];
 }

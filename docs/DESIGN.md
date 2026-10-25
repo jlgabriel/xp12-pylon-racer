@@ -113,6 +113,11 @@ podía sacar al avión sobre ella.
 |---|---|
 | Pack sobre agua | El DSF `-46+168` carga sin errores en `Log.txt` (0 tris: sólo objetos). |
 | Verlos sobre el lago | Apoyados en la superficie, ni hundidos ni flotando, con su reflejo en el agua: captura del replay en la meta, los dos `home` Tall de 50 m. |
+
+Pasó a ser la novena pista incluida (`sampleCourses.ts`, sólo en esta app), tal como Juan la voló:
+misma revisión (`4e1a66db22f68f91`), así la carrera de arriba sigue en su ranking. Conserva el id
+`queenstown-lake-race-01` del archivo compartido, y la copia que Juan importó toma el texto nuevo
+al abrir la app (su sello va en `SAMPLE_EARLIER_STAMPS`).
 | Altura sobre el suelo en el lago | La AGL de RPOS se mide **desde la superficie del agua**: `altMslM − aglM` = 311,0 m en las nueve pasadas (el lago, 310 m). Las ventanas de altura sirven sobre agua. |
 | Carrera | **2:44,71**: 2:42,71 de vuelo y +2 s en g3 por pasar a 52 m (el piso es 55 m). g5 rodeado a 45 m del pilón, con 56° de alabeo a 239 km/h; g6 a 156 m (ventana 70–160). |
 

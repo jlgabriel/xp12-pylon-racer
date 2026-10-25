@@ -2,10 +2,12 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
+import { courseRevision } from "../src/core/course/course";
 import { sampleCourses } from "../src/core/demo/sampleCourses";
 import { Storage } from "../src/main/storage";
 
 const rules = sampleCourses().find((c) => c.id === "kdag-rules-test")!;
+const queenstown = sampleCourses().find((c) => c.id === "queenstown-lake-race-01")!;
 let storage: Storage;
 let userData: string;
 
@@ -39,6 +41,13 @@ describe("sample courses", () => {
     storage.saveCourse(moved);
     new Storage(userData).init();
     expect(storage.getCourse(rules.id)!.gates[0]!.widthM).toBe(120);
+  });
+
+  it("include Queenstown at the revision Juan flew, and take over his copy from before it shipped", () => {
+    expect(courseRevision(queenstown)).toBe("4e1a66db22f68f91");
+    storage.saveCourse({ ...queenstown, author: "ChatGPT — XP Pylon Racer course design", updatedAt: "2026-10-25T21:43:34.997Z" });
+    new Storage(userData).init();
+    expect(storage.getCourse(queenstown.id)!.author).toBe("ChatGPT");
   });
 
   it("stay deleted", () => {
