@@ -1,13 +1,13 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 0.1 · 2026-10-24 · en definición con Juan. Nombre provisional.
+> Versión 0.2 · 2026-10-24 · en definición con Juan. Nombre provisional.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-24, v0.1, volada)
+## 0. Estado (2026-10-24, v0.2: los hallazgos del vuelo, sin volar todavía)
 
 La app completa está portada: diseñador, carrera en vivo, ranking por clase, compartir
 `.pylonrace`, demo e instalación del pack. Typecheck, 271 tests unitarios (con la lectura de vuelta
@@ -29,13 +29,39 @@ sin cambiar una línea de la app (detalle en cada `probes/H*/FLIGHT.md`):
 las cinco pasadas a menos de 6 m del centro, entre 10 y 20 m de altura, y una carrera guardada con
 `source: rpos 30 Hz` y la clase Aerobatic.
 
-**Lo que dejó el vuelo para la próxima versión:**
+**Lo que dejó el vuelo, resuelto en la 0.2** (typecheck, 280 tests y 3 e2e en verde; falta volarla):
 
-1. **RPOS tiene un solo suscriptor** (H0): con otro programa que también lo pida, se pelean. Detectarlo
-   y avisar, o buscar otra fuente.
-2. **Replay:** ignorar los datos mientras X-Plane reproduce (`replay_mode` por la Web API).
+1. **RPOS compartido.** RPOS tiene un solo suscriptor: X-Plane lo manda sólo al último que lo pidió.
+   `src/core/telemetry/rposShare.ts` (puro, `tests/rposShare.test.ts`) reconoce la pelea por su firma:
+   el flujo se corta y vuelve **justo después de nuestra petición** (X-Plane estaba sirviendo, pero a
+   otro). Dos de esas "tomas" en 40 s = otro programa pide RPOS. Un tirón o una carga de escenario
+   vuelven solos, el menú no contesta y un sim reiniciado contesta una sola vez: ninguno cuenta.
+   Mientras dura, la app **espacia sus peticiones** (2 → 4 → 8 → 10 s), así el otro programa funciona
+   casi siempre (simulado: recibe el 80 % del flujo en vez de la mitad) y la app vuelve a pedir de vez
+   en cuando para recuperar RPOS cuando el otro se cierre (~15 s en la simulación). 10 s de flujo sin
+   cortes lo despejan. La UI lo dice en la píldora (*X-Plane RPOS taken*), en "Flight data" y en la
+   línea de estado.
+2. **Replay.** El hub lee `sim/time/is_in_replay` por la Web API REST cada 250 ms (el avión, cada
+   5 s) y no pasa fixes al motor mientras vale 1. La UI dice *Replay: not racing*. Sin Web API, todo
+   pasa como en la 0.1. Si se cuela algún fix del replay antes de verlo, el motor ya trata el salto
+   como DNF "reset".
 3. El WebSocket de la Web API sólo abre en `/api/v1` en 12.4.3. La app no lo usa; la grabadora ya
    lo sabe.
+
+**Medido el 2026-10-24 con X-Plane 12.4.3 abierto, para la 0.2** (sin volar: el sim estaba en replay):
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Qué dataref dice "replay"? | `sim/time/is_in_replay`: int, **sólo lectura**, valía 1 en replay. `sim/operation/prefs/replay_mode` también existe, pero es escribible y es un enum (valía 7): no sirve de booleano. Ids de la Web API ~1,6e12 (caben en un double). |
+| RPOS con dos sockets | El segundo que pide se lo queda entero (75 paquetes en 2 s contra 0). |
+| ¿Un `RPOS 0` de quien no es dueño? | **Corta el flujo del dueño.** Por eso la app (y la grabadora H0) sólo piden 0 al cerrar si el flujo les está llegando. |
+| ¿RREF admite varios suscriptores? | **Sí**: dos sockets pidiendo `sim/flightmodel/position/latitude` a 20 Hz reciben ~19 Hz cada uno, y el 0 de uno no corta al otro. |
+
+**RREF como alternativa a RPOS (no adoptada en la 0.2).** Comparte sin pelear, pero cada valor llega
+como **float de 32 bits**: lat/lon perderían precisión (~0,7 m de paso a 117° de longitud, contra el
+double de RPOS), y una muestra son ~10 datarefs sueltos sin garantía de llegar en el mismo paquete.
+Sirve para leer banderas (el replay, sin HTTP) o como fuente de respaldo con posición
+`local_x/y/z`; queda anotado para cuando un piloto necesite volar con un mapa móvil que no suelte RPOS.
 
 ---
 
@@ -88,6 +114,8 @@ resultado → reintentar.** Lo que cambia es todo lo que toca al simulador.
 | Actitud | pitch, **rumbo verdadero**, roll (float, grados) | `true_theta/psi/phi` | ? |
 | Velocidad | vx este, vy arriba, vz **sur** (m/s) + velocidades angulares | `groundspeed`, `hpath` | ? |
 | Avión | **no** | `acf_ICAO`, `acf_relative_path`, `acf_ui_name` | ? |
+| Replay | sigue mandando (posiciones del replay) | `sim/time/is_in_replay` (0.2) | ? |
+| Suscriptores | **uno**: el último que pidió (0.2, §0) | REST: sin límite | ? |
 | Requiere | nada; no desactivar el tráfico entrante | no marcar "Disable Incoming Traffic" en Settings › Network | una opción en Settings › Network, si existe |
 
 **Hipótesis (a confirmar en H0):** RPOS a 40 Hz alimenta la carrera, igual que la DLL en Aerofly,
@@ -161,7 +189,7 @@ Igual que Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite
 | v0.2 | Diseñador + instalación del pack | ✅ la Daggett Sprint instalada por la app se ve en X-Plane |
 | v0.3 | Carrera en vivo + ranking por clase | ✅ primera carrera: 29,13 s, Aerobatic |
 | v0.4 | Abrir `.pylonrace` de Pylon Racer | ✅ mismo formato, mismos ids de pilón, mismas pistas de ejemplo |
-| 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | Pendiente |
+| 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | ✅ hecho y probado sin sim; falta volarlo |
 | 1.0 | Pulido, release | Mismo ciclo que XOP y PCT |
 
 ---

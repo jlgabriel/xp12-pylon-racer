@@ -13,6 +13,7 @@ import { classLabel, resolveClass } from "../../core/ranking/classes";
 import { classesOf, currentClass, isDemo, leaderboard, pilotRuns } from "../../core/ranking/ranking";
 import type { LiveState } from "../../core/session/raceSession";
 import type { RunSummary, TelemetryStatus } from "../../shared/racerApi";
+import { REPLAY, REPLAY_HINT, RPOS_SHARED } from "../app/feedText";
 import { KMH_PER_MS, fmtDelta, fmtDistance, fmtTime } from "../app/format";
 import { useStore } from "../state/store";
 import { MiniMap } from "./MiniMap";
@@ -199,15 +200,13 @@ function ReadyList({ course, telemetry: t }: { course: Course; telemetry: Teleme
   const install = summary?.install.state ?? "none";
   const start = course.gates[0];
   const cls = t?.active && choices ? resolveClass(t.aircraft, choices) : null;
-  const source = !t?.active
-    ? null
-    : t.active === "demo"
-      ? "demo flight"
-      : `X-Plane, ${Math.round(t.rpos.hz)} Hz`;
+  const demo = t?.active === "demo";
+  const held = demo ? null : t?.rpos.shared ? RPOS_SHARED : t?.active && t.replay ? `${REPLAY}. ${REPLAY_HINT}` : null;
+  const source = !t?.active ? null : demo ? "demo flight" : `X-Plane, ${Math.round(t.rpos.hz)} Hz`;
   return (
     <ul className="ready" aria-label="Before the start">
-      <ReadyItem state={source ? "ok" : "missing"} label="Flight data">
-        {source ?? (
+      <ReadyItem state={source && !held ? "ok" : "missing"} label="Flight data">
+        {held ?? source ?? (
           <>
             waiting for X-Plane 12: start a flight on this computer. Nothing to switch on: the app asks X-Plane for its position on
             UDP port 49000.{" "}
@@ -271,18 +270,23 @@ function TurnCue({ fix, gate }: { fix: Fix; gate: Gate }) {
 }
 
 function StatusLine({ race, telemetry }: { race: RaceSnapshot | null; telemetry: TelemetryStatus | null }) {
+  const ended = race?.status === "finished" || race?.status === "dnf";
+  const sim = telemetry && !telemetry.demo.running ? telemetry : null;
+  const held = ended ? null : sim?.rpos.shared ? "X-Plane's position is taken by another program" : sim?.active && sim.replay ? REPLAY : null;
   const text =
     race?.status === "finished"
       ? "Finished"
       : race?.status === "dnf"
         ? "Did not finish"
-        : !telemetry?.active
-          ? "Waiting for X-Plane…"
-          : race?.status === "running"
-            ? "Racing"
-            : "Armed — fly through the start gate";
+        : held
+          ? held
+          : !telemetry?.active
+            ? "Waiting for X-Plane…"
+            : race?.status === "running"
+              ? "Racing"
+              : "Armed — fly through the start gate";
   return (
-    <div className={`status-line status-${race?.status ?? "none"} ${telemetry?.active ? "live" : ""}`}>
+    <div className={`status-line status-${held ? "held" : (race?.status ?? "none")} ${telemetry?.active ? "live" : ""}`}>
       <span className="status-dot" aria-hidden />
       {text}
     </div>

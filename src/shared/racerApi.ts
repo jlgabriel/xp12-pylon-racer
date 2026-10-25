@@ -99,13 +99,21 @@ export interface SourceStatus {
   error: string | null;
 }
 
+export interface RposStatus extends SourceStatus {
+  /** Another program asks X-Plane for RPOS too, and X-Plane sends it to only one: the two keep
+   *  taking it from each other. The app then asks less often (core/telemetry/rposShare.ts). */
+  shared: boolean;
+}
+
 export interface TelemetryStatus {
   /** The source currently feeding the race, if any. */
   active: SourceKind | null;
   /** The aircraft's ICAO type code, from X-Plane's Web API; null when it does not say. */
   aircraft: string | null;
-  rpos: SourceStatus;
-  /** X-Plane's Web API, asked only for the aircraft. */
+  rpos: RposStatus;
+  /** X-Plane is playing a replay (Web API) while RPOS streams: its positions are not raced. */
+  replay: boolean;
+  /** X-Plane's Web API, asked for the aircraft and the replay flag. */
   webApi: { ok: boolean; error: string | null };
   demo: { running: boolean };
 }

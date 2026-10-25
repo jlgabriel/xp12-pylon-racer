@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AIRCRAFT_ICAO, idFromLookup, lookupUrl, textFromValue, valueUrl } from "../src/core/telemetry/webapi";
+import { AIRCRAFT_ICAO, IN_REPLAY, idFromLookup, lookupUrl, numberFromValue, textFromValue, valueUrl } from "../src/core/telemetry/webapi";
 
 describe("X-Plane Web API", () => {
   it("looks a dataref up by name and reads it by id", () => {
@@ -26,5 +26,14 @@ describe("X-Plane Web API", () => {
     expect(textFromValue({ data: btoa("\u0001\u0002") })).toBeNull();
     expect(textFromValue({ data: "not base64!" })).toBeNull();
     expect(textFromValue({ data: 1.5 })).toBeNull();
+  });
+
+  it("reads the replay flag as a number, with 12.4.3's real ids", () => {
+    expect(idFromLookup({ data: [{ id: 1626080912064, is_writable: false, name: IN_REPLAY, value_type: "int" }] })).toBe(1626080912064);
+    expect(numberFromValue({ data: 1 })).toBe(1);
+    expect(numberFromValue({ data: 0 })).toBe(0);
+    expect(numberFromValue({ data: "1" })).toBeNull();
+    expect(numberFromValue({ error_code: "dataref_not_found" })).toBeNull();
+    expect(numberFromValue(null)).toBeNull();
   });
 });

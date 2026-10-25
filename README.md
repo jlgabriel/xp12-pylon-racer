@@ -135,10 +135,16 @@ There is nothing to install in X-Plane and nothing to switch on:
 - **Position (RPOS, UDP port 49000).** The app asks X-Plane for its position 40 times a second, the
   way moving maps do (documented in X-Plane's `Instructions/Exchanging Data with X-Plane`). It asks
   again whenever the stream stops, so X-Plane can be started before or after the app.
-- **Aircraft (Web API, port 8086, X-Plane 12.1.1 or later).** Only to read which aircraft you fly.
+- **Aircraft and replay (Web API, port 8086, X-Plane 12.1.1 or later).** To read which aircraft you
+  fly, and whether X-Plane is playing a replay: positions from a replay are not raced.
 
 Both are local to your computer. If **Settings › Network › Disable Incoming Traffic** is ticked in
 X-Plane, untick it. The top bar shows whether X-Plane is sending and at what rate.
+
+**X-Plane sends RPOS to one program only**, the last one that asked. If another program on this
+computer also asks for it (some moving maps do), the two keep taking it from each other: the top bar
+then says *RPOS taken*. Close the other program, or switch it to another X-Plane output; the app
+takes RPOS back on its own within about 20 seconds.
 
 ## Building from source
 

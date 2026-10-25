@@ -256,7 +256,9 @@ function finish(): void {
   clearInterval(live);
   clearInterval(rposTimer);
   clearInterval(webTimer);
-  askRpos(0); // stop the stream, so X-Plane is not left sending to a closed port
+  // Stop the stream, so X-Plane is not left sending to a closed port; only if it is ours, since a
+  // request for 0 also stops it for whoever holds it (measured 2026-10-24).
+  if (performance.now() - lastRpos < 1000) askRpos(0);
   socket?.close();
   setTimeout(async () => {
     for (const s of [rpos, p49002, beacon]) s.close();

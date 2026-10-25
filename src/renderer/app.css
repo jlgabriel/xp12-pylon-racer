@@ -424,6 +424,14 @@
 .status-line.status-dnf .status-dot {
   background: var(--bad);
 }
+/* X-Plane streams but is not raced: a replay, or RPOS taken by another program. */
+.status-line.status-held {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+.status-line.status-held .status-dot {
+  background: var(--warn);
+}
 @keyframes pulse {
   50% {
     opacity: 0.25;

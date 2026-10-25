@@ -68,13 +68,23 @@ export function installMockBridge(): void {
   const notFound = (id: string): RacerResult<never> => ({ ok: false, error: { code: "not-found", message: id } });
   const ok = <T>(value: T): RacerResult<T> => ({ ok: true, value });
 
-  const telemetry = (): TelemetryStatus => ({
-    active: demo !== null ? "demo" : null,
-    aircraft: demo !== null ? demoAircraft : null,
-    rpos: { ageS: null, hz: 0, error: null },
-    webApi: { ok: false, error: null },
-    demo: { running: demo !== null },
-  });
+  // ?shared: another program keeps taking X-Plane's RPOS, so the stream comes and goes every 3 s.
+  // ?replay: X-Plane streams, but is playing a replay. Both show X-Plane as if it were running; the
+  // demo still flies (and wins, as in the hub).
+  const query = new URLSearchParams(window.location.search);
+  const shared = query.has("shared");
+  const replay = query.has("replay");
+  const telemetry = (): TelemetryStatus => {
+    const streaming = replay || (shared && Math.floor(performance.now() / 3000) % 2 === 0);
+    return {
+      active: demo !== null ? "demo" : streaming ? "rpos" : null,
+      aircraft: demo !== null || streaming ? demoAircraft : null,
+      rpos: { ageS: streaming ? 0.03 : shared ? 2.5 : null, hz: streaming ? 29 : 0, error: null, shared },
+      replay,
+      webApi: { ok: streaming, error: null },
+      demo: { running: demo !== null },
+    };
+  };
   const push = (): void => {
     const u: LiveUpdate = { telemetry: telemetry(), live: session?.live() ?? null };
     liveListeners.forEach((l) => l(u));

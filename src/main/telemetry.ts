@@ -5,7 +5,12 @@
 //
 // RPOS is a subscription: X-Plane sends to the port the request came from until asked for 0, and
 // forgets the subscriber when it restarts. So the request is repeated whenever the stream is quiet,
-// which also covers "X-Plane was started after the app".
+// which also covers "X-Plane was started after the app". It has ONE subscriber, though: another
+// program that asks takes it away. RposShare (core/telemetry/rposShare.ts) tells that apart, and
+// then spaces the requests out instead of fighting for it.
+//
+// While X-Plane plays a replay, RPOS streams the replay's positions: the Web API says so
+// (sim/time/is_in_replay) and those fixes are dropped. Without the Web API they go through, as in 0.1.
 import dgram from "node:dgram";
 import { performance } from "node:perf_hooks";
 import type { Course } from "../core/course/course";
@@ -15,12 +20,15 @@ import type { SourceKind } from "../core/run/run";
 import type { SourceInfo } from "../core/session/raceSession";
 import { RateMeter } from "../core/telemetry/rate";
 import { XPLANE_PORT, parseRpos, rposRequest } from "../core/telemetry/rpos";
+import { RposShare } from "../core/telemetry/rposShare";
 import {
   AIRCRAFT_ICAO,
+  IN_REPLAY,
   WEB_API_PORT,
   WEB_API_VERSIONS,
   idFromLookup,
   lookupUrl,
+  numberFromValue,
   textFromValue,
   valueUrl,
   type WebApiVersion,
@@ -33,8 +41,10 @@ const now = (): number => performance.now() / 1000;
 const XPLANE_HOST = "127.0.0.1";
 const RPOS_RATE_HZ = 40;
 const RPOS_FRESH_S = 2;
-const RPOS_ASK_MS = 2000;
-const AIRCRAFT_POLL_MS = 5000;
+const RPOS_TICK_MS = 250;
+/** The replay flag is read this often, so few replay fixes slip through before it is seen. */
+const WEB_POLL_MS = 250;
+const AIRCRAFT_EVERY_S = 5;
 const WEB_TIMEOUT_MS = 1500;
 const DEMO_RATE_HZ = 20;
 export const DEMO_AIRCRAFT = "Extra";
@@ -46,14 +56,19 @@ export class TelemetryHub {
 
   private rpos: dgram.Socket | null = null;
   private readonly rposRate = new RateMeter();
+  private readonly share = new RposShare();
+  private shared = false;
   private rposError: string | null = null;
   private askTimer: NodeJS.Timeout | null = null;
 
   private aircraft: string | null = null;
+  private aircraftReadT = -Infinity;
+  private replay = false;
   private webVersion: WebApiVersion | null = null;
-  private icaoId: number | null = null;
+  /** Dataref name → id, for webVersion. */
+  private readonly ids = new Map<string, number>();
   private webError: string | null = null;
-  private aircraftTimer: NodeJS.Timeout | null = null;
+  private webTimer: NodeJS.Timeout | null = null;
   private polling = false;
 
   private demoTimer: NodeJS.Timeout | null = null;
@@ -64,28 +79,33 @@ export class TelemetryHub {
 
   start(): void {
     this.startRpos();
-    this.aircraftTimer = setInterval(() => void this.pollAircraft(), AIRCRAFT_POLL_MS);
+    this.webTimer = setInterval(() => void this.pollWeb(), WEB_POLL_MS);
   }
 
   stop(): void {
     this.stopDemo();
     if (this.askTimer) clearInterval(this.askTimer);
-    if (this.aircraftTimer) clearInterval(this.aircraftTimer);
+    if (this.webTimer) clearInterval(this.webTimer);
     const sock = this.rpos;
     this.rpos = null;
-    if (sock) {
-      // Ask X-Plane to stop sending, so it is not left streaming at a closed port.
+    if (sock && this.share.owns(now())) {
+      // Ask X-Plane to stop sending, so it is not left streaming at a closed port. Only when the
+      // stream is ours: a request for 0 from anyone also stops it for another program holding it.
       sock.send(rposRequest(0), XPLANE_PORT, XPLANE_HOST, () => sock.close());
+    } else {
+      sock?.close();
     }
   }
 
   status(): TelemetryStatus {
     const t = now();
     const last = this.rposRate.lastT();
+    const fresh = last !== null && t - last <= RPOS_FRESH_S;
     return {
       active: this.activeSource(t),
       aircraft: this.aircraft,
-      rpos: { ageS: last === null ? null : t - last, hz: this.rposRate.hz(t), error: this.rposError },
+      rpos: { ageS: last === null ? null : t - last, hz: this.rposRate.hz(t), error: this.rposError, shared: this.share.shared(t) },
+      replay: this.replay && fresh,
       webApi: { ok: this.webVersion !== null && this.webError === null, error: this.webError },
       demo: { running: this.demoTimer !== null },
     };
@@ -134,7 +154,8 @@ export class TelemetryHub {
       const fix = parseRpos(new Uint8Array(msg.buffer, msg.byteOffset, msg.byteLength), t);
       if (!fix || isNullIsland(fix)) return;
       this.rposRate.tick(t);
-      if (this.activeSource(t) !== "rpos") return;
+      this.share.received(t);
+      if (this.replay || this.activeSource(t) !== "rpos") return;
       this.listener?.(fix, { kind: "rpos", hz: this.rposRate.hz(t), aircraft: this.aircraft });
     });
     sock.on("error", (e) => {
@@ -148,47 +169,82 @@ export class TelemetryHub {
     });
     this.rpos = sock;
     this.askTimer = setInterval(() => {
-      const last = this.rposRate.lastT();
-      if (last === null || now() - last > RPOS_FRESH_S) this.ask();
-    }, RPOS_ASK_MS);
+      const t = now();
+      if (this.share.shouldAsk(t)) this.ask();
+      const shared = this.share.shared(t);
+      if (shared !== this.shared) {
+        log.info(shared ? "another program is taking RPOS from X-Plane: asking less often" : "RPOS is ours again");
+        this.shared = shared;
+      }
+    }, RPOS_TICK_MS);
   }
 
   private ask(): void {
+    this.share.asked(now());
     this.rpos?.send(rposRequest(RPOS_RATE_HZ), XPLANE_PORT, XPLANE_HOST, (e) => {
       this.rposError = e ? e.message : null;
     });
   }
 
-  // --- Web API: the aircraft --------------------------------------------------------------------------
+  // --- Web API: the replay flag and the aircraft ------------------------------------------------------
 
-  /** While X-Plane streams, read which aircraft it flies. A new aircraft means a new flight, which
-   *  can reload the dataref ids, so the id is looked up again whenever a read fails. */
-  private async pollAircraft(): Promise<void> {
+  /** While X-Plane streams, read whether it plays a replay (every poll) and which aircraft it flies
+   *  (every AIRCRAFT_EVERY_S). Ids are looked up again after a failed read: a new flight can reload
+   *  them. Without an answer the replay counts as off, so the race behaves as before the Web API. */
+  private async pollWeb(): Promise<void> {
     if (this.polling || this.activeSource(now()) !== "rpos") return;
     this.polling = true;
     try {
-      const versions = this.webVersion ? [this.webVersion] : WEB_API_VERSIONS;
-      for (const v of versions) {
-        if (this.icaoId === null || this.webVersion !== v) {
-          const id = idFromLookup(await getJson(lookupUrl(XPLANE_HOST, WEB_API_PORT, v, AIRCRAFT_ICAO)));
-          if (id === null) continue;
-          this.icaoId = id;
-          this.webVersion = v;
-        }
-        const icao = textFromValue(await getJson(valueUrl(XPLANE_HOST, WEB_API_PORT, v, this.icaoId)));
-        if (icao !== this.aircraft) log.info(`aircraft: ${icao ?? "(no ICAO code)"} (Web API ${v})`);
-        this.aircraft = icao;
-        this.webError = null;
+      const replay = await this.read(IN_REPLAY, numberFromValue);
+      if (replay === undefined) {
+        this.setReplay(false);
+        this.webError = "X-Plane's Web API did not answer";
         return;
       }
-      this.webError = "X-Plane's Web API did not answer";
+      this.setReplay(replay === 1);
+      if (now() - this.aircraftReadT >= AIRCRAFT_EVERY_S) {
+        this.aircraftReadT = now();
+        const icao = await this.read(AIRCRAFT_ICAO, textFromValue);
+        if (icao !== undefined) {
+          if (icao !== this.aircraft) log.info(`aircraft: ${icao ?? "(no ICAO code)"} (Web API ${this.webVersion})`);
+          this.aircraft = icao;
+        }
+      }
+      this.webError = null;
     } catch (e) {
-      this.icaoId = null;
+      this.ids.clear();
       this.webVersion = null;
+      this.setReplay(false);
       this.webError = e instanceof Error ? e.message : String(e);
     } finally {
       this.polling = false;
     }
+  }
+
+  /** A dataref's decoded value (null when it does not decode); undefined when no API version knows
+   *  the name. */
+  private async read<T>(name: string, decode: (body: unknown) => T | null): Promise<T | null | undefined> {
+    const versions = this.webVersion ? [this.webVersion] : WEB_API_VERSIONS;
+    for (const v of versions) {
+      let id = this.webVersion === v ? this.ids.get(name) : undefined;
+      if (id === undefined) {
+        const found = idFromLookup(await getJson(lookupUrl(XPLANE_HOST, WEB_API_PORT, v, name)));
+        if (found === null) continue;
+        if (this.webVersion !== v) this.ids.clear();
+        this.webVersion = v;
+        this.ids.set(name, found);
+        id = found;
+      }
+      const body = await getJson(valueUrl(XPLANE_HOST, WEB_API_PORT, v, id));
+      if (body === null) this.ids.delete(name);
+      return decode(body);
+    }
+    return undefined;
+  }
+
+  private setReplay(replay: boolean): void {
+    if (replay !== this.replay) log.info(replay ? "X-Plane is playing a replay: not racing" : "X-Plane is flying again");
+    this.replay = replay;
   }
 }
 

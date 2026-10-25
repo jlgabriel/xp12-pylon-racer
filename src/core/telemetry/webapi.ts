@@ -1,11 +1,13 @@
-// X-Plane 12's Web API (12.1.1 and later), only for what RPOS does not say: which aircraft is flying.
+// X-Plane 12's Web API (12.1.1 and later), only for what RPOS does not say: which aircraft is flying,
+// and whether X-Plane is playing a replay (RPOS then streams the replay's positions).
 // developer.x-plane.com, "X-Plane Web API": a built-in web server on port 8086, local connections
 // only, switched off by Settings › Network › "Disable Incoming Traffic". A dataref is looked up by
 // name to get its numeric id, then read by id. Byte-array datarefs (the aircraft's names) come back
 // base64-encoded. Before a flight is loaded the lookups answer 404.
 //
 // The API's version in the path has moved (v1, v2, v3 across 12.x); the hub tries them newest first
-// and keeps the one that answers. Probe H0 records which one Juan's 12.4.3 serves.
+// and keeps the one that answers. Juan's 12.4.3 serves REST on v3 (H0). Dataref ids are large
+// (~1.6e12 in 12.4.3) but well inside a double's exact integers.
 
 export const WEB_API_PORT = 8086;
 export const WEB_API_VERSIONS = ["v3", "v2", "v1"] as const;
@@ -13,6 +15,10 @@ export type WebApiVersion = (typeof WEB_API_VERSIONS)[number];
 
 /** The ICAO type code of the loaded aircraft, as its .acf declares it (classes.ts keys on it). */
 export const AIRCRAFT_ICAO = "sim/aircraft/view/acf_ICAO";
+
+/** 1 while X-Plane plays a replay, 0 while flying. Read-only int, checked against 12.4.3's own API
+ *  (2026-10-24: 1 in replay). Not `sim/operation/prefs/replay_mode`: writable, and an enum (it read 7). */
+export const IN_REPLAY = "sim/time/is_in_replay";
 
 export function lookupUrl(host: string, port: number, version: WebApiVersion, name: string): string {
   return `http://${host}:${port}/api/${version}/datarefs?filter%5Bname%5D=${encodeURIComponent(name)}`;
@@ -42,4 +48,10 @@ export function textFromValue(body: unknown): string | null {
   }
   const text = bytes.replace(/\0.*$/s, "").trim();
   return text !== "" && /^[\x20-\x7e]+$/.test(text) ? text : null;
+}
+
+/** A numeric value (`{ data: 1 }`) as a number; null when not one. */
+export function numberFromValue(body: unknown): number | null {
+  const data = (body as { data?: unknown } | null)?.data;
+  return typeof data === "number" && Number.isFinite(data) ? data : null;
 }

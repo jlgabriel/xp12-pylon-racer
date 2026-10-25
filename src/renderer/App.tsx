@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AIRCRAFT_CLASSES, classLabel, classOfAircraft, resolveClass } from "../core/ranking/classes";
 import type { SketchPoint, TelemetryStatus } from "../shared/racerApi";
+import { REPLAY, REPLAY_HINT, RPOS_SHARED } from "./app/feedText";
 import { fmtDistance, fmtTime } from "./app/format";
 import { LogoMark } from "./app/Logo";
 import { Designer } from "./design/Designer";
@@ -224,6 +225,12 @@ function PilotMenu() {
 function TelemetryPills({ t }: { t: TelemetryStatus | null }) {
   if (!t) return null;
   const rposOn = t.rpos.ageS !== null && t.rpos.ageS < 2;
+  const held = t.rpos.shared ? "shared" : rposOn && t.replay ? "replay" : null;
+  const title = t.rpos.shared
+    ? RPOS_SHARED.charAt(0).toUpperCase() + RPOS_SHARED.slice(1)
+    : held === "replay"
+      ? `${REPLAY}. ${REPLAY_HINT}`
+      : (t.rpos.error ?? "X-Plane's position output (RPOS), asked for on UDP port 49000");
   return (
     <div className="pills">
       {t.demo.running && (
@@ -231,11 +238,17 @@ function TelemetryPills({ t }: { t: TelemetryStatus | null }) {
           <span className="dot" /> Demo flight
         </span>
       )}
-      <span
-        className={`pill ${rposOn ? "on" : t.rpos.error ? "warn" : ""}`}
-        title={t.rpos.error ?? "X-Plane's position output (RPOS), asked for on UDP port 49000"}
-      >
-        <span className="dot" /> X-Plane {rposOn ? `${Math.round(t.rpos.hz)} Hz` : t.rpos.error ? "error" : "waiting"}
+      <span className={`pill ${held || t.rpos.error ? "warn" : rposOn ? "on" : ""}`} title={title}>
+        <span className="dot" /> X-Plane{" "}
+        {held === "shared"
+          ? "RPOS taken"
+          : held === "replay"
+            ? "replay"
+            : rposOn
+              ? `${Math.round(t.rpos.hz)} Hz`
+              : t.rpos.error
+                ? "error"
+                : "waiting"}
       </span>
       <AircraftClass t={t} />
     </div>
