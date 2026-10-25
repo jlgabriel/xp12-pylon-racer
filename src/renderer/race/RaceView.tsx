@@ -154,6 +154,7 @@ function CourseTools() {
   const edit = useStore((s) => s.editCourse);
   const duplicate = useStore((s) => s.duplicateCourse);
   const share = useStore((s) => s.exportCourse);
+  const shirley = useStore((s) => s.exportShirley);
   const remove = useStore((s) => s.deleteCourse);
   const install = useStore((s) => s.installCourse);
   const uninstall = useStore((s) => s.uninstallCourse);
@@ -169,6 +170,13 @@ function CourseTools() {
         </button>
         <button className="ghost" onClick={() => void share()} title="Save this course as a .pylonrace file to send to other pilots">
           Share…
+        </button>
+        <button
+          className="ghost"
+          onClick={() => void shirley()}
+          title="Save this course as a FlyShirley challenge: Shirley, the AI copilot, calls your race while you fly"
+        >
+          Export to Shirley…
         </button>
         <button className="ghost danger" onClick={() => void remove()}>
           Delete

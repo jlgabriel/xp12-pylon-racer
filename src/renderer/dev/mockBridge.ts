@@ -6,6 +6,7 @@ import { courseRevision, parseCourse, type Course } from "../../core/course/cour
 import { demoFlight } from "../../core/demo/demoFlight";
 import { sampleCourses } from "../../core/demo/sampleCourses";
 import { packFolderName, packSceneryId } from "../../core/export/pack";
+import { shirleyFile, shirleyFileName } from "../../core/export/shirley";
 import { courseFileName, packCourse, unpack } from "../../core/files/share";
 import type { ZipCodec } from "../../core/files/zip";
 import { destination } from "../../core/geo/geo";
@@ -188,6 +189,12 @@ export function installMockBridge(): void {
       if (!c) return notFound(id);
       download(courseFileName(c), packCourse(c, storeOnly));
       return ok(courseFileName(c));
+    },
+    exportShirley: async (id) => {
+      const c = courses.get(id);
+      if (!c) return notFound(id);
+      download(shirleyFileName(c), new TextEncoder().encode(shirleyFile(c, pilot, summaries())));
+      return ok(shirleyFileName(c));
     },
     takeOpenedFiles: async () => null,
     onImported: () => () => undefined,

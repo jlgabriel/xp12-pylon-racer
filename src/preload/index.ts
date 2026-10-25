@@ -21,6 +21,7 @@ const racer: RacerApi = {
   importFiles: () => ipcRenderer.invoke("racer:importFiles"),
   importDropped: (files) => ipcRenderer.invoke("racer:importDropped", files),
   exportCourse: (id) => ipcRenderer.invoke("racer:exportCourse", id),
+  exportShirley: (id) => ipcRenderer.invoke("racer:exportShirley", id),
   saveCourse: (draft) => ipcRenderer.invoke("racer:saveCourse", draft),
   duplicateCourse: (id) => ipcRenderer.invoke("racer:duplicateCourse", id),
   deleteCourse: (id) => ipcRenderer.invoke("racer:deleteCourse", id),

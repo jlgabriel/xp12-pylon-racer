@@ -1,11 +1,12 @@
 // One ipcMain handler per RacerApi method, channel "racer:<method>". This is the app's single trust
 // boundary: it owns every path and dialog, validates what comes in, and maps expected failures into
 // RacerResult envelopes (a thrown error loses its fields crossing invoke).
-import { app, BrowserWindow, dialog, ipcMain, type OpenDialogOptions, type SaveDialogOptions, type WebContents } from "electron";
+import { app, BrowserWindow, clipboard, dialog, ipcMain, type OpenDialogOptions, type SaveDialogOptions, type WebContents } from "electron";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { ZodError } from "zod";
 import { parseCourse, type Course } from "../core/course/course";
+import { shirleyFile, shirleyFileName } from "../core/export/shirley";
 import { COURSE_EXT, courseFileName, IMPORT_EXTS } from "../core/files/share";
 import { classOfAircraft, isClassId } from "../core/ranking/classes";
 import { rankRuns, summarizeCourse } from "../core/run/summaries";
@@ -226,6 +227,19 @@ export function registerIpc({ storage, race, installer, xplaneDir, xplaneVersion
       if (!file) return fail("cancelled", "Export cancelled");
       writeFileAtomic(file, courseFile(c));
       log.info(`course exported: ${c.id} to ${file}`);
+      return ok(path.basename(file));
+    }),
+  );
+
+  ipcMain.handle("racer:exportShirley", (e, id: unknown) =>
+    withCourseAsync(id, async (c) => {
+      const file = await saveDialog(e.sender, "Shirley challenge", shirleyFileName(c), "json", "Shirley challenge");
+      if (!file) return fail("cancelled", "Export cancelled");
+      const text = shirleyFile(c, storage.readSettings().pilot, storage.listRuns());
+      writeFileAtomic(file, new TextEncoder().encode(text));
+      // Shirley's Challenge Creator takes the challenge pasted in.
+      clipboard.writeText(text);
+      log.info(`Shirley challenge exported: ${c.id} to ${file}`);
       return ok(path.basename(file));
     }),
   );

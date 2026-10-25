@@ -173,6 +173,9 @@ export interface RacerApi {
   importDropped(files: DroppedFile[]): Promise<RacerResult<ImportReport>>;
   /** Saves the course as a .pylonrace through a save dialog; returns the file name. */
   exportCourse(id: string): Promise<RacerResult<string>>;
+  /** Saves the course as a FlyShirley challenge (.json) through a save dialog and copies it to the
+   *  clipboard, for Shirley's Challenge Creator; returns the file name. */
+  exportShirley(id: string): Promise<RacerResult<string>>;
   /** Validates and stores a course from the designer. An empty id means a new course. Gates with
    *  no terrain elevation get one looked up. */
   saveCourse(draft: Course): Promise<RacerResult<SaveResult>>;

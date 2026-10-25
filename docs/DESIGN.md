@@ -121,6 +121,55 @@ al abrir la app (su sello va en `SAMPLE_EARLIER_STAMPS`).
 | Altura sobre el suelo en el lago | La AGL de RPOS se mide **desde la superficie del agua**: `altMslM − aglM` = 311,0 m en las nueve pasadas (el lago, 310 m). Las ventanas de altura sirven sobre agua. |
 | Carrera | **2:44,71**: 2:42,71 de vuelo y +2 s en g3 por pasar a 52 m (el piso es 55 m). g5 rodeado a 45 m del pilón, con 56° de alabeo a 239 km/h; g6 a 156 m (ventana 70–160). |
 
+### Después de la 1.0: Export to Shirley (sin volar todavía)
+
+Juan está suscrito a [FlyShirley](https://airplane.team), el copiloto con IA, que acepta *challenges*
+en JSON con fases, instrucciones y estado. **Export to Shirley…** (junto a *Share…*) convierte la
+pista en uno para que Shirley relate la carrera; se lo anunció a Alex, el autor, en el Discord de
+FlyShirley. `src/core/export/shirley.ts` (puro, `tests/shirley.test.ts`) sigue el `ChallengeSchema`
+publicado (repo `Airplane-Team/sample-challenges` y la pestaña *Challenge Specification* de
+airplane.team/capabilities/specifications, leídos el 2026-10-25); el test lleva un espejo estricto del
+schema, recortado a los campos que se escriben.
+
+- Tres fases: `Brief` (presentación de la pista camino a la salida, silencio máx. 60 s) → `Race`
+  (relato en vivo: silencio máx. `RACE_QUIET_S` = 6 s, `challengeTimer`, `recordFlightData`) →
+  `Debrief` (veredicto, `analyzeFlightData`, otra corrida vuelve a `Brief`).
+- Las puertas de una vuelta van como `navigateToStateWaypoints`, con lo que pide cada una en su
+  `context`; rumbos verdaderos (no se llena `magneticHeadingDeg`), alturas en m y ft.
+- **La app juzga, Shirley relata.** Shirley no ve el reloj ni las penalizaciones de la app: el prompt
+  le prohíbe anunciarlos como hechos y le pide el resultado oficial al piloto en el debrief.
+- Se apagan las herramientas que mueven el avión o el sim (`setPosition`, `resetFlight`,
+  `setSimulatorSetpoints`, `setDestinationRunway`): un reposicionamiento a mitad de carrera es DNF.
+- Los récords de la revisión actual (líder por clase y el mejor del piloto) entran al prompt.
+- Se guarda un `.json` y se copia al portapapeles: el Challenge Creator (airplane.team/fly/create)
+  recibe el challenge pegado.
+
+El challenge pasa el schema actual de Shirley en las nueve pistas (transcrito de la web, sin claves
+descartadas) y el Challenge Creator lo aceptó sin avisos.
+
+**Volado el 2026-10-25** (Daggett Sprint Tall, Cessna 172SP, la 1.0.0 portable midiendo; vuelo
+compartido en airplane.team/share/2mMcEFrN):
+
+| Prueba | Resultado |
+|---|---|
+| Brief | Presentó la pista bien, con el récord de 41,93 s y que el Skyhawk corre en otra clase. Hasta vio el freno de estacionamiento puesto. |
+| Transiciones | `Brief` → `Race` y `Race` → `Debrief` solas, sin el botón *Transition Phase*. |
+| Relato en vivo | Alcanza: cantó cada puerta. Por su cuenta se puso *wake-up triggers* en la longitud de cada puerta (la pista va de este a oeste). |
+| Conexión | Shirley usa el WebSocket de la Web API, no RPOS: la app no mostró *RPOS taken*. |
+| Debrief | Pidió el tiempo oficial. |
+| App | **1:00,79**, limpia, cero penalizaciones; las cinco pasadas entre 15 y 20 m AGL. |
+
+Dos errores de Shirley, corregidos en el prompt:
+1. Dijo "way over the tops" y que esas puertas no contarían: las pasadas fueron a 15–20 m, bajo los
+   30 m de los pilones Tall, y sin límite de altura la puerta cuenta a cualquier altura. Venía del
+   "below its top" de la regla del toque y de dar alturas en metros cuando ella lee pies (60 ft contra
+   "30 m"). Ahora las alturas van en pies primero, y una línea dice que sin límite de altura toda puerta
+   cuenta, también por encima de los pilones.
+2. Escribió 1:00.079 cuando Juan leyó "01:00.79". Ahora el prompt explica el formato
+   minutos:segundos.centésimas de la app.
+
+Pendiente: volver a volar con el prompt corregido.
+
 ### RREF como alternativa a RPOS (no adoptada)
 
 Comparte sin pelear, pero cada valor llega

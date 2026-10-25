@@ -150,6 +150,16 @@ There is no server: courses travel as files. Your runs stay on your computer.
 - With both apps installed, double-clicking a `.pylonrace` opens the one installed last. **Import…**
   works in either.
 
+### Shirley calls your race
+
+**Export to Shirley…** turns a course into a challenge for [FlyShirley](https://airplane.team),
+the AI copilot, so she commentates your run like an air race broadcast: a course preview on the way
+to the start, live call-outs gate by gate, and a verdict at the end. The app saves a `.json` file and
+copies it to the clipboard: paste it into Shirley's Challenge Creator
+([airplane.team/fly/create](https://airplane.team/fly/create)). The challenge carries the gates, the
+rules and your records on that course. Keep XP Pylon Racer open on the same course while you fly: it
+still times and scores the race, and Shirley only watches.
+
 ## Connecting to X-Plane 12
 
 There is nothing to install in X-Plane and nothing to switch on:

@@ -55,6 +55,7 @@ interface State {
   /** Files dropped on the window. */
   importDropped(files: readonly File[]): Promise<void>;
   exportCourse(): Promise<void>;
+  exportShirley(): Promise<void>;
   resetRace(): Promise<void>;
   startDemo(): Promise<void>;
   stopDemo(): Promise<void>;
@@ -220,6 +221,23 @@ export const useStore = create<State>((set, get) => {
         return;
       }
       set({ message: { kind: "info", text: `Saved ${r.value}. Send it to other pilots: they open it with Import… or drop it on Pylon Racer.` } });
+    },
+
+    async exportShirley() {
+      const racer = getRacer();
+      const c = get().selected;
+      if (!racer || !c) return;
+      const r = await racer.exportShirley(c.id);
+      if (!r.ok) {
+        if (r.error.code !== "cancelled") set({ message: { kind: "error", text: `Couldn't export for Shirley. ${r.error.message}` } });
+        return;
+      }
+      set({
+        message: {
+          kind: "info",
+          text: `Saved ${r.value} and copied it: paste it into Shirley's Challenge Creator (airplane.team/fly/create), then keep this app open on this course while you fly.`,
+        },
+      });
     },
 
     async resetRace() {
