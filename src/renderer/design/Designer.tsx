@@ -16,7 +16,7 @@ import {
   updateGate,
   type Draft,
 } from "../../core/course/edit";
-import { DEFAULT_PYLON, PYLONS } from "../../core/export/pylons";
+import { DEFAULT_PYLON, PYLONS, PYLON_SCALE, PYLON_SIZES, pylonLabel, type PylonSize } from "../../core/export/pylons";
 import { lapLength } from "../../core/run/summaries";
 import { fmtDistance } from "../app/format";
 import { useStore } from "../state/store";
@@ -31,6 +31,14 @@ const KIND_LABEL: Record<GateType, string> = {
   inverted: "Inverted gate",
   turn: "Turn pylon",
 };
+
+const SIZE_NAME: Record<PylonSize, string> = { standard: "Standard", tall: "Tall, ×2" };
+
+/** "Tall, ×2 (30–50 m)": the size and the heights it gives the models. */
+function sizeLabel(size: PylonSize): string {
+  const heights = PYLONS.map((p) => p.heightM * PYLON_SCALE[size]);
+  return `${SIZE_NAME[size]} (${Math.round(Math.min(...heights))}–${Math.round(Math.max(...heights))} m)`;
+}
 
 export function Designer() {
   const draft = useStore((s) => s.draft);
@@ -115,6 +123,24 @@ export function Designer() {
               />
             </label>
             <label className="field">
+              <span>Pylons</span>
+              <select
+                value={draft.rules.pylonSize}
+                onChange={(e) => editDraft((d) => ({ ...d, rules: { ...d.rules, pylonSize: e.target.value as PylonSize } }))}
+              >
+                {PYLON_SIZES.map((s) => (
+                  <option key={s} value={s}>
+                    {sizeLabel(s)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {draft.rules.pylonSize !== "standard" && (
+              <div className="muted designer-note">
+                Every pylon twice as tall and as wide, easier to spot from afar. A hit is judged as far from its side as before.
+              </div>
+            )}
+            <label className="field">
               <span>Missed gate</span>
               <span className="field-inline">
                 <input
@@ -175,6 +201,7 @@ export function Designer() {
                   suggested={suggestedHeading(draft, g.id)}
                   selected={g.id === selectedGateId}
                   canInsert={i < draft.gates.length - 1 || draft.laps > 1}
+                  size={draft.rules.pylonSize}
                   onInsert={() => {
                     editDraft((d) => insertGateAfter(d, g.id) ?? d);
                     const added = useStore.getState().draft?.gates[i + 1];
@@ -201,13 +228,16 @@ interface RowProps {
   selected: boolean;
   /** Whether a gate can go between this one and the next (not after the finish). */
   canInsert: boolean;
+  /** The course's pylon size, for the heights the picker shows. */
+  size: PylonSize;
   onInsert(): void;
   onSelect(): void;
   edit(fn: (d: Draft) => Draft): void;
 }
 
-function GateRow({ gate: g, index, count, suggested, selected, canInsert, onInsert, onSelect, edit }: RowProps) {
+function GateRow({ gate: g, index, count, suggested, selected, canInsert, size, onInsert, onSelect, edit }: RowProps) {
   const positional = g.type === "start" || g.type === "finish";
+  const fallback = PYLONS.find((p) => p.id === DEFAULT_PYLON[g.type]);
   return (
     <li className={`gate-row ${selected ? "selected" : ""}`} onClick={onSelect}>
       <div className="gate-row-head">
@@ -334,10 +364,10 @@ function GateRow({ gate: g, index, count, suggested, selected, canInsert, onInse
           <label className="field">
             <span>Pylon</span>
             <select value={g.pylon ?? ""} onChange={(e) => edit((d) => updateGate(d, g.id, { pylon: e.target.value || null }))}>
-              <option value="">Default ({PYLONS.find((p) => p.id === DEFAULT_PYLON[g.type])?.label})</option>
+              <option value="">Default ({fallback && pylonLabel(fallback, size)})</option>
               {PYLONS.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.label}
+                  {pylonLabel(p, size)}
                 </option>
               ))}
             </select>
@@ -363,7 +393,8 @@ const RULE_FIELDS: { key: NumericRule; label: string; unit: string; min?: number
   { key: "tooLowPenaltyS", label: "Too low", unit: "s" },
   { key: "pylonHitPenaltyS", label: "Pylon hit", unit: "s" },
   { key: "pylonHitRadiusM", label: "Hit within", unit: "m of a pylon", min: 0.5 },
-  // No "Pylon height": every generated model has its own (export/pylons.ts), shown in its name.
+  // No "Pylon height": every generated model has its own (export/pylons.ts), shown in its name, and
+  // the course's pylon size scales them all. The hit distance is for the standard size.
   { key: "turnCutPenaltyS", label: "Turn pylon cut", unit: "s" },
 ];
 

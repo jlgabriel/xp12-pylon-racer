@@ -78,6 +78,14 @@ describe("revision", () => {
     expect(courseRevision(straightCourse({ rules: { pylonHeightM: 40 } }))).not.toBe(V02_STRAIGHT_REVISION);
   });
 
+  it("keeps the revision at the standard pylon size, and starts a new one with tall pylons", () => {
+    expect(courseRevision(straightCourse({ rules: { pylonSize: "standard" } }))).toBe(V02_STRAIGHT_REVISION);
+    expect(courseRevision(straightCourse({ rules: { pylonSize: "tall" } }))).not.toBe(V02_STRAIGHT_REVISION);
+    const { pylonSize: _, ...older } = straightCourse().rules;
+    expect(courseSchema.parse({ ...straightCourse(), rules: older }).rules.pylonSize).toBe("standard");
+    expect(() => courseSchema.parse({ ...straightCourse(), rules: { pylonSize: "huge" } })).toThrow();
+  });
+
   it("keeps the v0.2 revision with the v0.6 rules at their defaults and no height floors", () => {
     expect(courseRevision(straightCourse({ rules: { tooLowPenaltyS: 2, invertedToleranceDeg: 20 } }))).toBe(V02_STRAIGHT_REVISION);
     expect(courseRevision(straightCourse({ rules: { tooLowPenaltyS: 5 } }))).not.toBe(V02_STRAIGHT_REVISION);

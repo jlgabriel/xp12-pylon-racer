@@ -408,6 +408,28 @@ describe("pylon hits", () => {
     expect(penaltyKinds(tall)).toEqual(["pylon-hit"]);
   });
 
+  it("judges tall pylons at their own height", () => {
+    // 20 m up, 3 m from the pylon: over the 18 m model, under it when tall (36 m).
+    const standard = new RaceEngine(judged({ type: "gate", ground: 1400, pylon: "rodeo-18" }));
+    flyAxis(standard, { altMslM: 1420 }, 37);
+    expect(penaltyKinds(standard)).toEqual([]);
+
+    const tall = new RaceEngine(judged({ type: "gate", ground: 1400, pylon: "rodeo-18" }, { pylonSize: "tall" }));
+    flyAxis(tall, { altMslM: 1420 }, 37);
+    expect(penaltyKinds(tall)).toEqual(["pylon-hit"]);
+  });
+
+  it("widens the hit distance of tall pylons by as much as they widened", () => {
+    // 5.8 m from the red pylon's center: clear of the standard 5 m, inside the tall 6.2 m.
+    const standard = new RaceEngine(judged({ type: "gate", pylon: "red" }));
+    flyAxis(standard, {}, 34.2);
+    expect(penaltyKinds(standard)).toEqual([]);
+
+    const tall = new RaceEngine(judged({ type: "gate", pylon: "red" }, { pylonSize: "tall" }));
+    flyAxis(tall, {}, 34.2);
+    expect(penaltyKinds(tall)).toEqual(["pylon-hit"]);
+  });
+
   it("a turn pylon can be hit too", () => {
     const eng = new RaceEngine(judged({ type: "turn", width: 300, turnSide: "left" }));
     flyAxis(eng, {}, 2); // 2 m right of the pylon: rounded on the correct side, but hit

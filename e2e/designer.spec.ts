@@ -50,6 +50,20 @@ test("installs, edits and removes a course's pylons", async () => {
     const stored = JSON.parse(readFileSync(path.join(userData, "courses", "daggett-sprint.json"), "utf8"));
     expect(stored.description).toBe("Edited in the e2e.");
 
+    // Tall pylons: the install goes out of date, and reinstalling swaps in the tall models.
+    await win.getByRole("button", { name: "Edit" }).click();
+    await win.getByLabel("Pylons").selectOption("tall");
+    await win.getByRole("button", { name: "Save" }).click();
+    await expect(win.getByText("The pylons installed in X-Plane are from before this change: reinstall them.")).toBeVisible();
+    await expect(win.getByText("Pylons in X-Plane are out of date")).toBeVisible();
+    await win.getByRole("button", { name: "Reinstall", exact: true }).click();
+    await expect(win.getByText("Pylons in X-Plane", { exact: true })).toBeVisible();
+    expect(readdirSync(path.join(pack, "objects")).sort()).toEqual(
+      ["blue", "green", "home", "red"].flatMap((m) => [`pylon_${m}_tall.obj`, `pylon_${m}_tall.png`]).sort(),
+    );
+    expect(readFileSync(path.join(pack, "objects", "pylon_red_tall.obj"), "latin1")).toMatch(/^VT\t\S+\t30\t/m);
+    expect(JSON.parse(readFileSync(path.join(userData, "courses", "daggett-sprint.json"), "utf8")).rules.pylonSize).toBe("tall");
+
     await win.getByRole("button", { name: "Remove" }).click();
     await expect(win.getByText("Pylons removed from X-Plane.")).toBeVisible();
     expect(existsSync(pack)).toBe(false);

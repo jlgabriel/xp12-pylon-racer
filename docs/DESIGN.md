@@ -70,6 +70,13 @@ log de la app y corrida H0 `runs/2026-10-25T02-32-07`, local):
 | Al salir del replay | "X-Plane is flying again": la app vuelve a seguir el vuelo y a quedar armada. |
 | Ids de la Web API | Cambian en cada sesión de X-Plane (1626080912064 → 3170083268528 para `is_in_replay`): bien que el hub los busque por nombre. |
 
+**Después de la 0.2: pilones altos (sin volar).** Juan: el tamaño actual está bien, pero en un sim
+cuesta verlos. Cada pista elige ahora el tamaño de sus pilones en el diseñador (*Pylons*: Standard
+o Tall ×2), todos a la vez; decisión D15. Typecheck, 287 tests y 3 e2e en verde (el e2e del
+diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj` de 30 m). Falta
+volarlo: reinstalar una pista con pilones altos, ver que estén apoyados en el suelo y que "pilón
+tocado" use la altura y el radio nuevos.
+
 **RREF como alternativa a RPOS (no adoptada en la 0.2).** Comparte sin pelear, pero cada valor llega
 como **float de 32 bits**: lat/lon perderían precisión (~0,7 m de paso a 117° de longitud, contra el
 double de RPOS), y una muestra son ~10 datarefs sueltos sin garantía de llegar en el mismo paquete.
@@ -106,10 +113,11 @@ resultado → reintentar.** Lo que cambia es todo lo que toca al simulador.
 | D8 | **Rankings separados por simulador.** Ni se importan ni se comparan tiempos de Aerofly. | Física, terreno y tasa de datos distintos: un tiempo de AFS4 y uno de X-Plane no miden lo mismo. |
 | D9 | **Heredadas de Pylon Racer sin reabrir:** sin servidor; app individual (se comparten sólo pistas); sin medallas, fantasma ni sonido; UI en inglés y docs en español con "tú"; diseño sobre tokens. | Decisiones de Juan del 2026-10-24 para Pylon Racer. |
 | D10 | **Heredadas de XOP sin reabrir:** el DSF binario lo escribe la app, sin DSFTool (XOP D10); la línea de `scenery_packs.ini` la escribe el instalador, con respaldo (XOP D8); instalar y desinstalar con X-Plane cerrado (XOP D16); el instalador sólo toca carpetas propias con marcador. | Medido y publicado en XOP 1.0–1.4. |
-| D11 | **Cada modelo de pilón sabe su altura; el `pylonHeightM` de la pista no se usa** (sigue en el formato, por compatibilidad). El diseñador ya no lo muestra. | Pilones generados. Consecuencia: la **revisión** de una misma pista es distinta en cada app (la altura entra en cómo se puntúa), lo que calza con D8. |
+| D11 | **Cada modelo de pilón sabe su altura, al tamaño que pida la pista (D15); el `pylonHeightM` de la pista no se usa** (sigue en el formato, por compatibilidad). El diseñador ya no lo muestra. | Pilones generados. Consecuencia: la **revisión** de una misma pista es distinta en cada app (la altura entra en cómo se puntúa), lo que calza con D8. |
 | D12 | **Clase de avión por código ICAO** (`acf_ICAO`), sin distinguir mayúsculas. La tabla se leyó de los `.acf` de la instalación 12.4.3 de Juan, nunca de memoria. | En X-Plane no hay ids de carpeta fijos. Un avión desconocido: el piloto elige la clase, recordada por su código. |
 | D13 | **X-Plane se encuentra solo** (primera instalación usable de `x-plane_install_12.txt`); el piloto puede elegir otra. Los e2e usan `XPR_XPLANE_DIR` para no tocar nunca un X-Plane real. | Código de XOP (`findInstallations`). |
 | D14 | **Pendiente para Juan:** las dos apps registran `.pylonrace`; con ambas instaladas, el doble clic abre la que se instaló última. Ambas importan el archivo igual. | Alternativa: que esta app no registre la extensión. |
+| D15 | **El tamaño de los pilones es de la pista** (Juan, 2026-10-24): `rules.pylonSize`, `standard` (los modelos de siempre, 15–25 m) o `tall` (todos al doble de alto **y** de ancho, misma pintura: 30–50 m). Viaja en el `.pylonrace`; Pylon Racer lo descarta al abrir, como toda clave que no conoce. El radio de "pilón tocado" crece lo mismo que creció la base de cada modelo (`pylonHitRadiusFor`: el rojo pasa de 5 a 6,2 m), así la distancia que se pide al costado del pilón no cambia y un toque nunca queda dentro del pilón. **Ranking separado:** `pylonSize` entra en la revisión cuando no es `standard`, igual que la altura de cada modelo, así que cambiarlo abre otro ranking y volver a Standard recupera el anterior; las pistas y carreras de antes conservan su revisión. Los modelos altos van en el pack como `pylon_<id>_tall.obj/.png`; el `sceneryId` de Standard no cambió. | En un sim cuesta ver un pilón de 15 m de lejos. Dos tamaños bastan para elegir sin pensar; un pilón sólo más alto sería un poste. Tiempos con pilones de distinta altura no miden lo mismo (D11). |
 
 ---
 
@@ -152,6 +160,7 @@ alguien mire una flecha:
 ```
 Custom Scenery/XPR_<slug>/
   objects/pylon_<color>.obj + .png     generados, sólo los colores que usa la pista
+                                       (pylon_<color>_tall con pilones altos, D15)
   Earth nav data/<bloque>/<tile>.dsf   uno por tile tocado (groupByTile de XOP)
   pylon-racer.json                     marcador: el instalador sólo toca carpetas con él
 ```

@@ -7,7 +7,7 @@
 // - laps > 1: there is NO finish gate — the start line closes each lap and the race ends on the
 //   start-line crossing that completes the last lap.
 import { z } from "zod";
-import { pylonHeightFor } from "../export/pylons";
+import { PYLON_SIZES, pylonHeightFor } from "../export/pylons";
 
 export const COURSE_FORMAT = "pylon-racer/course";
 export const COURSE_VERSION = 1;
@@ -60,6 +60,9 @@ export const rulesSchema = z.object({
   /** Pylons are this tall: passing above it is not a hit. Only for models whose height is unknown
    *  (krzysk1's); a model with a known height uses its own (export/pylons.ts). */
   pylonHeightM: z.number().positive().default(25),
+  /** Every pylon of the course at this size (export/pylons.ts). Pylon Racer (Aerofly) drops it on
+   *  open, like any key it does not know. */
+  pylonSize: z.enum(PYLON_SIZES).default("standard"),
 });
 export type Rules = z.infer<typeof rulesSchema>;
 
@@ -139,7 +142,7 @@ export function revisionInput(c: Course): string {
   // Rules added after v0.2 join the list only when they differ from their default, so the courses
   // (and the runs) of earlier versions keep their revision.
   const later = rulesSchema.parse({});
-  for (const key of ["pylonHitRadiusM", "pylonHeightM", "tooLowPenaltyS", "invertedToleranceDeg"] as const) {
+  for (const key of ["pylonHitRadiusM", "pylonHeightM", "tooLowPenaltyS", "invertedToleranceDeg", "pylonSize"] as const) {
     if (r[key] !== later[key]) rules.push(`${key}=${r[key]}`);
   }
   const gates = c.gates.map((g) => {
@@ -153,8 +156,9 @@ export function revisionInput(c: Course): string {
       g.groundElevM === null ? null : g.groundElevM.toFixed(2),
       g.turnSide,
     ];
-    // The pylon model is cosmetic, except for its height: it joins only when it differs from the
-    // course-wide one (so courses with krzysk1's models, of unknown height, keep their revision).
+    // The pylon model is cosmetic, except for its height (at the course's pylon size): it joins only
+    // when it differs from the course-wide one (so courses with krzysk1's models, of unknown height,
+    // keep their revision).
     const pylonHeightM = pylonHeightFor(g, r);
     if (pylonHeightM !== r.pylonHeightM) gate.push(`pylonHeightM=${pylonHeightM.toFixed(2)}`);
     // Added in v0.6: only a gate that has one changes its revision.

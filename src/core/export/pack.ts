@@ -3,6 +3,7 @@
 //
 //   Custom Scenery/XPR_<course id>/
 //     objects/pylon_<model>.obj + .png    the generated models the course uses, and only those
+//                                         (pylon_<model>_tall at the tall pylon size)
 //     Earth nav data/<block>/<tile>.dsf    one per 1°×1° tile the pylons touch (XOP's writer)
 //
 // A DSF OBJECT carries no elevation: X-Plane sets each pylon on whatever mesh is under it, so the
@@ -15,7 +16,7 @@ import { pylonsOfGate } from "../geo/geo";
 import type { PlacedObject } from "../model";
 import { pylonObj } from "../pylon/obj8";
 import { bandPixels, encodePng } from "../pylon/texture";
-import { pylonFor, type PylonModel } from "./pylons";
+import { pylonFor, sizedPylon, type PylonModel } from "./pylons";
 
 /** Marker file written into every pack the app installs; nothing else is ever touched or removed. */
 export const MARKER_FILE = "pylon-racer.json";
@@ -66,14 +67,25 @@ export interface PackMarker {
   appVersion: string;
 }
 
+interface PackPylon {
+  /** At the course's pylon size. */
+  model: PylonModel;
+  /** The model id, plus the size when not standard: `red`, `red_tall`. Names its .obj and .png. */
+  key: string;
+  object: PlacedObject;
+}
+
 /** What the pack is made of, separately from writing it: pylon by pylon, model and place. */
-export function packPylons(course: Course): { model: PylonModel; object: PlacedObject }[] {
-  const out: { model: PylonModel; object: PlacedObject }[] = [];
+export function packPylons(course: Course): PackPylon[] {
+  const size = course.rules.pylonSize;
+  const out: PackPylon[] = [];
   for (const g of course.gates) {
-    const model = pylonFor(g);
+    const base = pylonFor(g);
+    const model = sizedPylon(base, size);
+    const key = size === "standard" ? base.id : `${base.id}_${size}`;
     const at = g.type === "turn" ? [g.center] : Object.values(pylonsOfGate(g.center, g.widthM, g.headingDeg));
     at.forEach((position, i) =>
-      out.push({ model, object: { id: `${g.id}.${i}`, libraryPath: `objects/pylon_${model.id}.obj`, position, rotation: 0 } }),
+      out.push({ model, key, object: { id: `${g.id}.${i}`, libraryPath: `objects/pylon_${key}.obj`, position, rotation: 0 } }),
     );
   }
   return out;
@@ -83,7 +95,7 @@ export function packPylons(course: Course): { model: PylonModel; object: PlacedO
 export function packSceneryId(course: Course): string {
   return fnv1a64(
     packPylons(course)
-      .map(({ model, object: o }) => `${model.id} ${o.position.lon.toFixed(7)} ${o.position.lat.toFixed(7)}`)
+      .map(({ key, object: o }) => `${key} ${o.position.lon.toFixed(7)} ${o.position.lat.toFixed(7)}`)
       .join("\n"),
   );
 }
@@ -100,11 +112,11 @@ export function planPack(course: Course, deps: PackDeps): PackPlan {
   const pylons = packPylons(course);
   const files: PackFile[] = [];
 
-  const models = new Map(pylons.map((p) => [p.model.id, p.model]));
-  for (const m of [...models.values()].sort((a, b) => a.id.localeCompare(b.id))) {
-    const png = `pylon_${m.id}.png`;
+  const models = new Map(pylons.map((p) => [p.key, p.model]));
+  for (const [key, m] of [...models].sort(([a], [b]) => a.localeCompare(b))) {
+    const png = `pylon_${key}.png`;
     const obj = pylonObj({ heightM: m.heightM, baseRadiusM: m.baseRadiusM, topRadiusM: m.topRadiusM, sides: SIDES, texture: png });
-    files.push({ path: `objects/pylon_${m.id}.obj`, bytes: latin1(obj) });
+    files.push({ path: `objects/pylon_${key}.obj`, bytes: latin1(obj) });
     const pixels = bandPixels({ colors: m.bands, width: TEXTURE_W, height: TEXTURE_H });
     files.push({ path: `objects/${png}`, bytes: encodePng(TEXTURE_W, TEXTURE_H, pixels, deps.deflate) });
   }

@@ -14,8 +14,9 @@
 // - any gate with a top or a bottom: the height above the terrain (the sim's AGL, else MSL minus the
 //   gate's DEM)
 // - pylons: flying closer than pylonHitRadiusM to a pylon's center, below its height (the model's
-//   own when known, else pylonHeightM), is a hit
-//   (once per pylon and lap); checked on every segment, not only at passes
+//   own when known, else pylonHeightM), is a hit (once per pylon and lap); checked on every segment,
+//   not only at passes. A course with bigger pylons (rules.pylonSize) scales the height, and widens
+//   the radius by as much as the pylon widened
 // - turn pylons: crossing the half-line on the WRONG side of the pylon still counts the step, with
 //   the turn-cut penalty instead of a missed gate
 // A height that cannot be known (no AGL from the source and no DEM at the gate) is never penalized.
@@ -41,7 +42,7 @@ import {
   type LonLat,
   type Xy,
 } from "../geo/geo";
-import { pylonHeightFor } from "../export/pylons";
+import { pylonHeightFor, pylonHitRadiusFor } from "../export/pylons";
 import type { Fix } from "./fix";
 
 export type RaceStatus = "waiting" | "running" | "finished" | "dnf";
@@ -121,6 +122,8 @@ interface GateLine {
   cut: { a: Xy; b: Xy } | null;
   /** Pylon positions: two for a gate, one for a turn pylon. */
   pylons: Xy[];
+  /** Closer than this to a pylon's center is a hit (pylonHitRadiusFor: it grows with the pylon size). */
+  hitRadiusM: number;
 }
 
 /** Something that happens along one path segment, at fraction f of it. */
@@ -212,6 +215,7 @@ export class RaceEngine {
         widthM: g.widthM,
         cut: cut ? { a: local(cut.a), b: local(cut.b) } : null,
         pylons: turn ? [local(g.center)] : [local(left), local(right)],
+        hitRadiusM: pylonHitRadiusFor(g, course.rules),
       };
     });
   }
@@ -332,7 +336,6 @@ export class RaceEngine {
   private happenings(p: Xy, c: Xy): Happening[] {
     const move = { x: c.x - p.x, y: c.y - p.y };
     const len2 = move.x * move.x + move.y * move.y;
-    const radius = this.course.rules.pylonHitRadiusM;
     const out: Happening[] = [];
     for (let gi = 0; gi < this.lines.length; gi++) {
       const line = this.lines[gi]!;
@@ -347,7 +350,7 @@ export class RaceEngine {
         // closest approach of the segment to the pylon
         const f = len2 > 0 ? Math.max(0, Math.min(1, ((q.x - p.x) * move.x + (q.y - p.y) * move.y) / len2)) : 0;
         const d = Math.hypot(p.x + f * move.x - q.x, p.y + f * move.y - q.y);
-        if (d < radius) out.push({ kind: "near", gateIndex: gi, pylon, f, distanceM: d });
+        if (d < line.hitRadiusM) out.push({ kind: "near", gateIndex: gi, pylon, f, distanceM: d });
       });
     }
     return out.sort((a, b) => a.f - b.f);

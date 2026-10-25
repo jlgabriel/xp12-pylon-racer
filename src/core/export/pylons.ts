@@ -58,14 +58,46 @@ export const DEFAULT_PYLON: Record<GateType, string> = {
   turn: "home2",
 };
 
+/**
+ * How big a course's pylons are, all of them at once (DESIGN D15). In a sim a 15 m pylon is hard to
+ * pick out from far away, so a course can ask for every model twice as big: twice as tall and as
+ * wide, the same paint. Ids never change: a course file stores them.
+ */
+export const PYLON_SIZES = ["standard", "tall"] as const;
+export type PylonSize = (typeof PYLON_SIZES)[number];
+
+export const PYLON_SCALE: Record<PylonSize, number> = { standard: 1, tall: 2 };
+
+type GateRef = { type: GateType; pylon: string | null };
+
 /** The model a gate uses: its own choice if it is a known id, else the default for its type. */
-export function pylonFor(gate: { type: GateType; pylon: string | null }): PylonModel {
+export function pylonFor(gate: GateRef): PylonModel {
   const byId = (id: string | null): PylonModel | undefined => PYLONS.find((p) => p.id === id);
   return byId(gate.pylon) ?? byId(DEFAULT_PYLON[gate.type]) ?? PYLONS[0]!;
 }
 
+/** A model at a course's pylon size: every dimension scaled, the paint unchanged. */
+export function sizedPylon(model: PylonModel, size: PylonSize): PylonModel {
+  const k = PYLON_SCALE[size];
+  if (k === 1) return model;
+  return { ...model, heightM: model.heightM * k, baseRadiusM: model.baseRadiusM * k, topRadiusM: model.topRadiusM * k };
+}
+
 /** How tall a gate's pylons are for the pylon-hit rule. Every generated model knows its height, so
  *  the course-wide `pylonHeightM` (kept for Aerofly's courses, whose models did not) is never used. */
-export function pylonHeightFor(gate: { type: GateType; pylon: string | null }, _rules: Pick<Rules, "pylonHeightM">): number {
-  return pylonFor(gate).heightM;
+export function pylonHeightFor(gate: GateRef, rules: Pick<Rules, "pylonHeightM" | "pylonSize">): number {
+  return sizedPylon(pylonFor(gate), rules.pylonSize).heightM;
+}
+
+/** How close to a gate pylon's center counts as a hit. `pylonHitRadiusM` is set for the standard
+ *  models; a bigger pylon widens it by as much as its foot widened, so the clearance it asks for stays
+ *  the same and a hit is never inside the pylon (the Air Race 25 m is 5 m wide at the foot when tall). */
+export function pylonHitRadiusFor(gate: GateRef, rules: Pick<Rules, "pylonHitRadiusM" | "pylonSize">): number {
+  const model = pylonFor(gate);
+  return rules.pylonHitRadiusM + sizedPylon(model, rules.pylonSize).baseRadiusM - model.baseRadiusM;
+}
+
+/** The model's name for a picker: as it is at the standard size, with its real height when bigger. */
+export function pylonLabel(model: PylonModel, size: PylonSize): string {
+  return size === "standard" ? model.label : `${model.label} → ${Math.round(sizedPylon(model, size).heightM)} m`;
 }

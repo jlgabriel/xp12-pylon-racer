@@ -47,7 +47,7 @@ Lo que cambió al portar:
 | Pilones | `.tmb` vendidos en `assets/` | generados (`core/pylon/`, `core/export/pylons.ts`), **mismos ids** |
 | Escenario | POI `.tsl` (`export/poi.ts`) | pack con DSF (`export/pack.ts`) |
 | Clases | ids de carpeta de AFS4 | códigos ICAO leídos de los `.acf` |
-| Revisión de una pista | — | distinta: cada pilón tiene altura conocida (DESIGN D11) |
+| Revisión de una pista | — | distinta: cada pilón tiene altura conocida (DESIGN D11), y la pista elige su tamaño (D15) |
 | Test dorado del `.tsl` | el `.tsl` completo | sólo las posiciones de los pilones, que siguen idénticas al exportador viejo |
 
 ## La disciplina (de PCT, vía XOP)
