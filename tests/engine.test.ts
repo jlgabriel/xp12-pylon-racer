@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { demoFlight } from "../src/core/demo/demoFlight";
+import { sampleCourses } from "../src/core/demo/sampleCourses";
 import { isJump, RaceEngine, STILL_S, type RaceEvent } from "../src/core/race/engine";
 import type { Fix } from "../src/core/race/fix";
 import { fixAt, makeCourse, straightCourse, type GateSpec } from "./helpers";
@@ -180,6 +181,17 @@ describe("laps", () => {
     const s = eng.snapshot();
     expect(s.penalties.map((p) => p.gateIndex)).toEqual([1, 2, 3]);
     expect(s.lapTimes).toHaveLength(1);
+  });
+
+  it("a fix right on the start line starts the race once, not a lap too", () => {
+    // At 5 Hz the demo puts a fix exactly on the Uyuni start line: the segment ending there and the
+    // one starting there both cross it, and the second used to close lap 1 at 0 s, every gate missed.
+    const uyuni = sampleCourses().find((c) => c.id === "uyuni-salt-flats-speed")!;
+    const eng = new RaceEngine(uyuni);
+    for (const f of demoFlight(uyuni, { rateHz: 5 })) eng.update(f);
+    const s = eng.snapshot();
+    expect(s.penalties).toEqual([]);
+    expect(s.lapTimes).toEqual([expect.closeTo(s.lapTimes[1]!, 6), expect.any(Number), expect.any(Number)]);
   });
 });
 

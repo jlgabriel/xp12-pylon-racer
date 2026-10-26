@@ -147,7 +147,7 @@ schema, recortado a los campos que se escriben.
 - Se guarda un `.json` y se copia al portapapeles: el Challenge Creator (airplane.team/fly/create)
   recibe el challenge pegado.
 
-El challenge pasa el schema actual de Shirley en las nueve pistas (transcrito de la web, sin claves
+El challenge pasa el schema actual de Shirley en las nueve pistas (hoy trece: el test las recorre todas) (transcrito de la web, sin claves
 descartadas) y el Challenge Creator lo aceptó sin avisos.
 
 **Volado el 2026-10-25** (Daggett Sprint Tall, Cessna 172SP, la 1.0.0 portable midiendo; vuelo
@@ -172,6 +172,41 @@ Dos errores de Shirley, corregidos en el prompt:
    minutos:segundos.centésimas de la app.
 
 Pendiente: volver a volar con el prompt corregido.
+
+### Después de la 1.1: cuatro pistas del catálogo (sin volar todavía)
+
+Juan trajo un catálogo de 23 pistas propuestas (`Catalogo_Circuitos_XP_Pylon_Racer.md`, sólo ideas:
+lugar, aeródromo, largo, puertas y dificultad, sin coordenadas). Se hicieron las cuatro primeras de su
+lista de prioridades después de Queenstown, todas Tall:
+
+| Pista | Aeródromo | Largo | Qué pide |
+|---|---|---|---|
+| Pucón Volcano Race | SCPC | 14,9 km | lago Villarrica; 3 level, 6 pilón de viraje a la izquierda, 9 cuchillo |
+| Uyuni Salt Flats Speed Challenge | SLUY | 3 × 6,4 km | óvalo en el salar a 3.654 m, pilones a la derecha, salida bajo 60 m |
+| Monument Valley Challenge | UT25 (`XKUT25` en el apt.dat de X-Plane) | 16,4 km | el piso del valle al este de los Mittens; 4 level, dos virajes a la izquierda |
+| Rapa Nui Coastal Race | SCIP | 15,5 km | mar al sur de la isla, giro frente a Rano Kau; 3 y 6 level |
+
+**Cómo se trazaron.** Sobre el DEM Terrarium de AWS (teselas z13, ~25 m; Open-Meteo limita a ~600
+puntos por minuto y no alcanza para mapear): un mapa ASCII de cada zona, las puertas a mano y un
+chequeo que calcula los rumbos por bisectriz, mira que el centro y los dos pilones caigan en el agua
+(±2 m del nivel del lago o del mar) o en suelo llano, y recorre el camino cada 100 m y a 250–400 m de
+cada lado: nada sube más de 30 m sobre el recorrido. Las cotas de `groundElevM`, de Open-Meteo como en
+las demás. Los cuatro aeródromos están en el apt.dat de la 12.4.3.
+
+**Descartada: Milford Sound.** En el fiordo el DEM no deja claro dónde termina el agua (cortes de
+50 m de ancho donde el mapa muestra 1 km), así que no se puede asegurar que los pilones queden sobre
+el agua y no en el acantilado. El catálogo mismo la deja para después de probar mallas complejas.
+
+**Arreglo en el motor que trajo Uyuni.** A 5 Hz la demo pone un fix exactamente sobre la línea de
+salida: el segmento que termina ahí y el que empieza ahí la cruzaban los dos, y el segundo cerraba la
+vuelta 1 en 0 s con las cuatro puertas perdidas. Ahora un cruce al principio de un segmento no cuenta
+si el segmento anterior ya cruzó esa misma línea en ese mismo punto (`crossedAtEnd` en
+`src/core/race/engine.ts`). Descartar todo cruce al principio del segmento rompía otras pistas: con
+el redondeo, a veces el anterior no lo ve. En vuelo real es casi imposible, pero no cuesta nada.
+
+Falta volarlas: que los pilones se vean sobre el agua y el salar, el viraje de Pucón (90°, a 1,8 km
+de la orilla oeste más cercana), la subida desde SLUY y si los 16 km de Monument Valley se hacen
+largos.
 
 ### RREF como alternativa a RPOS (no adoptada)
 

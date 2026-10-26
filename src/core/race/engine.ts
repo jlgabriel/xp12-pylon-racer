@@ -196,6 +196,8 @@ export class RaceEngine {
   private lapStartElapsed = 0;
   private wrongWayPenalized = new Set<number>();
   private pylonsHit = new Set<string>();
+  /** The lines the last segment crossed right at its end point (see happenings). */
+  private crossedAtEnd: { at: Xy; keys: Set<string> } | null = null;
 
   constructor(course: Course) {
     this.course = course;
@@ -337,14 +339,18 @@ export class RaceEngine {
     const move = { x: c.x - p.x, y: c.y - p.y };
     const len2 = move.x * move.x + move.y * move.y;
     const out: Happening[] = [];
+    // A fix right on a line ends one segment and starts the next: both see the crossing, and only the
+    // first counts it.
+    const before = this.crossedAtEnd && this.crossedAtEnd.at.x === p.x && this.crossedAtEnd.at.y === p.y ? this.crossedAtEnd.keys : null;
+    const counted = (kind: "cross" | "cut", gi: number, t: number) => !(t <= ON_LINE_T && before?.has(`${kind}${gi}`));
     for (let gi = 0; gi < this.lines.length; gi++) {
       const line = this.lines[gi]!;
       const forward = move.x * line.fwd.x + move.y * line.fwd.y > 0;
       const x = segmentIntersection(p, c, line.a, line.b);
-      if (x) out.push({ kind: "cross", gateIndex: gi, f: x.t, u: x.u, forward });
+      if (x && counted("cross", gi, x.t)) out.push({ kind: "cross", gateIndex: gi, f: x.t, u: x.u, forward });
       if (line.cut) {
         const y = segmentIntersection(p, c, line.cut.a, line.cut.b);
-        if (y) out.push({ kind: "cut", gateIndex: gi, f: y.t, u: y.u, forward });
+        if (y && counted("cut", gi, y.t)) out.push({ kind: "cut", gateIndex: gi, f: y.t, u: y.u, forward });
       }
       line.pylons.forEach((q, pylon) => {
         // closest approach of the segment to the pylon
@@ -353,6 +359,9 @@ export class RaceEngine {
         if (d < line.hitRadiusM) out.push({ kind: "near", gateIndex: gi, pylon, f, distanceM: d });
       });
     }
+    const keys = new Set<string>();
+    for (const h of out) if (h.kind !== "near" && h.f >= 1 - ON_LINE_T) keys.add(`${h.kind}${h.gateIndex}`);
+    this.crossedAtEnd = { at: c, keys };
     return out.sort((a, b) => a.f - b.f);
   }
 
@@ -481,6 +490,8 @@ export const JUMP_MIN_M = 250;
  * 25–50 ms (the sim updates slower), and a scenery-loading stutter lasts under a second.
  */
 export const STILL_S = 3;
+/** How close to either end of a segment (as a fraction of it) a crossing is at the fix itself. */
+const ON_LINE_T = 1e-9;
 /** Slack over the faster ground speed reported at either end, for noise and for speeding up mid-gap. */
 export const JUMP_SPEED_FACTOR = 1.5;
 export const JUMP_SPEED_SLACK_MS = 20;

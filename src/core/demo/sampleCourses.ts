@@ -4,8 +4,10 @@
 // course is scored. Two sit just north-east of EDDM (Munich); four are in the open Mojave desert at
 // KDAG: a sprint, a flight test of every rule, a flight test of the three air-race pylons and an
 // aerobatic showcase. Then a Reno-style pylon oval at Reno Stead (KRTS) and Juan's river run at the
-// bottom of the Grand Canyon. The ninth is only here: a lake race at Queenstown (NZQN) with tall
-// pylons, the first course flown on water.
+// bottom of the Grand Canyon. The rest are only here, all with tall pylons: a lake race at
+// Queenstown (NZQN), the first course flown on water, and four from Juan's catalog of proposed
+// courses (2026-10-26): Lake Villarrica at Pucón (SCPC), a three-lap oval on the Salar de Uyuni
+// (SLUY), the floor of Monument Valley (UT25) and the south coast of Rapa Nui (SCIP).
 import { COURSE_FORMAT, COURSE_VERSION, parseCourse, type Course } from "../course/course";
 
 const STAMP = "2026-10-18T00:00:00Z";
@@ -230,6 +232,112 @@ export function sampleCourses(): Course[] {
         { id: "g7", type: "level", center: { lon: 168.68, lat: -45.073 }, widthM: 130, headingDeg: 290, pylon: "blue", groundElevM: 309 },
         { id: "g8", type: "gate", center: { lon: 168.657, lat: -45.064 }, widthM: 145, headingDeg: 331, pylon: "red", groundElevM: 309 },
         { id: "g9", type: "finish", center: { lon: 168.658, lat: -45.05 }, widthM: 160, headingDeg: 3, pylon: "home", groundElevM: 309 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    // The four below come from Juan's catalog of proposed courses and are not flown yet. Each was laid
+    // out on the AWS Terrarium DEM: every pylon on water (or, in Monument Valley and Uyuni, on flat
+    // ground), nothing more than 30 m above the course within 250–400 m of the path, and each gate
+    // facing the bisector of its legs. Ground heights from Open-Meteo, like the others.
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "pucon-volcano-race",
+      name: "Pucón Volcano Race",
+      author: "XP Pylon Racer",
+      description:
+        "15 km over Lake Villarrica, with the Villarrica volcano to the south. Take off from Pucón (SCPC) runway 27 and turn right over the town: the start is on the lake 9 km north-west of the airport, flown west. Out west along the north half of the lake, round a turn pylon kept on your left (6), and back east in an S. 3 wings level, 9 knife edge.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // The east half of the lake, at least 1 km from every shore and clear of the La Poza peninsula
+      // (SE of the finish). The lake at 213 m.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -71.998, lat: -39.24 }, widthM: 160, headingDeg: 270, pylon: "green", groundElevM: 213 },
+        { id: "g2", type: "gate", center: { lon: -72.016, lat: -39.237 }, widthM: 145, headingDeg: 270, pylon: "rodeo-18", groundElevM: 213 },
+        { id: "g3", type: "level", center: { lon: -72.034, lat: -39.24 }, widthM: 130, headingDeg: 270, pylon: "blue", groundElevM: 213 },
+        { id: "g4", type: "gate", center: { lon: -72.052, lat: -39.237 }, widthM: 145, headingDeg: 266, pylon: "rodeo-25", groundElevM: 213 },
+        { id: "g5", type: "gate", center: { lon: -72.07, lat: -39.242 }, widthM: 145, headingDeg: 236, pylon: "rodeo-18", groundElevM: 213 },
+        { id: "g6", type: "turn", center: { lon: -72.084, lat: -39.254 }, widthM: 250, headingDeg: 177, pylon: "home2", groundElevM: 213, turnSide: "left" },
+        { id: "g7", type: "gate", center: { lon: -72.068, lat: -39.265 }, widthM: 145, headingDeg: 101, pylon: "rodeo-25", groundElevM: 213 },
+        { id: "g8", type: "gate", center: { lon: -72.05, lat: -39.26 }, widthM: 145, headingDeg: 88, pylon: "rodeo-18", groundElevM: 213 },
+        { id: "g9", type: "knife", center: { lon: -72.032, lat: -39.264 }, widthM: 130, headingDeg: 92, pylon: "red", groundElevM: 213 },
+        { id: "g10", type: "finish", center: { lon: -72.014, lat: -39.261 }, widthM: 160, headingDeg: 78, pylon: "home", groundElevM: 213 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "uyuni-salt-flats-speed",
+      name: "Uyuni Salt Flats Speed Challenge",
+      author: "XP Pylon Racer",
+      description:
+        "Three laps of a 6.4 km oval on the white salt of the Salar de Uyuni, 3,654 m above the sea: fly it clockwise and keep every pylon on your right. The start line, on the south side flown west, closes each lap: cross it below 60 m. Take off from Uyuni (SLUY) runway 31 and hold runway heading for 25 km: the start is straight ahead. The air is thin up here, so expect a long take-off roll and a slow climb.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 3,
+      // Near the Dakar monument, 10 km inside the salar's east shore: the DEM is flat within 6 m
+      // for 400 m round the whole oval. Each pylon faces the bisector of its two legs.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -67.07, lat: -20.334 }, widthM: 150, headingDeg: 270, pylon: "rodeo-25", groundElevM: 3654, topM: 60 },
+        { id: "g2", type: "turn", center: { lon: -67.081, lat: -20.334 }, widthM: 300, headingDeg: 315, pylon: "rodeo-reno", groundElevM: 3654, turnSide: "right" },
+        { id: "g3", type: "turn", center: { lon: -67.081, lat: -20.326 }, widthM: 300, headingDeg: 45, pylon: "rodeo-reno", groundElevM: 3654, turnSide: "right" },
+        { id: "g4", type: "turn", center: { lon: -67.059, lat: -20.326 }, widthM: 300, headingDeg: 135, pylon: "rodeo-reno", groundElevM: 3654, turnSide: "right" },
+        { id: "g5", type: "turn", center: { lon: -67.059, lat: -20.334 }, widthM: 300, headingDeg: 225, pylon: "rodeo-reno", groundElevM: 3654, turnSide: "right" },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "monument-valley-challenge",
+      name: "Monument Valley Challenge",
+      author: "XP Pylon Racer",
+      description:
+        "16 km on the valley floor east of the Mittens and Merrick Butte. Take off from Monument Valley (UT25; XKUT25 in X-Plane) and fly east over the mesa: the start is on the valley floor 14 km east of the airport, flown south-south-west. South past the buttes, round two turn pylons kept on your left (6, 7) and back north. 4 wings level.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // The floor slopes from 1,560 m down to 1,485 m eastward; no pylon on rock. The nearest buttes
+      // stand ~600 m west of gates 3–5, 200–300 m tall.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -110.043, lat: 36.991 }, widthM: 160, headingDeg: 198, pylon: "green", groundElevM: 1559 },
+        { id: "g2", type: "gate", center: { lon: -110.048, lat: 36.979 }, widthM: 145, headingDeg: 176, pylon: "rodeo-25", groundElevM: 1518 },
+        { id: "g3", type: "gate", center: { lon: -110.04, lat: 36.966 }, widthM: 145, headingDeg: 160, pylon: "rodeo-18", groundElevM: 1517 },
+        { id: "g4", type: "level", center: { lon: -110.036, lat: 36.953 }, widthM: 130, headingDeg: 182, pylon: "blue", groundElevM: 1540 },
+        { id: "g5", type: "gate", center: { lon: -110.041, lat: 36.941 }, widthM: 145, headingDeg: 178, pylon: "rodeo-25", groundElevM: 1526 },
+        { id: "g6", type: "turn", center: { lon: -110.034, lat: 36.928 }, widthM: 250, headingDeg: 117, pylon: "home2", groundElevM: 1556, turnSide: "left" },
+        { id: "g7", type: "turn", center: { lon: -110.01, lat: 36.932 }, widthM: 250, headingDeg: 44, pylon: "home2", groundElevM: 1549, turnSide: "left" },
+        { id: "g8", type: "gate", center: { lon: -110.006, lat: 36.952 }, widthM: 145, headingDeg: 0, pylon: "rodeo-18", groundElevM: 1507 },
+        { id: "g9", type: "gate", center: { lon: -110.01, lat: 36.972 }, widthM: 145, headingDeg: 343, pylon: "rodeo-25", groundElevM: 1485 },
+        { id: "g10", type: "finish", center: { lon: -110.02, lat: 36.99 }, widthM: 160, headingDeg: 336, pylon: "home", groundElevM: 1516 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "rapa-nui-coastal-race",
+      name: "Rapa Nui Coastal Race",
+      author: "XP Pylon Racer",
+      description:
+        "15.5 km on the sea off the south coast of Rapa Nui, round the cliffs of Rano Kau and back on an outer line. Take off from Mataveri (SCIP) runway 10 and come round over the sea: the start is 4 km east of the end of the runway, flown west-south-west along the coast. 3 and 6 wings level.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // Outbound 0.6–1 km off the coast, the turn (5) 1.2 km south of the Rano Kau cliffs and 2.5 km
+      // east of the Motu Nui islets; the way back 2–3 km offshore.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -109.365, lat: -27.173 }, widthM: 160, headingDeg: 249, pylon: "green", groundElevM: 0 },
+        { id: "g2", type: "gate", center: { lon: -109.38, lat: -27.178 }, widthM: 145, headingDeg: 249, pylon: "rodeo-18", groundElevM: 0 },
+        { id: "g3", type: "level", center: { lon: -109.395, lat: -27.183 }, widthM: 130, headingDeg: 236, pylon: "blue", groundElevM: 0 },
+        { id: "g4", type: "gate", center: { lon: -109.41, lat: -27.198 }, widthM: 145, headingDeg: 229, pylon: "rodeo-25", groundElevM: 0 },
+        { id: "g5", type: "gate", center: { lon: -109.425, lat: -27.207 }, widthM: 145, headingDeg: 174, pylon: "rodeo-18", groundElevM: 0 },
+        { id: "g6", type: "level", center: { lon: -109.405, lat: -27.214 }, widthM: 130, headingDeg: 87, pylon: "blue", groundElevM: 0 },
+        { id: "g7", type: "gate", center: { lon: -109.385, lat: -27.205 }, widthM: 145, headingDeg: 59, pylon: "rodeo-25", groundElevM: 0 },
+        { id: "g8", type: "gate", center: { lon: -109.367, lat: -27.194 }, widthM: 145, headingDeg: 54, pylon: "rodeo-18", groundElevM: 0 },
+        { id: "g9", type: "finish", center: { lon: -109.352, lat: -27.184 }, widthM: 160, headingDeg: 53, pylon: "home", groundElevM: 0 },
       ],
       rules: { pylonSize: "tall" },
     }),

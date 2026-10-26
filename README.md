@@ -50,6 +50,10 @@ Want to see it first? **Watch demo** flies any course for you, no simulator need
 |--------|-------|--------------|
 | **Grand Canyon West River Run** | Grand Canyon West, **1G4** | 21 km along the Colorado River, 1,000 m below the rim, by Jugac64 |
 | **Queenstown Lake Race** | Queenstown, **NZQN** | 11 km over Lake Wakatipu with tall pylons, designed by ChatGPT |
+| **Pucón Volcano Race** | Pucón, **SCPC** | 15 km over Lake Villarrica below the volcano, a turn pylon and a knife edge |
+| **Uyuni Salt Flats Speed Challenge** | Uyuni, **SLUY** | Three laps of an oval on the salt flat, 3,654 m up |
+| **Monument Valley Challenge** | Monument Valley, **UT25** | 16 km on the valley floor past the buttes |
+| **Rapa Nui Coastal Race** | Easter Island, **SCIP** | 15.5 km on the sea round the cliffs of Rano Kau |
 | **Stead Pylon Oval** | Reno Stead, **KRTS** | Three laps of a Reno-style oval, every pylon on your left |
 | **Daggett Air Show** | Daggett, **KDAG** | Wings level, knife edge, inverted, a height window and turn pylons |
 | **Daggett Sprint** | Daggett, **KDAG** | Five gates in a straight line: the quickest way to learn |
