@@ -1,13 +1,16 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 1.2 · 2026-10-26 · publicada; las pistas nuevas sin volar.
+> Versión 1.3 · 2026-10-26 · publicada; las pistas nuevas sin volar.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-26, v1.2: publicada; las pistas nuevas sin volar)
+## 0. Estado (2026-10-26, v1.3: publicada; las pistas nuevas sin volar)
+
+**1.3.0, 2026-10-26.** La 1.2 más las dieciséis pistas de Juan (34 en total), abajo en *Después de
+la 1.2*. Tampoco se volaron; las notas lo dicen. Tag `v1.3.0`, mismo workflow.
 
 **1.2.0, 2026-10-26.** La 1.1 más nueve pistas incluidas (18 en total), abajo en *Después de la
 1.1*, y el arreglo del motor que trajo Uyuni. Juan la pidió sin poder volarlas antes: es el primer
