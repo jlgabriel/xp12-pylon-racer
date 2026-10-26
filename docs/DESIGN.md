@@ -1,13 +1,16 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 1.3 · 2026-10-26 · publicada; las pistas nuevas sin volar.
+> Versión 1.3.1 · 2026-10-26 · la carpeta de X-Plane, a la vista y elegible.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-26, v1.3: publicada; las pistas nuevas sin volar)
+## 0. Estado (2026-10-26, v1.3.1: la carpeta de X-Plane a la vista)
+
+**1.3.1, 2026-10-26.** La 1.3 más la carpeta de X-Plane a la vista, con **Change…** para elegir
+otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario en X-Plane.org.
 
 **1.3.0, 2026-10-26.** La 1.2 más las dieciséis pistas de Juan (34 en total), abajo en *Después de
 la 1.2*. Tampoco se volaron; las notas lo dicen. Tag `v1.3.0`, mismo workflow.
@@ -266,6 +269,22 @@ en el apt.dat de la 12.4.3. Y el terreno entre puertas: en Quebrada, Gorafe, Auv
 base del Osorno la recta entre dos puertas cruza lomas de 60 a 150 m. Una búsqueda del camino más bajo
 (dentro de 1,4 veces la recta) encontró en todos un paso por el valle a menos de 35 m sobre la puerta
 más alta, y la descripción lo avisa.
+
+### Después de la 1.3: la carpeta de X-Plane, a la vista
+
+Un usuario de X-Plane.org (danhopgood1, 2026-10-26) instaló pilones, la app dijo "installed" y en su
+X-Plane, en E:, no apareció nada. La app usa la primera instalación que siga existiendo en la lista de
+Laminar (`x-plane_install_12.txt`); con otra X-Plane 12 en C: el pack se escribió ahí. No había cómo
+verlo ni cambiarlo: la carpeta no se mostraba y "Choose folder…" sólo salía si no había ninguna (el
+README prometía lo contrario).
+
+Ahora la lista *antes de la largada* tiene una fila **X-Plane** con la carpeta (y la versión del
+`Log.txt`) y **Change…**; el aviso de instalación dice dónde se instaló; y una carpeta que no es X-Plane
+ya no se ignora en silencio: lo dice, con el botón para elegir otra. La elección sigue en
+`settings.json` (`xplaneDir`), como antes.
+
+En el mismo reporte preguntó por los pilones de viraje: pasar más afuera de la media línea (`widthM`,
+300 m en Stead) no cuenta. Es a propósito y no cambia.
 
 **Qué se cambió.** Autor `XP Pylon Racer` (decía ChatGPT); ids sin `local-` ni `-01`; puertas
 `g1…gN` (las de entrenamiento traían `chicane-2a` y parecidos, y la app numera por posición);
