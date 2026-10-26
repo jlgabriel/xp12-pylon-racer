@@ -151,7 +151,7 @@ schema, recortado a los campos que se escriben.
 - Se guarda un `.json` y se copia al portapapeles: el Challenge Creator (airplane.team/fly/create)
   recibe el challenge pegado.
 
-El challenge pasa el schema actual de Shirley en las nueve pistas (hoy dieciocho: el test las recorre todas) (transcrito de la web, sin claves
+El challenge pasa el schema actual de Shirley en las nueve pistas (hoy 34: el test las recorre todas) (transcrito de la web, sin claves
 descartadas) y el Challenge Creator lo aceptó sin avisos.
 
 **Volado el 2026-10-25** (Daggett Sprint Tall, Cessna 172SP, la 1.0.0 portable midiendo; vuelo
@@ -229,6 +229,52 @@ completa daba 24,5 km y pasaba a menos de 400 m de los islotes del oeste: quedó
 **Descartadas: Lago Bled y Venecia.** Bled es chico (2 × 1,2 km) y entre la isla y la orilla sur
 quedan ~250 m: no da para pilones Tall a la velocidad de esta app. En la laguna de Venecia el DEM
 da la misma cota (0–3 m) al agua, las barras y las islas: no se puede saber dónde cae un pilón.
+
+### Después de la 1.2: dieciséis pistas de Juan (sin volar todavía)
+
+Juan las preparó con ChatGPT y las trajo como `.pylonrace` para revisarlas e incluirlas (34 en total).
+Doce sobre tierra, Tall, y cuatro versiones de entrenamiento de pistas reales de carreras aéreas,
+Standard:
+
+| Pista | Aeródromo | Largo | Qué pide |
+|---|---|---|---|
+| Osorno Spiral Ascent | SCTE (57 km) | 24,2 km | espiral de dos vueltas al volcán, 950 → 2.660 m; 33 pilones a la izquierda, a 500 m, ≥ 80 m AGL |
+| Quebrada de las Conchas Run | SA02 (26 km) | 13,9 km | el cañón río arriba; ocho pilones de viraje en las curvas |
+| San Rafael Desert Run | KHVE (18 km) | 16,0 km | horario; 4, 7, 8 a la derecha; 3 y 10 level |
+| Swaledale Valley Sprint | EGXE (29 km) | 12,9 km | valle arriba hacia el oeste; 3 y 10 level, 7 entre 40 y 90 m |
+| Auvergne Volcano Circuit | LFLC (22 km) | 12,4 km | horario entre los puys; 4 y 9 a la derecha; 3 y 8 level |
+| Bardenas Badlands Race | XLE001L Ablitas (22 km) | 11,9 km | antihorario; 2 cuchillo, 5 y 9 a la izquierda, 8 level |
+| Gorafe Ravine Run | LEGR (73 km: no hay nada más cerca) | 15,1 km | baja 350 m por las ramblas; siete pilones de viraje, 6 level |
+| Cappadocia Ridge Challenge | LTAZ (27 km) | 13,7 km | 3 y 10 level; de 5 a 6 el suelo sube 228 m en 1,4 km |
+| Flinders Valley Run | YRYK (2 km) | 14,8 km | ida y vuelta por el valle, viraje de 136° en 7; 3 y 10 level |
+| Lindis Pass Traverse | NZWF (30 km) | 13,1 km | sube 375 m al paso y baja; cinco pilones de viraje, 13 level |
+| Namib Dune Run | FYSS (1,5 km) | 15,2 km | junto a la duna Elim; 7 a la derecha, 5 y 9 level |
+| Orkhon Steppe Circuit | ZMHH (2 km) | 2 × 8,1 km | estepa plana a 1.440 m, antihorario; 4 y 8 level |
+| Abu Dhabi 2014 — Training | OMAD (14 km) | 2,3 km | sobre el mar, 15–25 m en cada puerta; slalom, tres level |
+| Chiba 2019 — Training | RJTT (25 km) | 1,6 km | igual, frente a Makuhari; posiciones aproximadas |
+| Porto 2017 — Training | LPPR (12 km) | 1,75 km | sobre el Duero, río arriba; el puente Luís I 250 m después de la meta |
+| Reno Sport 2023 — Training | KRTS | 2 × 12 km | el circuito Sport de Reno, pilones a la izquierda, 15–76 m |
+
+**Qué se revisó.** Que pasen el schema y la demo limpia (a 5, 10 y 30 Hz, de 60 a 110 m/s; a 1 Hz
+con 110 m/s fallan éstas y varias de antes: la demo no alcanza a nivelar entre una muestra y otra);
+rumbos por bisectriz y lado de cada pilón de viraje contra el giro (sólo los slalom alternan, a
+propósito); `groundElevM` contra el DEM Terrarium (coinciden: ChatGPT usó el mismo); los aeródromos
+en el apt.dat de la 12.4.3. Y el terreno entre puertas: en Quebrada, Gorafe, Auvergne, Lindis y la
+base del Osorno la recta entre dos puertas cruza lomas de 60 a 150 m. Una búsqueda del camino más bajo
+(dentro de 1,4 veces la recta) encontró en todos un paso por el valle a menos de 35 m sobre la puerta
+más alta, y la descripción lo avisa.
+
+**Qué se cambió.** Autor `XP Pylon Racer` (decía ChatGPT); ids sin `local-` ni `-01`; puertas
+`g1…gN` (las de entrenamiento traían `chicane-2a` y parecidos, y la app numera por posición);
+reglas por defecto fuera del archivo. Las descripciones, reescritas para pilotos: sin coordenadas
+ni notas de validación, con el aeródromo, dónde queda la salida y qué pide cada puerta. Los pilones
+de viraje de las pistas Tall pasan de 120–160 m de línea a **250 m**, como Queenstown y las del
+catálogo. En Porto la descripción decía "climb and turn as needed" después de la meta: ahora avisa
+que el puente Luís I está 250 m más adelante.
+
+Falta volarlas. Lo más dudoso: la cumbre del Osorno (la meta queda 170 m sobre el último pilón y a
+360 m), si los cañones de Quebrada y Gorafe se ven en la malla de X-Plane, y si las de
+entrenamiento, con puertas de 40 m entre 15 y 25 m, se pueden volar a la velocidad de un Extra.
 
 ### RREF como alternativa a RPOS (no adoptada)
 

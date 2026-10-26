@@ -59,6 +59,22 @@ Want to see it first? **Watch demo** flies any course for you, no simulator need
 | **Heimaey Volcano Island Race** | Westman Islands, **BIVM** | 17 km on the sea round the south of the volcanic island |
 | **Kauai Coast Challenge** | Līhuʻe, **PHLI** | 15.7 km off the east coast of Kauaʻi to Hoary Head |
 | **Lake Tahoe Emerald Run** | South Lake Tahoe, **KTVL** | 15 km on the lake toward Emerald Bay, with a knife edge |
+| **Osorno Spiral Ascent** | Puerto Montt, **SCTE** | Two turns round the volcano, from 950 m up to the summit at 2,660 m |
+| **Quebrada de las Conchas Run** | Cafayate, **SA02** | 14 km up the red canyon, eight turn pylons on the bends |
+| **San Rafael Desert Run** | Hanksville, **KHVE** | 16 km on the desert below the San Rafael Reef |
+| **Swaledale Valley Sprint** | RAF Leeming, **EGXE** | 13 km up a Yorkshire Dales valley, with a height window |
+| **Auvergne Volcano Circuit** | Clermont-Ferrand, **LFLC** | 12 km through the clearings between the wooded volcanoes |
+| **Bardenas Badlands Race** | Ablitas, **XLE001L** | 12 km over the white badlands, a knife edge at the start |
+| **Gorafe Ravine Run** | Granada, **LEGR** | 15 km down from the plateau through winding ravines |
+| **Cappadocia Ridge Challenge** | Nevşehir Kapadokya, **LTAZ** | 14 km of valleys and a 230 m climb onto the ridge |
+| **Flinders Valley Run** | Rawnsley Park, **YRYK** | 15 km up an outback valley and back, a 136° turnaround |
+| **Lindis Pass Traverse** | Wanaka, **NZWF** | 13 km over the pass, between valley walls |
+| **Namib Dune Run** | Sesriem, **FYSS** | 15 km past the red dunes of Elim |
+| **Orkhon Steppe Circuit** | Kharkhorin, **ZMHH** | Two laps on the flat steppe at 1,440 m, every pylon on your left |
+| **Abu Dhabi 2014 — Training** | Abu Dhabi, **OMAD** | The 2014 air race off the Corniche: slalom and wings-level gates at 15–25 m |
+| **Chiba 2019 — Training** | Tokyo Bay, **RJTT** | The 2019 air race off Makuhari Beach, 1.6 km at 15–25 m |
+| **Porto 2017 — Training** | Porto, **LPPR** | The 2017 air race up the Douro, between the bridges |
+| **Reno Sport 2023 — Training** | Reno Stead, **KRTS** | Two laps of the Sport class course, 15–76 m at every pylon |
 | **Stead Pylon Oval** | Reno Stead, **KRTS** | Three laps of a Reno-style oval, every pylon on your left |
 | **Daggett Air Show** | Daggett, **KDAG** | Wings level, knife edge, inverted, a height window and turn pylons |
 | **Daggett Sprint** | Daggett, **KDAG** | Five gates in a straight line: the quickest way to learn |
