@@ -147,7 +147,7 @@ schema, recortado a los campos que se escriben.
 - Se guarda un `.json` y se copia al portapapeles: el Challenge Creator (airplane.team/fly/create)
   recibe el challenge pegado.
 
-El challenge pasa el schema actual de Shirley en las nueve pistas (hoy trece: el test las recorre todas) (transcrito de la web, sin claves
+El challenge pasa el schema actual de Shirley en las nueve pistas (hoy dieciocho: el test las recorre todas) (transcrito de la web, sin claves
 descartadas) y el Challenge Creator lo aceptó sin avisos.
 
 **Volado el 2026-10-25** (Daggett Sprint Tall, Cessna 172SP, la 1.0.0 portable midiendo; vuelo
@@ -207,6 +207,24 @@ el redondeo, a veces el anterior no lo ve. En vuelo real es casi imposible, pero
 Falta volarlas: que los pilones se vean sobre el agua y el salar, el viraje de Pucón (90°, a 1,8 km
 de la orilla oeste más cercana), la subida desde SLUY y si los 16 km de Monument Valley se hacen
 largos.
+
+**Cinco más el mismo día**, a pedido de Juan, con el mismo método. Cuatro del catálogo y una propia:
+
+| Pista | Aeródromo | Largo | Qué pide |
+|---|---|---|---|
+| Puerto Varas Lake Oval | SCTE (21 km) | 2 × 7 km | lago Llanquihue, antihorario, pilones a la izquierda: la más fácil |
+| General Carrera Lake Race | SCCC | 15,3 km | 3 y 8 level, 6 viraje a la izquierda |
+| Heimaey Volcano Island Race | BIVM | 17,2 km | mar al este y sur de la isla, entre ella y Bjarnarey, vuelta por fuera; 3 y 7 level |
+| Kauai Coast Challenge | PHLI | 15,7 km | costa este de Kauaʻi hasta Hoary Head, dos virajes a la izquierda; 2 y 7 level |
+| Lake Tahoe Emerald Run (propia) | KTVL | 15,3 km | a 1.897 m, hacia Emerald Bay sin entrar; 2 level, 7 cuchillo |
+
+En el mar el DEM Terrarium trae la profundidad (Heimaey: −20 a −110 m; Kauaʻi: hasta −700 m), así
+que "sobre el agua" ahí es bajo 2 m; Open-Meteo da 0. En Heimaey la primera vuelta a la isla
+completa daba 24,5 km y pasaba a menos de 400 m de los islotes del oeste: quedó en el lado este.
+
+**Descartadas: Lago Bled y Venecia.** Bled es chico (2 × 1,2 km) y entre la isla y la orilla sur
+quedan ~250 m: no da para pilones Tall a la velocidad de esta app. En la laguna de Venecia el DEM
+da la misma cota (0–3 m) al agua, las barras y las islas: no se puede saber dónde cae un pilón.
 
 ### RREF como alternativa a RPOS (no adoptada)
 

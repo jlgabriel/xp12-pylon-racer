@@ -5,9 +5,11 @@
 // KDAG: a sprint, a flight test of every rule, a flight test of the three air-race pylons and an
 // aerobatic showcase. Then a Reno-style pylon oval at Reno Stead (KRTS) and Juan's river run at the
 // bottom of the Grand Canyon. The rest are only here, all with tall pylons: a lake race at
-// Queenstown (NZQN), the first course flown on water, and four from Juan's catalog of proposed
-// courses (2026-10-26): Lake Villarrica at Pucón (SCPC), a three-lap oval on the Salar de Uyuni
-// (SLUY), the floor of Monument Valley (UT25) and the south coast of Rapa Nui (SCIP).
+// Queenstown (NZQN), the first course flown on water, and nine laid out on 2026-10-26, eight of
+// them from Juan's catalog of proposed courses: Lake Villarrica at Pucón (SCPC), a three-lap oval on
+// the Salar de Uyuni (SLUY), the floor of Monument Valley (UT25), the south coast of Rapa Nui (SCIP),
+// a two-lap oval on Lake Llanquihue (SCTE), Lake General Carrera (SCCC), the sea round Heimaey
+// (BIVM), the east coast of Kauaʻi (PHLI), and Lake Tahoe (KTVL).
 import { COURSE_FORMAT, COURSE_VERSION, parseCourse, type Course } from "../course/course";
 
 const STAMP = "2026-10-18T00:00:00Z";
@@ -338,6 +340,134 @@ export function sampleCourses(): Course[] {
         { id: "g7", type: "gate", center: { lon: -109.385, lat: -27.205 }, widthM: 145, headingDeg: 59, pylon: "rodeo-25", groundElevM: 0 },
         { id: "g8", type: "gate", center: { lon: -109.367, lat: -27.194 }, widthM: 145, headingDeg: 54, pylon: "rodeo-18", groundElevM: 0 },
         { id: "g9", type: "finish", center: { lon: -109.352, lat: -27.184 }, widthM: 160, headingDeg: 53, pylon: "home", groundElevM: 0 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    // Four more from the catalog and one of ours (Lake Tahoe), laid out the same way and not flown
+    // yet. At sea the DEM carries the depth, so "on water" there is below 2 m.
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "puerto-varas-lake-oval",
+      name: "Puerto Varas Lake Oval",
+      author: "XP Pylon Racer",
+      description:
+        "Two laps of a 7 km oval on Lake Llanquihue, 3.7 km off Puerto Varas, with the Osorno volcano to the north-east: the easiest course here. Fly it counterclockwise and keep every pylon on your left. The start line, on the south side flown east, closes each lap. Take off from El Tepual (SCTE) and fly north-east for 21 km, over Puerto Varas: the start is straight ahead on the lake.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 2,
+      // At least 2 km from every shore; the lake at 48 m. Each pylon faces the bisector of its legs.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -72.945, lat: -41.285 }, widthM: 160, headingDeg: 90, pylon: "green", groundElevM: 48 },
+        { id: "g2", type: "turn", center: { lon: -72.93, lat: -41.285 }, widthM: 300, headingDeg: 45, pylon: "rodeo-reno", groundElevM: 48, turnSide: "left" },
+        { id: "g3", type: "turn", center: { lon: -72.93, lat: -41.276 }, widthM: 300, headingDeg: 315, pylon: "rodeo-reno", groundElevM: 48, turnSide: "left" },
+        { id: "g4", type: "gate", center: { lon: -72.945, lat: -41.276 }, widthM: 160, headingDeg: 270, pylon: "rodeo-25", groundElevM: 48 },
+        { id: "g5", type: "turn", center: { lon: -72.96, lat: -41.276 }, widthM: 300, headingDeg: 225, pylon: "rodeo-reno", groundElevM: 48, turnSide: "left" },
+        { id: "g6", type: "turn", center: { lon: -72.96, lat: -41.285 }, widthM: 300, headingDeg: 135, pylon: "rodeo-reno", groundElevM: 48, turnSide: "left" },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "general-carrera-lake-race",
+      name: "General Carrera Lake Race",
+      author: "XP Pylon Racer",
+      description:
+        "15 km on the turquoise water of Lake General Carrera, off Chile Chico. Take off from Chile Chico (SCCC) and fly north over the town: the start is on the lake 9 km north-north-west of the airport, 2.5 km off the shore, flown east. Four gates east, round a turn pylon kept on your left (6) and back west. 3 and 8 wings level.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // 2.5–4 km off the south shore, open water for 400 m round the whole path. The lake at 206 m
+      // (Open-Meteo; the DEM says 201).
+      gates: [
+        { id: "g1", type: "start", center: { lon: -71.72, lat: -46.505 }, widthM: 160, headingDeg: 90, pylon: "green", groundElevM: 206 },
+        { id: "g2", type: "gate", center: { lon: -71.7, lat: -46.507 }, widthM: 145, headingDeg: 88, pylon: "rodeo-18", groundElevM: 206 },
+        { id: "g3", type: "level", center: { lon: -71.68, lat: -46.504 }, widthM: 130, headingDeg: 90, pylon: "blue", groundElevM: 206 },
+        { id: "g4", type: "gate", center: { lon: -71.66, lat: -46.507 }, widthM: 145, headingDeg: 90, pylon: "rodeo-25", groundElevM: 206 },
+        { id: "g5", type: "gate", center: { lon: -71.64, lat: -46.504 }, widthM: 145, headingDeg: 66, pylon: "rodeo-18", groundElevM: 206 },
+        { id: "g6", type: "turn", center: { lon: -71.622, lat: -46.495 }, widthM: 250, headingDeg: 360, pylon: "home2", groundElevM: 206, turnSide: "left" },
+        { id: "g7", type: "gate", center: { lon: -71.64, lat: -46.486 }, widthM: 145, headingDeg: 283, pylon: "rodeo-25", groundElevM: 206 },
+        { id: "g8", type: "level", center: { lon: -71.665, lat: -46.489 }, widthM: 130, headingDeg: 272, pylon: "blue", groundElevM: 206 },
+        { id: "g9", type: "gate", center: { lon: -71.69, lat: -46.485 }, widthM: 145, headingDeg: 271, pylon: "rodeo-18", groundElevM: 206 },
+        { id: "g10", type: "finish", center: { lon: -71.712, lat: -46.488 }, widthM: 160, headingDeg: 259, pylon: "home", groundElevM: 206 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "heimaey-volcano-island-race",
+      name: "Heimaey Volcano Island Race",
+      author: "XP Pylon Racer",
+      description:
+        "17 km on the sea round the south of Heimaey, the volcanic island of the Westman Islands. Take off from Vestmannaeyjar (BIVM): the start is 4 km east-north-east of the airport, flown south-south-west down the east side of the island, between it and the islet of Bjarnarey. Round a turn pylon south of Stórhöfði kept on your left (5) and back north on an outer line, east of Bjarnarey. 3 and 7 wings level.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // 1–2 km off the island, 1.2 km or more from Bjarnarey and the skerries north of the harbor;
+      // nothing above the sea within 400 m of the path. Clear of the islets off the west side.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -20.2, lat: 63.44 }, widthM: 160, headingDeg: 193, pylon: "green", groundElevM: 0 },
+        { id: "g2", type: "gate", center: { lon: -20.208, lat: 63.424 }, widthM: 145, headingDeg: 197, pylon: "rodeo-18", groundElevM: 0 },
+        { id: "g3", type: "level", center: { lon: -20.22, lat: 63.41 }, widthM: 130, headingDeg: 201, pylon: "blue", groundElevM: 0 },
+        { id: "g4", type: "gate", center: { lon: -20.235, lat: 63.393 }, widthM: 145, headingDeg: 206, pylon: "rodeo-25", groundElevM: 0 },
+        { id: "g5", type: "turn", center: { lon: -20.255, lat: 63.378 }, widthM: 250, headingDeg: 142, pylon: "home2", groundElevM: 0, turnSide: "left" },
+        { id: "g6", type: "gate", center: { lon: -20.212, lat: 63.384 }, widthM: 145, headingDeg: 63, pylon: "rodeo-18", groundElevM: 0 },
+        { id: "g7", type: "level", center: { lon: -20.17, lat: 63.398 }, widthM: 130, headingDeg: 44, pylon: "blue", groundElevM: 0 },
+        { id: "g8", type: "gate", center: { lon: -20.14, lat: 63.418 }, widthM: 145, headingDeg: 24, pylon: "rodeo-25", groundElevM: 0 },
+        { id: "g9", type: "finish", center: { lon: -20.13, lat: 63.437 }, widthM: 160, headingDeg: 13, pylon: "home", groundElevM: 0 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "kauai-coast-challenge",
+      name: "Kauai Coast Challenge",
+      author: "XP Pylon Racer",
+      description:
+        "15.7 km on the sea off the east coast of Kauaʻi, past Nawiliwili to the cliffs of Hoary Head. Take off from Līhuʻe (PHLI): the start is 4 km north-east of the airport, 2 km off the coast, flown south. Down the coast, round two turn pylons kept on your left (4, 5) and back north 2.5 km further out. 2 and 7 wings level.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // The inner line 1 km or more off the coast (Ninini Point is the nearest), the turns 2.4 km east
+      // of Hoary Head.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -159.312, lat: 22 }, widthM: 160, headingDeg: 180, pylon: "green", groundElevM: 0 },
+        { id: "g2", type: "level", center: { lon: -159.313, lat: 21.981 }, widthM: 130, headingDeg: 184, pylon: "blue", groundElevM: 0 },
+        { id: "g3", type: "gate", center: { lon: -159.315, lat: 21.962 }, widthM: 145, headingDeg: 192, pylon: "rodeo-25", groundElevM: 0 },
+        { id: "g4", type: "turn", center: { lon: -159.322, lat: 21.942 }, widthM: 250, headingDeg: 143, pylon: "home2", groundElevM: 0, turnSide: "left" },
+        { id: "g5", type: "turn", center: { lon: -159.3, lat: 21.943 }, widthM: 250, headingDeg: 57, pylon: "home2", groundElevM: 0, turnSide: "left" },
+        { id: "g6", type: "gate", center: { lon: -159.29, lat: 21.962 }, widthM: 145, headingDeg: 16, pylon: "rodeo-18", groundElevM: 0 },
+        { id: "g7", type: "level", center: { lon: -159.288, lat: 21.982 }, widthM: 130, headingDeg: 0, pylon: "blue", groundElevM: 0 },
+        { id: "g8", type: "finish", center: { lon: -159.29, lat: 22.002 }, widthM: 160, headingDeg: 355, pylon: "home", groundElevM: 0 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "lake-tahoe-emerald-run",
+      name: "Lake Tahoe Emerald Run",
+      author: "XP Pylon Racer",
+      description:
+        "15 km on Lake Tahoe, 1,897 m up, toward Emerald Bay. Take off from South Lake Tahoe (KTVL) runway 36: the start is on the lake 8 km north-north-west of the airport, flown west-north-west. Up the west shore past the mouth of Emerald Bay, round a turn pylon kept on your right (5) and back south-east. 2 wings level, 7 knife edge.",
+      createdAt: "2026-10-26T00:00:00Z",
+      updatedAt: "2026-10-26T00:00:00Z",
+      laps: 1,
+      // Not in the catalog. Outside Emerald Bay (its mouth is 400 m wide), 1.5 km or more from the
+      // west shore; the lake at 1,897 m.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -120.03, lat: 38.963 }, widthM: 160, headingDeg: 294, pylon: "green", groundElevM: 1897 },
+        { id: "g2", type: "level", center: { lon: -120.05, lat: 38.97 }, widthM: 130, headingDeg: 300, pylon: "blue", groundElevM: 1897 },
+        { id: "g3", type: "gate", center: { lon: -120.068, lat: 38.98 }, widthM: 145, headingDeg: 328, pylon: "rodeo-25", groundElevM: 1897 },
+        { id: "g4", type: "gate", center: { lon: -120.072, lat: 38.998 }, widthM: 145, headingDeg: 7, pylon: "rodeo-18", groundElevM: 1897 },
+        { id: "g5", type: "turn", center: { lon: -120.062, lat: 39.015 }, widthM: 250, headingDeg: 78, pylon: "home2", groundElevM: 1897, turnSide: "right" },
+        { id: "g6", type: "gate", center: { lon: -120.045, lat: 39.003 }, widthM: 145, headingDeg: 139, pylon: "rodeo-25", groundElevM: 1897 },
+        { id: "g7", type: "knife", center: { lon: -120.032, lat: 38.988 }, widthM: 130, headingDeg: 145, pylon: "red", groundElevM: 1897 },
+        { id: "g8", type: "gate", center: { lon: -120.02, lat: 38.975 }, widthM: 145, headingDeg: 149, pylon: "rodeo-18", groundElevM: 1897 },
+        { id: "g9", type: "finish", center: { lon: -120.012, lat: 38.962 }, widthM: 160, headingDeg: 154, pylon: "home", groundElevM: 1897 },
       ],
       rules: { pylonSize: "tall" },
     }),

@@ -54,6 +54,11 @@ Want to see it first? **Watch demo** flies any course for you, no simulator need
 | **Uyuni Salt Flats Speed Challenge** | Uyuni, **SLUY** | Three laps of an oval on the salt flat, 3,654 m up |
 | **Monument Valley Challenge** | Monument Valley, **UT25** | 16 km on the valley floor past the buttes |
 | **Rapa Nui Coastal Race** | Easter Island, **SCIP** | 15.5 km on the sea round the cliffs of Rano Kau |
+| **Puerto Varas Lake Oval** | Puerto Montt, **SCTE** | Two easy laps on Lake Llanquihue, every pylon on your left |
+| **General Carrera Lake Race** | Chile Chico, **SCCC** | 15 km on the turquoise lake, a turn pylon and two wings-level gates |
+| **Heimaey Volcano Island Race** | Westman Islands, **BIVM** | 17 km on the sea round the south of the volcanic island |
+| **Kauai Coast Challenge** | Līhuʻe, **PHLI** | 15.7 km off the east coast of Kauaʻi to Hoary Head |
+| **Lake Tahoe Emerald Run** | South Lake Tahoe, **KTVL** | 15 km on the lake toward Emerald Bay, with a knife edge |
 | **Stead Pylon Oval** | Reno Stead, **KRTS** | Three laps of a Reno-style oval, every pylon on your left |
 | **Daggett Air Show** | Daggett, **KDAG** | Wings level, knife edge, inverted, a height window and turn pylons |
 | **Daggett Sprint** | Daggett, **KDAG** | Five gates in a straight line: the quickest way to learn |
