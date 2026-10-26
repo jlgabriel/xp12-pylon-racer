@@ -29,9 +29,12 @@ test("installs, edits and removes a course's pylons", async () => {
     win.on("dialog", (d) => void d.accept());
     await expect(win.getByRole("heading", { name: "Daggett Sprint" })).toBeVisible();
     await expect(win.getByText("Pylons not in X-Plane")).toBeVisible();
+    // The folder the pylons go into is on screen, so a pilot with two X-Planes can tell.
+    await expect(win.getByText(xp, { exact: false })).toBeVisible();
+    await expect(win.getByRole("button", { name: "Change…" })).toBeVisible();
 
     await win.getByRole("button", { name: "Install pylons" }).click();
-    await expect(win.getByText("Pylons installed. X-Plane reads scenery at startup: restart it to see them.")).toBeVisible();
+    await expect(win.getByText(`Pylons installed in ${xp}. X-Plane reads scenery at startup: restart it to see them.`)).toBeVisible();
     const pack = path.join(cs, "XPR_daggett-sprint");
     expect(readdirSync(pack).sort()).toEqual(["Earth nav data", "objects", "pylon-racer.json"]);
     expect(readdirSync(path.join(pack, "objects")).sort()).toEqual(

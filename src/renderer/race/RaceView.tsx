@@ -231,6 +231,7 @@ function ReadyList({ course, telemetry: t }: { course: Course; telemetry: Teleme
             ? "out of date in X-Plane: reinstall them, then restart the sim"
             : "not installed yet: the gates count anyway, but you won't see them. Install them, then restart the sim"}
       </ReadyItem>
+      <XplaneFolder />
       {t?.active && t.active !== "demo" && (
         <ReadyItem state={cls !== null ? "ok" : "missing"} label="Class">
           {cls !== null ? `${t.aircraft ?? "your aircraft"} · ${classLabel(cls)}` : "choose your aircraft's class in the top bar to rank your runs"}
@@ -247,6 +248,32 @@ function ReadyList({ course, telemetry: t }: { course: Course; telemetry: Teleme
         </ReadyItem>
       )}
     </ul>
+  );
+}
+
+/** The X-Plane 12 the pylons go into. The app takes the first installation in Laminar's list, which
+ *  may not be the one the pilot flies (a forum report: an old copy on C:, the sim on E:). */
+function XplaneFolder() {
+  const app = useStore((s) => s.app);
+  const choose = useStore((s) => s.chooseXplaneDir);
+  if (!app) return null;
+  const found = app.xplaneDirFound;
+  return (
+    <ReadyItem state={found ? "ok" : "missing"} label="X-Plane">
+      {found ? (
+        <span className="ready-path" title="The X-Plane 12 folder pylons are installed into">
+          {app.xplaneDir}
+          {app.xplaneVersion ? ` · ${app.xplaneVersion}` : ""}
+        </span>
+      ) : app.xplaneDir ? (
+        `not found at ${app.xplaneDir}`
+      ) : (
+        "no X-Plane 12 installation found"
+      )}{" "}
+      <button className="ready-link" title="Choose the X-Plane 12 folder you fly (the one that contains Custom Scenery)" onClick={() => void choose()}>
+        {found ? "Change…" : "Choose folder…"}
+      </button>
+    </ReadyItem>
   );
 }
 

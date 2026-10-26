@@ -150,15 +150,17 @@ export function registerIpc({ storage, race, installer, xplaneDir, xplaneVersion
     const parent = dialogParent(e.sender);
     const pick = parent ? await dialog.showOpenDialog(parent, opts) : await dialog.showOpenDialog(opts);
     const dir = pick.filePaths[0];
+    let notXplane: string | null = null;
     if (!pick.canceled && dir) {
       if (isInstallation(dir)) {
         storage.writeSettings({ xplaneDir: dir });
         log.info(`X-Plane folder set to ${dir}`);
       } else {
         log.warn(`not an X-Plane installation (no Resources/default scenery): ${dir}`);
+        notXplane = dir;
       }
     }
-    return appInfo();
+    return { app: appInfo(), notXplane };
   });
 
   ipcMain.handle("racer:setAircraftClass", (_e, aircraftId: unknown, classId: unknown) => {

@@ -33,7 +33,9 @@ paid certificate:
 ## Get started
 
 1. **[Install](#install) XP Pylon Racer** and start it. It finds X-Plane 12 by itself (from Laminar's own list of
-   installations); if you have several, or it finds none, it lets you choose the folder.
+   installations) and shows the folder it uses under each course (**X-Plane**). If you have several
+   X-Planes and that is not the one you fly, or it finds none, click **Change…** and choose the folder
+   that contains `Custom Scenery`.
 2. **Pick a course** on the left and click **Install pylons**. X-Plane reads scenery when it starts,
    so start it (or restart it) after installing.
 3. **Fly.** The course's description says where to take off. Nothing needs switching on in X-Plane:

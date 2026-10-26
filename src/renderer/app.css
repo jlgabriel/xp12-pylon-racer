@@ -585,6 +585,21 @@
 .ready-text a {
   color: var(--info);
 }
+.ready-path {
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.ready-text button.ready-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--info);
+  font-size: inherit;
+  cursor: pointer;
+}
+.ready-text button.ready-link:hover {
+  text-decoration: underline;
+}
 
 .result {
   border-radius: var(--radius-md);

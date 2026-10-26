@@ -155,8 +155,8 @@ export interface RacerApi {
   /** Drops a pilot from the list (never the active one). Their runs are kept. */
   removePilot(name: string): Promise<AppInfo>;
   /** Opens a folder dialog to pick the X-Plane 12 folder (the one holding Custom Scenery). A folder
-   *  that is not an X-Plane installation is not taken. */
-  chooseXplaneDir(): Promise<AppInfo>;
+   *  that is not an X-Plane installation is not taken: it comes back as notXplane. */
+  chooseXplaneDir(): Promise<{ app: AppInfo; notXplane: string | null }>;
   /** Chooses the class an aircraft the app does not know is ranked in (aircraftId null = flying with
    *  no aircraft name). A null class clears the choice. Built-in aircraft keep their own. Runs
    *  from the next finish use it. */

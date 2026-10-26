@@ -283,8 +283,13 @@ export const useStore = create<State>((set, get) => {
     async chooseXplaneDir() {
       const racer = getRacer();
       if (!racer) return;
-      const app = await racer.chooseXplaneDir();
-      set({ app, message: app.xplaneDirFound ? null : get().message, courses: await racer.listCourses() });
+      const { app, notXplane } = await racer.chooseXplaneDir();
+      const message: Message | null = notXplane
+        ? { kind: "error", text: `${notXplane} isn't an X-Plane 12 folder: choose the one that contains Resources and Custom Scenery.`, chooseXplane: true }
+        : app.xplaneDirFound
+          ? null
+          : get().message;
+      set({ app, message, courses: await racer.listCourses() });
     },
 
     async setPrefs(patch) {
@@ -405,7 +410,13 @@ export const useStore = create<State>((set, get) => {
           return;
         }
         afterInstallChange(r.value);
-        set({ message: { kind: "info", text: "Pylons installed. X-Plane reads scenery at startup: restart it to see them." } });
+        const dir = get().app?.xplaneDir;
+        set({
+          message: {
+            kind: "info",
+            text: `Pylons installed${dir ? ` in ${dir}` : ""}. X-Plane reads scenery at startup: restart it to see them.`,
+          },
+        });
       } finally {
         set({ busy: false });
       }

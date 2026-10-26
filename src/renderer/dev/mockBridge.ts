@@ -111,7 +111,7 @@ export function installMockBridge(): void {
       if (name !== pilot) pilots = pilots.filter((p) => p !== name);
       return info();
     },
-    chooseXplaneDir: async () => info(),
+    chooseXplaneDir: async () => ({ app: info(), notXplane: null }),
     setAircraftClass: async (aircraftId, classId) => {
       const cls = isClassId(classId) ? classId : null;
       if (aircraftId === null) classChoices = { ...classChoices, noAircraft: cls };
