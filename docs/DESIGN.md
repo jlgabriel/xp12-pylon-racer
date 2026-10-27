@@ -11,7 +11,8 @@
 
 **1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
 `xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
-*Después de la H3*. La sonda se voló cuatro veces en la 12.4.3; en esta forma, todavía no.
+*Después de la H3*. Volado el mismo día en la 12.4.3 con la app (Daggett Sprint, 27,54 s); un
+arreglo de ese vuelo (la ventana que no nacía oculta) quedó sin volar.
 
 **1.3.1, 2026-10-26.** La 1.3 más la carpeta de X-Plane a la vista, con **Change…** para elegir
 otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario en X-Plane.org.
@@ -323,7 +324,7 @@ Volado con la app el mismo día: Daggett Sprint en 27,26 s, New best, igual en l
 plugin. Falta: oculta contra visible, VR, la tecla y la 12.4.4; y después,
 compilar en el CI para los tres sistemas e instalarlo desde la app.
 
-### Después de la H3: el plugin en el release (1.4.0, sin volar en esta forma)
+### Después de la H3: el plugin en el release (1.4.0, volado el 2026-10-27)
 
 Juan pidió dejarlo lanzado como un archivo aparte, y así va: el release trae, junto a los
 instaladores, `xp12-pylon-racer-plugin-<versión>.zip` con la carpeta `XPPylonRacer/` (`win_x64`,
@@ -349,8 +350,20 @@ después, si los usuarios lo piden.
   firma ad-hoc; en Linux, compilado en ubuntu-22.04 con el runtime de C++ adentro. El CI lo compila
   en los tres sistemas en cada push, y el workflow de release arma el zip.
 
-**Falta:** volarlo en esta forma (la ventana que aparece sola, la posición recordada, el reloj
-final con *New best!*), probarlo en macOS y Linux (sólo se compila), VR, y la 12.4.4. En macOS el
+**Volado el 2026-10-27** (12.4.3, KDAG, Extra, la app con `npm run dev`, el plugin del borrador):
+- **Con la app cerrada la ventana apareció igual**, diciendo "Waiting for XP Pylon Racer…". El
+  `Log.txt` no tenía ningún mensaje recibido: la ventana se crea oculta, pero
+  `XPLMSetWindowPositioningMode` la muestra. Arreglado (se oculta después de ubicarla) e instalado,
+  **sin volar**.
+- Al abrir la app la ventana tomó la carrera al tiro: "Armed", el reloj en gris, "1 · Start" a
+  3,9 km y "ahead", las cinco puertas en el mapa.
+- **Daggett Sprint en 27,54 s, limpia** ("todo bien!"): el plugin terminó con "Finished", el reloj
+  en blanco y "+0.28 vs your best", igual que la app. Es la primera vez que se ve la línea `result`.
+- Al cerrar X-Plane se guardó la ventana en `XPPylonRacer.prf`. No se alcanzó a probar que vuelva
+  ahí, ni ocultarla con la app abierta.
+
+**Falta:** volar el arreglo del arranque, que la ventana vuelva donde quedó y que una ventana
+oculta por el piloto siga oculta; probarlo en macOS y Linux (sólo se compila), VR, y la 12.4.4. En macOS el
 zip bajado queda en cuarentena: el README del zip y el de la app dan el `xattr`.
 
 ### RREF como alternativa a RPOS (no adoptada)

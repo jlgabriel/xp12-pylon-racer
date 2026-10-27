@@ -455,6 +455,8 @@ void createWindow() {
   XPLMSetWindowResizingLimits(gWindow, 260, 220, 1600, 1400);
   XPLMSetWindowPositioningMode(gWindow, xplm_WindowPositionFree, -1);
   placeSaved();
+  // Hidden again: setting the positioning mode shows the window, whatever `visible` said (12.4.3, flown).
+  XPLMSetWindowIsVisible(gWindow, 0);
 }
 
 // ---------------------------------------------------------------- the loop: UDP and the hello
