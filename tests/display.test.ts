@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { courseRevision } from "../src/core/course/course";
 import { demoFlight } from "../src/core/demo/demoFlight";
 import { sampleCourses } from "../src/core/demo/sampleCourses";
-import { courseMessage, liveMessage, parseHello, xplaneVersionText } from "../src/core/display/wire";
+import { courseMessage, liveMessage, parseHello, resultCue, xplaneVersionText } from "../src/core/display/wire";
 import { RaceSession, type SessionContext } from "../src/core/session/raceSession";
 
 const ctx: SessionContext = { pilot: "Tester", appVersion: "0.1.0", newId: () => "run-1", nowIso: () => "2026-10-26T12:00:00Z" };
@@ -50,6 +50,19 @@ describe("the in-sim display's wire format", () => {
     expect(row(end, "next")).toEqual(["-1"]);
     expect(row(end, "gates")).toEqual(["dddddd"]);
     expect(row(end, "fix")![3]).toBe("1");
+    expect(row(end, "result")).toBeUndefined();
+    const best = read(liveMessage(rules, session.live(), "Finished", false, { tone: "best", text: "New best!" }));
+    expect(row(best, "result")).toEqual(["best", "New best!"]);
+  });
+
+  it("says how the race ended, as the race screen's result does", () => {
+    const race = { status: "finished" as const, total: 27.26, dnfReason: null, passes: [], sequence: [0, 1, 2], step: 3 };
+    expect(resultCue(race, false, null)).toEqual({ tone: "best", text: "New best!" });
+    expect(resultCue(race, false, 41.93)).toEqual({ tone: "best", text: "New best!" });
+    expect(resultCue(race, false, 27.0)).toEqual({ tone: "done", text: "+0.26 vs your best" });
+    expect(resultCue(race, true, 27.0)).toEqual({ tone: "demo", text: "Demo flight · not ranked · +0.26" });
+    expect(resultCue({ ...race, status: "dnf", dnfReason: "missed-gate", step: 1 }, false, 27.0)).toEqual({ tone: "dnf", text: "missed gate 2" });
+    expect(resultCue({ ...race, status: "running" }, false, 27.0)).toBeNull();
   });
 
   it("keeps free text on its line", () => {

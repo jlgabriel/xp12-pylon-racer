@@ -4,7 +4,7 @@
 import dgram from "node:dgram";
 import { performance } from "node:perf_hooks";
 import type { Course } from "../core/course/course";
-import { DISPLAY_PORT, courseMessage, liveMessage, parseHello, type DisplayHello } from "../core/display/wire";
+import { DISPLAY_PORT, courseMessage, liveMessage, parseHello, type DisplayHello, type ResultCue } from "../core/display/wire";
 import { statusLine } from "../core/race/rulesText";
 import type { DisplayStatus, LiveUpdate } from "../shared/racerApi";
 import { log } from "./log";
@@ -48,8 +48,9 @@ export class DisplayLink {
     this.sock = null;
   }
 
-  /** The race as the window gets it, for the plugin. Nothing goes out without a course. */
-  send(u: LiveUpdate, course: Course | null): void {
+  /** The race as the window gets it, for the plugin, with how it ended once it has. Nothing goes out
+   *  without a course. */
+  send(u: LiveUpdate, course: Course | null, result: ResultCue | null): void {
     if (!this.sock || !course || !u.live) return;
     const t = now();
     if (course !== this.sentCourse || t - this.sentCourseT >= COURSE_EVERY_S) {
@@ -57,7 +58,7 @@ export class DisplayLink {
       this.sentCourse = course;
       this.sentCourseT = t;
     }
-    this.post(liveMessage(course, u.live, statusLine(u.live.race, u.telemetry).text, u.telemetry.active === "demo"));
+    this.post(liveMessage(course, u.live, statusLine(u.live.race, u.telemetry).text, u.telemetry.active === "demo", result));
   }
 
   status(): DisplayStatus {

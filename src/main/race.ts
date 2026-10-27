@@ -3,7 +3,9 @@
 // draws what it receives.
 import { randomUUID } from "node:crypto";
 import type { Course } from "../core/course/course";
+import { resultCue, type ResultCue } from "../core/display/wire";
 import { resolveClass } from "../core/ranking/classes";
+import { classKey, pilotBest } from "../core/ranking/ranking";
 import { summarizeCourse } from "../core/run/summaries";
 import { RaceSession } from "../core/session/raceSession";
 import type { CourseSummary, LiveUpdate, RunSummary } from "../shared/racerApi";
@@ -27,6 +29,8 @@ export class RaceController {
   private sink: Sink | null = null;
   private lastPush = 0;
   private idleTimer: NodeJS.Timeout | null = null;
+  /** How the last race ended, for the in-sim display; null until one ends, again on a new attempt. */
+  private result: ResultCue | null = null;
 
   constructor(
     private readonly storage: Storage,
@@ -39,6 +43,13 @@ export class RaceController {
       if (run) {
         try {
           const summary = this.storage.saveRun(run);
+          // Against the best before this run, in its class, on this revision: what the race
+          // screen compares with (its targetRun), so both say the same.
+          const before = this.storage
+            .listRuns()
+            .filter((r) => r.id !== summary.id && r.courseId === summary.courseId && r.courseRevision === summary.courseRevision);
+          const best = pilotBest(before, summary.pilot, classKey(summary));
+          this.result = resultCue(this.session.engine.snapshot(), source.kind === "demo", best?.total ?? null);
           log.info(`run saved: ${run.courseName} ${run.result.status} ${run.result.total.toFixed(2)} s (${source.kind})`);
           this.sink?.runSaved(summary);
         } catch (e) {
@@ -72,6 +83,7 @@ export class RaceController {
       nowIso: () => new Date().toISOString(),
       classOf: (aircraftId) => resolveClass(aircraftId, classChoicesOf(this.storage.readSettings())),
     });
+    this.result = null;
     log.info(`course selected: ${course.name} (${course.id})`);
     this.push(true);
     return summarizeCourse(course, this.storage.listRuns());
@@ -89,6 +101,7 @@ export class RaceController {
   reset(): void {
     this.hub.stopDemo();
     this.session?.reset();
+    this.result = null;
     this.push(true);
   }
 
@@ -96,6 +109,7 @@ export class RaceController {
     const course = this.session?.course;
     if (!course) return false;
     this.session!.reset();
+    this.result = null;
     this.hub.startDemo(course, () => this.push(true));
     this.push(true);
     return true;
@@ -113,6 +127,6 @@ export class RaceController {
     this.lastPush = t;
     const u: LiveUpdate = { telemetry: this.hub.status(), live: this.session?.live() ?? null, display: this.display.status() };
     this.sink.live(u);
-    this.display.send(u, this.session?.course ?? null);
+    this.display.send(u, this.session?.course ?? null, this.result);
   }
 }

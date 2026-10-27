@@ -5,9 +5,10 @@
 // (rulesText.ts), so the window and the sim never say different things.
 import { courseRevision, type Course } from "../course/course";
 import { packPylons } from "../export/pack";
-import { fmtTime } from "../format";
+import { fmtDelta, fmtTime } from "../format";
 import type { LiveState } from "../session/raceSession";
-import { GATE_NAME, gateRequirements, penaltyReason } from "../race/rulesText";
+import type { RaceSnapshot } from "../race/engine";
+import { GATE_NAME, dnfText, gateRequirements, penaltyReason } from "../race/rulesText";
 
 export const DISPLAY_PORT = 49710;
 export const DISPLAY_PROTOCOL = 1;
@@ -48,9 +49,32 @@ export function gateStates(course: Course, live: LiveState): string {
   return course.gates.map((_, i) => (i === next ? "n" : missed.has(i) ? "m" : passed.has(i) ? "d" : "t")).join("");
 }
 
+/** How the race ended, as the race screen's result says it. best = a new best, done = finished
+ *  slower than the best, dnf = did not finish, demo = a demo flight (never ranked). */
+export type ResultTone = "best" | "done" | "dnf" | "demo";
+export interface ResultCue {
+  tone: ResultTone;
+  text: string;
+}
+
+/** The result of a race that just ended, against the pilot's best in its class before it (null =
+ *  none yet). Null while the race has not ended. */
+export function resultCue(
+  race: Pick<RaceSnapshot, "status" | "total" | "dnfReason" | "passes" | "sequence" | "step">,
+  demo: boolean,
+  bestBefore: number | null,
+): ResultCue | null {
+  if (race.status === "dnf") return { tone: "dnf", text: dnfText(race) ?? "did not finish" };
+  if (race.status !== "finished") return null;
+  const delta = bestBefore !== null ? fmtDelta(race.total - bestBefore) : null;
+  if (demo) return { tone: "demo", text: `Demo flight · not ranked${delta ? ` · ${delta}` : ""}` };
+  if (bestBefore === null || race.total < bestBefore) return { tone: "best", text: "New best!" };
+  return { tone: "done", text: `${delta} vs your best` };
+}
+
 /** The race now. `statusText` is the race screen's status line; `demo` = the position is the demo
- *  flight's, so the plugin draws it instead of the sim's. */
-export function liveMessage(course: Course, live: LiveState, statusText: string, demo: boolean): Uint8Array {
+ *  flight's, so the plugin draws it instead of the sim's; `result` = how it ended, once it has. */
+export function liveMessage(course: Course, live: LiveState, statusText: string, demo: boolean, result: ResultCue | null = null): Uint8Array {
   const r = live.race;
   const over = r.status === "finished" || r.status === "dnf";
   const next = over ? null : (live.nextGate?.index ?? null);
@@ -68,6 +92,7 @@ export function liveMessage(course: Course, live: LiveState, statusText: string,
     ["needs", gate ? gateRequirements(gate, course).join(" · ") : ""],
     ["pen", last ? `+${r.penaltyTotal.toFixed(1)} s · gate ${last.gateIndex + 1}: ${penaltyReason(last, course)}` : ""],
     ["gates", gateStates(course, live)],
+    ...(result && over ? [["result", result.tone, result.text]] : []),
     ...(fix ? [["fix", fix.lat.toFixed(7), fix.lon.toFixed(7), fix.headingDeg.toFixed(1), demo ? 1 : 0]] : []),
   ]);
 }

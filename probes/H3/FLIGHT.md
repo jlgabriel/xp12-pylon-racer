@@ -101,7 +101,9 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   dice "In the sim — the race shows in X-Plane 12.4.3 too (plugin 0.1.0-h3)", y el plugin y la
   ventana muestran lo mismo a la vez. **Daggett Sprint en 27,26 s, limpia: New best**, guardada por
   la app, con sectores de 6,72 / 6,85 / 6,85 / 6,84 s. El plugin terminó con "Finished 00:27.26".
-  Lo que el plugin todavía no dice: que fue la mejor marca (la app lo muestra en violeta).
+  Lo que el plugin todavía no decía: que fue la mejor marca (la app lo muestra en violeta). Ahora
+  la app le manda una línea `result` y el reloj final queda **violeta con "New best!"**, blanco con
+  "+0.26 vs your best", rojo si no terminó o gris en un demo. **Instalado, sin volar.**
 - **Falta:** oculta contra visible (no quedó ningún período con la ventana oculta), VR, una tecla
   para `xpr/h3/toggle_display`, Pop out quieto, y repetir en la 12.4.4.
 

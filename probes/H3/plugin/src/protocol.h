@@ -21,6 +21,7 @@
 //   needs   <what the gate asks, may be empty>
 //   pen     <penalties text, may be empty>
 //   gates   <one char per gate index: n next, d done, m missed, t to do>
+//   result  best|done|dnf|demo <text>                 (once the race has ended)
 //   fix     <lat> <lon> <headingDeg> <demo 0|1>      (the app's own position)
 //
 //   XPR 1 hello                       plugin -> sender of the last message, every second
@@ -55,7 +56,7 @@ struct Course {
 
 struct Live {
   bool valid = false;
-  std::string rev, status, line, time, title, needs, pen, gates;
+  std::string rev, status, line, time, title, needs, pen, gates, resultTone, resultText;
   int next = -1;
   bool hasFix = false, demo = false;
   double lat = 0, lon = 0, headingDeg = 0;

@@ -49,6 +49,7 @@ constexpr Rgb kAccent{1.00f, 0.35f, 0.12f};  // --accent
 constexpr Rgb kGood{0.24f, 0.86f, 0.52f};    // --good
 constexpr Rgb kBad{1.00f, 0.30f, 0.37f};     // --bad
 constexpr Rgb kWarn{1.00f, 0.69f, 0.13f};    // --warn
+constexpr Rgb kBest{0.71f, 0.55f, 1.00f};    // --best
 constexpr Rgb kLine{0.18f, 0.23f, 0.32f};    // --line-strong
 
 Rgb gateColor(const std::string& type) {
@@ -327,8 +328,20 @@ void draw(XPLMWindowID win, void*) {
     // The clock.
     const float clockH = std::clamp((t - b) * 0.12f, 22.0f, 64.0f);
     y -= static_cast<int>(clockH);
-    drawClock(gLive.time, static_cast<float>(l + pad), static_cast<float>(y), clockH, gLive.status == "running" ? kText : kMuted);
+    // Running it is white; once the race ends it says how, like the race screen's result: a new best
+    // in the best color, a finished run white, a DNF red. Grey only while waiting and for a demo.
+    const std::string& tone = gLive.resultTone;
+    const Rgb clockColor = gLive.status == "running" ? kText
+                           : tone == "best"          ? kBest
+                           : tone == "done"          ? kText
+                           : tone == "dnf"           ? kBad
+                                                     : kMuted;
+    drawClock(gLive.time, static_cast<float>(l + pad), static_cast<float>(y), clockH, clockColor);
     y -= lineH + 4;
+    if (!gLive.resultText.empty()) {
+      text(clockColor, l + pad, y, gLive.resultText);
+      y -= lineH;
+    }
 
     // The next gate: what it is, what it asks, how far and which way.
     if (gLive.next >= 0 && gLive.next < static_cast<int>(gCourse.gates.size())) {

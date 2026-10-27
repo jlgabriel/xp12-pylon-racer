@@ -69,6 +69,10 @@ Kind parse(const char* data, std::size_t len, Course& course, Live& live) {
       else if (k == "needs") l.needs = rest(f);
       else if (k == "pen") l.pen = rest(f);
       else if (k == "gates") l.gates = rest(f);
+      else if (k == "result" && f.size() >= 3) {
+        l.resultTone = f[1];
+        l.resultText = f[2];
+      }
       else if (k == "fix" && f.size() >= 5) {
         l.hasFix = true;
         l.lat = num(f[1]);
