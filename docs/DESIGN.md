@@ -10,8 +10,8 @@
 ## 0. Estado (2026-10-27, v1.5.0: diez pistas más)
 
 **1.5.0, 2026-10-27.** La 1.4 más diez pistas de Juan (44 en total), abajo en *Después de la 1.4*.
-No se volaron; las notas lo dicen. Tag `v1.5.0`, mismo workflow; el plugin no cambia salvo el
-número de versión.
+No se volaron; las notas lo dicen. Tag `v1.5.0`, mismo workflow, publicada el 2026-10-27 con los
+seis archivos; el plugin no cambia salvo el número de versión.
 
 **1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
 `xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
