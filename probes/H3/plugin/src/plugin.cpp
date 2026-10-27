@@ -201,15 +201,14 @@ struct Position {
   bool fromApp = false;
 };
 
+/** The sim's position, read in the flight loop only: windows are drawn in the main menu too, and
+ *  reading the position there logs "Sim is not yet started - Position is unset" every frame. */
+Position gSim;
+
 /** The sim's own position, unless the app is flying its demo: then the demo's. */
 Position position() {
-  Position p;
-  if (gLive.valid && gLive.hasFix && gLive.demo) {
-    p = {true, gLive.lat, gLive.lon, gLive.headingDeg, true};
-  } else if (gLat && gLon && gPsi) {
-    p = {true, XPLMGetDatad(gLat), XPLMGetDatad(gLon), XPLMGetDataf(gPsi), false};
-  }
-  return p;
+  if (gLive.valid && gLive.hasFix && gLive.demo) return {true, gLive.lat, gLive.lon, gLive.headingDeg, true};
+  return gSim;
 }
 
 void drawMap(float x0, float y0, float x1, float y1, const Position& me) {
@@ -413,6 +412,7 @@ std::string statsLine(const Stats& s, double t) {
 
 float onLoop(float, float, int, void*) {
   const double t = now();
+  if (gLat && gLon && gPsi) gSim = {true, XPLMGetDatad(gLat), XPLMGetDatad(gLon), XPLMGetDataf(gPsi), false};
   if (gFramePeriod) {
     float period = XPLMGetDataf(gFramePeriod);
     for (Stats* s : {&gStats, &gHelloStats}) ++s->frames, s->frameSum += period;
@@ -430,8 +430,8 @@ float onLoop(float, float, int, void*) {
     }
     if (k == xpr::Kind::Course) xlog("course: " + gCourse.name + " (" + std::to_string(gCourse.gates.size()) + " gates, rev " + gCourse.rev + ")");
     // How far the app's fix (RPOS, ~30 Hz) is from the sim's position as this packet arrives.
-    if (k == xpr::Kind::Live && gLive.hasFix && !gLive.demo && gLat) {
-      double d = haversine(gLive.lat, gLive.lon, XPLMGetDatad(gLat), XPLMGetDatad(gLon));
+    if (k == xpr::Kind::Live && gLive.hasFix && !gLive.demo && gSim.valid) {
+      double d = haversine(gLive.lat, gLive.lon, gSim.lat, gSim.lon);
       for (Stats* s : {&gStats, &gHelloStats}) ++s->fixN, s->fixSum += d, s->fixMax = std::max(s->fixMax, d);
     }
   }

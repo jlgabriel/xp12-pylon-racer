@@ -38,6 +38,15 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   marcándose `d`/`n`/`t` a su tiempo. `display.ts` recibe el `hello` de vuelta.
 - **No probado:** todo lo que dibuja. Eso sólo se ve en X-Plane.
 
+## Primer arranque (2026-10-26, 12.4.3)
+
+- **Carga:** `XPR_H3: start 0.1.0-h3, X-Plane 12431, XPLM 430`, y escucha en el 49710.
+- **Llenaba el `Log.txt` desde el menú principal:** 34.490 líneas de `Sim is not yet started -
+  Position is unset`, dos por frame. Las ventanas **se dibujan también en el menú**, y el dibujo
+  leía la latitud y la longitud. El flight loop **no** corre en el menú (no hubo ninguna línea de
+  mediciones). Arreglado: la posición se lee sólo en el flight loop y el dibujo usa la última. Lo
+  mismo valdrá para el plugin de verdad.
+
 ## Antes (con X-Plane cerrado)
 
 1. Si no existe `probes/H3/XPR_H3_Display/`, rehazla con `npm run probe:plugin`.
