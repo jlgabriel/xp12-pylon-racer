@@ -1,16 +1,17 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 1.4.0 · 2026-10-27 · la carrera dentro de X-Plane, con un plugin propio.
+> Versión 1.5.0 · 2026-10-27 · diez pistas más, 44 en total.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-27, v1.4.0: la carrera dentro de X-Plane)
+## 0. Estado (2026-10-27, v1.5.0: diez pistas más)
 
-**Sin release, 2026-10-27.** Diez pistas más de Juan (44 en total), sin volar: abajo en
-*Después de la 1.4*.
+**1.5.0, 2026-10-27.** La 1.4 más diez pistas de Juan (44 en total), abajo en *Después de la 1.4*.
+No se volaron; las notas lo dicen. Tag `v1.5.0`, mismo workflow; el plugin no cambia salvo el
+número de versión.
 
 **1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
 `xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
