@@ -1,5 +1,9 @@
 # Sonda H3: la carrera dentro de X-Plane
 
+> **Desde la 1.4.0 el plugin vive en `plugin/`** y se compila con `npm run plugin`
+> (`plugin/out/XPPylonRacer/`), con otro nombre y otro comando (`xpr/toggle_display`). Lo que sigue
+> es la sonda tal como se voló; las rutas `XPR_H3_Display` y `npm run probe:plugin` ya no existen.
+
 **La pregunta:** un plugin nuestro, compilado con el SDK 4.3.0 y sólo con APIs de XPLM301, ¿puede
 mostrar la carrera dentro del sim (estado, reloj, la puerta que sigue con su flecha, y la pista
 sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?

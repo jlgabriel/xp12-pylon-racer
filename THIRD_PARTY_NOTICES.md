@@ -16,6 +16,13 @@ shipped or copied.
 
 Both are by the same author and under the same license as this app.
 
+## X-Plane SDK
+
+The in-sim display plugin (`plugin/`) is compiled against the **X-Plane SDK 4.3.0** by Laminar
+Research (© 2008 Sandy Barbour and Ben Supnik, under the SDK's permissive license), downloaded
+at build time and not part of this repository. The plugin links to the XPLM
+library that X-Plane itself provides; no file of the SDK ships in the plugin zip.
+
 ## Fonts (SIL Open Font License 1.1)
 
 The app bundles two typefaces, through the `@fontsource` packages, under the

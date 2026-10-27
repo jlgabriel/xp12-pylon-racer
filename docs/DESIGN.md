@@ -1,13 +1,17 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 1.3.1 · 2026-10-26 · la carpeta de X-Plane, a la vista y elegible.
+> Versión 1.4.0 · 2026-10-27 · la carrera dentro de X-Plane, con un plugin propio.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-26, v1.3.1: la carpeta de X-Plane a la vista)
+## 0. Estado (2026-10-27, v1.4.0: la carrera dentro de X-Plane)
+
+**1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
+`xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
+*Después de la H3*. La sonda se voló cuatro veces en la 12.4.3; en esta forma, todavía no.
 
 **1.3.1, 2026-10-26.** La 1.3 más la carpeta de X-Plane a la vista, con **Change…** para elegir
 otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario en X-Plane.org.
@@ -319,6 +323,36 @@ Volado con la app el mismo día: Daggett Sprint en 27,26 s, New best, igual en l
 plugin. Falta: oculta contra visible, VR, la tecla y la 12.4.4; y después,
 compilar en el CI para los tres sistemas e instalarlo desde la app.
 
+### Después de la H3: el plugin en el release (1.4.0, sin volar en esta forma)
+
+Juan pidió dejarlo lanzado como un archivo aparte, y así va: el release trae, junto a los
+instaladores, `xp12-pylon-racer-plugin-<versión>.zip` con la carpeta `XPPylonRacer/` (`win_x64`,
+`mac_x64`, `lin_x64`), un `README.txt` y la licencia. La app no lo instala: se copia a
+`Resources/plugins/` con X-Plane cerrado, como cualquier plugin. Instalarlo desde la app queda para
+después, si los usuarios lo piden.
+
+**Qué cambió desde la sonda.** El código pasó de `probes/H3/plugin/` a `plugin/`.
+- Nombre *XP Pylon Racer*, firma `jlgabriel.xppylonracer.display`, comando `xpr/toggle_display`,
+  menú *Plugins › XP Pylon Racer*. La versión es la de la app (`package.json`).
+- **La ventana nace oculta** y aparece la primera vez que la app le habla: quien instala el plugin y
+  vuela sin la app no ve nada. Si el piloto la oculta, la app no la vuelve a abrir hasta el próximo
+  arranque de X-Plane. **Vuelve donde la dejaste** (`Output/preferences/XPPylonRacer.prf`, sólo
+  dentro del sim; si ya no cabe en la pantalla, arriba a la derecha).
+- Ya no escribe mediciones en el `Log.txt` cada 10 s: sólo el arranque, la pista cuando cambia y
+  cuando aparece la app. El `hello` sigue llevando fps y tiempo de dibujo.
+- **El protocolo se prueba de los dos lados.** `tests/display.test.ts` escribe los mensajes reales
+  de la app en `plugin/test/fixtures/` (`toMatchFileSnapshot`; `npx vitest run -u` los rehace) y
+  `xpr_wire_test` los parsea; el `hello` lo arma `protocol.cpp` y el test de la app lee el mismo
+  archivo. La versión del protocolo sigue en 1.
+- `npm run plugin` baja el SDK 4.3.0 de Laminar (verificado por su sha256), compila, corre el test
+  y arma `plugin/out/XPPylonRacer/<sistema>/`. En macOS, universal (arm64 + x86_64), mínimo 12.0 y
+  firma ad-hoc; en Linux, compilado en ubuntu-22.04 con el runtime de C++ adentro. El CI lo compila
+  en los tres sistemas en cada push, y el workflow de release arma el zip.
+
+**Falta:** volarlo en esta forma (la ventana que aparece sola, la posición recordada, el reloj
+final con *New best!*), probarlo en macOS y Linux (sólo se compila), VR, y la 12.4.4. En macOS el
+zip bajado queda en cuarentena: el README del zip y el de la app dan el `xattr`.
+
 ### RREF como alternativa a RPOS (no adoptada)
 
 Comparte sin pelear, pero cada valor llega
@@ -458,6 +492,7 @@ Igual que Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite
 | 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | ✅ volada: aviso en 7 s, replay ignorado, 29,02 s |
 | Pilones altos | `rules.pylonSize`: Standard o Tall ×2 (D15) | ✅ volados en KDAG: "muy buen tamaño" |
 | 1.0 | README de la 1.0, nombre y `.pylonrace` decididos, release | Mismo ciclo que XOP y PCT |
+| 1.4 | La carrera dentro de X-Plane: el plugin de la sonda H3, en un zip aparte | Compilado en los tres sistemas; la sonda, volada; esta forma, sin volar |
 
 ---
 
