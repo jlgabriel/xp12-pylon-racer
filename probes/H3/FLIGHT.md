@@ -72,6 +72,10 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   0,06 ms por dibujo, y la pista escrita una sola vez.
   La app tiene el mismo `TurnCue` y le pasa lo mismo, a menos frames.
 - Esta carrera se voló todavía sin el fondo negro ni el reloj (la versión con `GL_QUADS`).
+- **Con el culling apagado se ve todo** (captura de Juan, "mejor!"): fondo negro, el reloj grande,
+  "1 · Start" con su `·`, el nombre de la pista y los pilones en el mapa. El reloj salía blanco
+  esperando la largada, cuando debía ser gris: el color se fijaba antes del `glState()` del reloj
+  y se perdía. Ahora el reloj lo recibe y lo pone después.
 
 ## Antes (con X-Plane cerrado)
 

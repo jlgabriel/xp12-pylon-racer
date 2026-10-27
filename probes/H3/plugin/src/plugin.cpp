@@ -161,11 +161,13 @@ int textWidth(const std::string& s) {
 }
 
 /** The clock as seven-segment digits: XPLMDrawString has one small size, and a timer is read at a glance. */
-float drawClock(const std::string& s, float x, float y, float h) {
+/** The color is set here, after glState: set before it, it was lost (the clock came out white). */
+float drawClock(const std::string& s, float x, float y, float h, Rgb c) {
   // Segments a b c d e f g, bit 0 = a.
   static const int kDigits[10] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
   const float w = h * 0.52f, th = h * 0.11f, gap = h * 0.16f, m = h / 2;
   glState();
+  color(c);
   for (char ch : s) {
     if (ch >= '0' && ch <= '9') {
       int seg = kDigits[ch - '0'];
@@ -325,8 +327,7 @@ void draw(XPLMWindowID win, void*) {
     // The clock.
     const float clockH = std::clamp((t - b) * 0.12f, 22.0f, 64.0f);
     y -= static_cast<int>(clockH);
-    color(gLive.status == "running" ? kText : kMuted);
-    drawClock(gLive.time, static_cast<float>(l + pad), static_cast<float>(y), clockH);
+    drawClock(gLive.time, static_cast<float>(l + pad), static_cast<float>(y), clockH, gLive.status == "running" ? kText : kMuted);
     y -= lineH + 4;
 
     // The next gate: what it is, what it asks, how far and which way.
