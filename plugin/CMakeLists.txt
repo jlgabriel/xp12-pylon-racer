@@ -43,7 +43,8 @@ else()
   set_target_properties(XPPylonRacer PROPERTIES CXX_VISIBILITY_PRESET hidden)
   # XPLM comes from X-Plane when it loads us. The C++ runtime goes inside, so the plugin does not
   # depend on the libstdc++ of the distribution it was built on, and stays inside: exported, its
-  # symbols could stand in for another plugin's. Only the five XPlugin* functions are exported.
+  # symbols could stand in for another plugin's. Exported: the five XPlugin* functions (and two digit
+  # tables libstdc++'s headers make unique, which are harmless).
   find_package(OpenGL REQUIRED)
   target_link_libraries(XPPylonRacer PRIVATE OpenGL::GL)
   target_link_options(XPPylonRacer PRIVATE -static-libstdc++ -static-libgcc "LINKER:--exclude-libs,ALL")
