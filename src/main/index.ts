@@ -8,6 +8,7 @@ import { Installer } from "./installer";
 import { applyOnTop, registerIpc, type IpcHandle } from "./ipc";
 import { LOG_FILE_NAME, log } from "./log";
 import { mayNavigate } from "./navigation";
+import { DisplayLink } from "./display";
 import { RaceController } from "./race";
 import { Storage } from "./storage";
 import { TelemetryHub } from "./telemetry";
@@ -53,7 +54,8 @@ const openFiles = (paths: readonly string[]): void => {
 
 const storage = new Storage(app.getPath("userData"));
 const hub = new TelemetryHub();
-const race = new RaceController(storage, hub);
+const display = new DisplayLink();
+const race = new RaceController(storage, hub, display);
 // Laminar's installation list is read once: it names every X-Plane 12 on the machine, the first
 // usable one is the default, and the pilot can point at another (Settings override). The e2e sets
 // XPR_XPLANE_DIR so it never installs into a real simulator.
@@ -153,6 +155,7 @@ app.whenReady().then(() => {
   ipc = registerIpc({ storage, race, installer, xplaneDir, xplaneVersion, userData: app.getPath("userData") });
   ipc.openFiles(toOpen.splice(0));
   hub.start();
+  display.start();
   createWindow();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -165,5 +168,6 @@ app.on("window-all-closed", () => {
 
 app.on("will-quit", () => {
   hub.stop();
+  display.stop();
   log.info("quitting");
 });

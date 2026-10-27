@@ -8,6 +8,7 @@ import { summarizeCourse } from "../core/run/summaries";
 import { RaceSession } from "../core/session/raceSession";
 import type { CourseSummary, LiveUpdate, RunSummary } from "../shared/racerApi";
 import { log } from "./log";
+import type { DisplayLink } from "./display";
 import { classChoicesOf, type Storage } from "./storage";
 import type { TelemetryHub } from "./telemetry";
 
@@ -30,6 +31,7 @@ export class RaceController {
   constructor(
     private readonly storage: Storage,
     private readonly hub: TelemetryHub,
+    private readonly display: DisplayLink,
   ) {
     hub.onFix((fix, source) => {
       if (!this.session) return;
@@ -109,6 +111,8 @@ export class RaceController {
     const t = Date.now();
     if (!force && t - this.lastPush < LIVE_PUSH_MS) return;
     this.lastPush = t;
-    this.sink.live({ telemetry: this.hub.status(), live: this.session?.live() ?? null });
+    const u: LiveUpdate = { telemetry: this.hub.status(), live: this.session?.live() ?? null, display: this.display.status() };
+    this.sink.live(u);
+    this.display.send(u, this.session?.course ?? null);
   }
 }

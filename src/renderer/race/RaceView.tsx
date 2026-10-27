@@ -1,7 +1,7 @@
 // The race screen: timer, deltas, gate strip, next gate, map, flight values, result and the runs of
 // this course. Everything shown comes from main's live updates; nothing here judges the race.
 import { useEffect, useMemo, useRef, type ReactNode } from "react";
-import type { Course, Gate, GateType } from "../../core/course/course";
+import type { Course, Gate } from "../../core/course/course";
 import { relativeBearing } from "../../core/geo/geo";
 import type { Fix } from "../../core/race/fix";
 import type { Penalty, PenaltyKind, RaceSnapshot } from "../../core/race/engine";
@@ -12,22 +12,13 @@ import type { Run } from "../../core/run/run";
 import { classLabel, resolveClass } from "../../core/ranking/classes";
 import { classesOf, currentClass, isDemo, leaderboard, pilotRuns } from "../../core/ranking/ranking";
 import type { LiveState } from "../../core/session/raceSession";
-import type { RunSummary, TelemetryStatus } from "../../shared/racerApi";
-import { REPLAY, REPLAY_HINT, RPOS_SHARED } from "../app/feedText";
-import { KMH_PER_MS, fmtDelta, fmtDistance, fmtTime } from "../app/format";
+import type { DisplayStatus, RunSummary, TelemetryStatus } from "../../shared/racerApi";
+import { xplaneVersionText } from "../../core/display/wire";
+import { REPLAY, REPLAY_HINT, RPOS_SHARED } from "../../core/telemetry/feedText";
+import { KMH_PER_MS, fmtDelta, fmtDistance, fmtTime } from "../../core/format";
 import { useStore } from "../state/store";
 import { MiniMap } from "./MiniMap";
-import { dnfShort, dnfText, gateRequirements, penaltyReason } from "./rulesText";
-
-const GATE_NAME: Record<GateType, string> = {
-  start: "Start",
-  finish: "Finish",
-  gate: "Gate",
-  level: "Level gate",
-  knife: "Knife-edge gate",
-  inverted: "Inverted gate",
-  turn: "Turn pylon",
-};
+import { GATE_NAME, dnfShort, dnfText, gateRequirements, penaltyReason, statusLine } from "../../core/race/rulesText";
 
 /** The README's section on connecting X-Plane (opens in the browser). */
 const HELP_CONNECT = "https://github.com/jlgabriel/xp12-pylon-racer#connecting-to-x-plane-12";
@@ -131,7 +122,7 @@ export function RaceView() {
             </div>
           )}
 
-          {(!race || race.status === "waiting") && <ReadyList course={course} telemetry={update?.telemetry ?? null} />}
+          {(!race || race.status === "waiting") && <ReadyList course={course} telemetry={update?.telemetry ?? null} display={update?.display ?? null} />}
 
           {race && over && <Result race={race} target={targetRun} course={course} demo={live?.demo ?? false} />}
         </section>
@@ -201,7 +192,7 @@ function CourseTools() {
 }
 
 /** Before the start: what is ready and what is still missing to race this course. */
-function ReadyList({ course, telemetry: t }: { course: Course; telemetry: TelemetryStatus | null }) {
+function ReadyList({ course, telemetry: t, display }: { course: Course; telemetry: TelemetryStatus | null; display: DisplayStatus | null }) {
   const summary = useStore((s) => s.courses.find((c) => c.id === course.id));
   const choices = useStore((s) => s.app?.classChoices);
   const pilot = useStore((s) => s.app?.pilot);
@@ -224,6 +215,11 @@ function ReadyList({ course, telemetry: t }: { course: Course; telemetry: Teleme
           </>
         )}
       </ReadyItem>
+      {display?.connected && (
+        <ReadyItem state="ok" label="In the sim">
+          the race shows in X-Plane{display.xplane ? ` ${xplaneVersionText(display.xplane)}` : ""} too (plugin {display.plugin})
+        </ReadyItem>
+      )}
       <ReadyItem state={install === "current" ? "ok" : "missing"} label="Pylons">
         {install === "current"
           ? "installed in X-Plane"
@@ -305,21 +301,7 @@ function TurnCue({ fix, gate }: { fix: Fix; gate: Gate }) {
 }
 
 function StatusLine({ race, telemetry }: { race: RaceSnapshot | null; telemetry: TelemetryStatus | null }) {
-  const ended = race?.status === "finished" || race?.status === "dnf";
-  const sim = telemetry && !telemetry.demo.running ? telemetry : null;
-  const held = ended ? null : sim?.rpos.shared ? "X-Plane's position is taken by another program" : sim?.active && sim.replay ? REPLAY : null;
-  const text =
-    race?.status === "finished"
-      ? "Finished"
-      : race?.status === "dnf"
-        ? "Did not finish"
-        : held
-          ? held
-          : !telemetry?.active
-            ? "Waiting for X-Plane…"
-            : race?.status === "running"
-              ? "Racing"
-              : "Armed — fly through the start gate";
+  const { text, held } = statusLine(race, telemetry);
   return (
     <div className={`status-line status-${held ? "held" : (race?.status ?? "none")} ${telemetry?.active ? "live" : ""}`}>
       <span className="status-dot" aria-hidden />

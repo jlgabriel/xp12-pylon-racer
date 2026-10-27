@@ -1,6 +1,39 @@
-// The words for the rules: what a gate asks of the pilot, and why a penalty was given.
-import type { Course, Gate } from "../../core/course/course";
-import type { DnfReason, Penalty, RaceSnapshot } from "../../core/race/engine";
+// The words for the rules: what a gate asks of the pilot, why a penalty was given, and the race's
+// status line. Shared by the race screen and the in-sim display, so both say the same thing.
+import type { TelemetryStatus } from "../../shared/racerApi";
+import type { Course, Gate, GateType } from "../course/course";
+import { REPLAY } from "../telemetry/feedText";
+import type { DnfReason, Penalty, RaceSnapshot } from "./engine";
+
+export const GATE_NAME: Record<GateType, string> = {
+  start: "Start",
+  finish: "Finish",
+  gate: "Gate",
+  level: "Level gate",
+  knife: "Knife-edge gate",
+  inverted: "Inverted gate",
+  turn: "Turn pylon",
+};
+
+/** The status line over the timer. `held` = X-Plane streams but its positions are not raced. */
+export function statusLine(race: Pick<RaceSnapshot, "status"> | null, telemetry: TelemetryStatus | null): { text: string; held: boolean } {
+  const ended = race?.status === "finished" || race?.status === "dnf";
+  const sim = telemetry && !telemetry.demo.running ? telemetry : null;
+  const held = ended ? null : sim?.rpos.shared ? "X-Plane's position is taken by another program" : sim?.active && sim.replay ? REPLAY : null;
+  const text =
+    race?.status === "finished"
+      ? "Finished"
+      : race?.status === "dnf"
+        ? "Did not finish"
+        : held
+          ? held
+          : !telemetry?.active
+            ? "Waiting for X-Plane…"
+            : race?.status === "running"
+              ? "Racing"
+              : "Armed — fly through the start gate";
+  return { text, held: held !== null };
+}
 
 /** The side of a turn pylon to fly by: keeping it on your left means passing to its right. "Pass to
  *  its right" says what to DO; "keep it on your left" had to be translated in the air (flight test,

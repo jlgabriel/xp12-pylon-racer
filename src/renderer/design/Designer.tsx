@@ -18,7 +18,7 @@ import {
 } from "../../core/course/edit";
 import { DEFAULT_PYLON, PYLONS, PYLON_SCALE, PYLON_SIZES, pylonLabel, type PylonSize } from "../../core/export/pylons";
 import { lapLength } from "../../core/run/summaries";
-import { fmtDistance } from "../app/format";
+import { fmtDistance } from "../../core/format";
 import { useStore } from "../state/store";
 import { DesignMap } from "./DesignMap";
 

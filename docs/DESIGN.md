@@ -298,6 +298,26 @@ Falta volarlas. Lo más dudoso: la cumbre del Osorno (la meta queda 170 m sobre 
 360 m), si los cañones de Quebrada y Gorafe se ven en la malla de X-Plane, y si las de
 entrenamiento, con puertas de 40 m entre 15 y 25 m, se pueden volar a la velocidad de un Extra.
 
+### Después de la 1.3.1: la carrera dentro de X-Plane (sonda H3, volada el 2026-10-26)
+
+Juan vuela con un monitor y hoy necesita *Pin on top*. La sonda H3 (`probes/H3/FLIGHT.md`) es un
+plugin propio en C++ (SDK 4.3.0, sólo APIs de XPLM301, así que sirve igual en la 12.4.3 y en la
+12.4.4). Abre una ventana sobre fondo negro con el estado, el reloj, la puerta que sigue con su
+flecha y la pista. **Sólo muestra: el juez sigue siendo la app.** Lo único que calcula es la flecha,
+con la posición del sim en cada frame. Cuatro carreras de la Daggett Sprint (27,3–27,5 s) a 60 fps
+topados, con 0,06 ms por dibujo y 5,5–6 ms de GPU. Tres lecciones para el plugin de verdad: leer la
+posición sólo en el flight loop (en el menú llenaba el `Log.txt`), apagar el culling antes de dibujar
+y, cerca de una puerta, que la flecha muestre su rumbo y no su centro.
+
+**La app ya le habla al plugin**: `src/main/display.ts` manda la carrera a `127.0.0.1:49710` con cada
+actualización (`src/core/display/wire.ts`, el formato de `protocol.h`). Cuando el plugin contesta, la
+lista *antes de la largada* lo muestra ("In the sim"). Sin el plugin no cambia nada. Para que la
+ventana y el plugin digan lo mismo, los textos de la carrera pasaron del renderer a `src/core`
+(`race/rulesText.ts`, con `GATE_NAME` y `statusLine`, `format.ts` y `telemetry/feedText.ts`).
+
+Falta: volarlo con la app, probar oculta contra visible, VR, la tecla y la 12.4.4; y después,
+compilar en el CI para los tres sistemas e instalarlo desde la app.
+
 ### RREF como alternativa a RPOS (no adoptada)
 
 Comparte sin pelear, pero cada valor llega

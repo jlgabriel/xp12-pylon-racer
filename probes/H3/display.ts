@@ -6,8 +6,8 @@
  *   npm run probe:display -- --demo                (no sim: the demo flight, as the app's Watch demo)
  *   npm run probe:display -- --list
  *
- * Judges the race with the app's own RaceSession and sends the plugin what it should show, in the
- * wire format of probes/H3/plugin/src/protocol.h, to 127.0.0.1:49710. With the sim it asks for RPOS
+ * Judges the race with the app's own RaceSession and sends the plugin what it should show, with the
+ * app's own messages (src/core/display/wire.ts), to 127.0.0.1:49710. With the sim it asks for RPOS
  * like the app does, so the two cannot run together (one RPOS subscriber: CLAUDE.md). Prints the
  * plugin's `hello` (its fps, draw time and what it receives) every five seconds.
  *
@@ -16,17 +16,18 @@
 
 import { randomUUID } from 'node:crypto';
 import dgram from 'node:dgram';
-import { courseRevision, type Course, type GateType } from '../../src/core/course/course.js';
+import { courseRevision } from '../../src/core/course/course.js';
 import { sampleCourses } from '../../src/core/demo/sampleCourses.js';
 import { demoFlight } from '../../src/core/demo/demoFlight.js';
-import { packPylons } from '../../src/core/export/pack.js';
+import { DISPLAY_PORT, courseMessage, liveMessage } from '../../src/core/display/wire.js';
+import { fmtTime } from '../../src/core/format.js';
 import type { Fix } from '../../src/core/race/fix.js';
+import { statusLine } from '../../src/core/race/rulesText.js';
 import { RaceSession, type SourceInfo } from '../../src/core/session/raceSession.js';
 import { parseRpos, rposRequest, XPLANE_PORT } from '../../src/core/telemetry/rpos.js';
-import { fmtTime } from '../../src/renderer/app/format.js';
-import { dnfText, gateRequirements, penaltyReason } from '../../src/renderer/race/rulesText.js';
+import type { TelemetryStatus } from '../../src/shared/racerApi.js';
 
-const PLUGIN_PORT = 49710; // protocol.h kPort
+const PLUGIN_PORT = DISPLAY_PORT;
 const PROTOCOL = 1;
 const LIVE_MS = 50; // ~20 Hz, as the app pushes to its window (main/race.ts)
 const COURSE_MS = 2000; // UDP may drop it: say it again
@@ -52,17 +53,6 @@ if (!course) {
 }
 const rev = courseRevision(course);
 
-/** As RaceView's GATE_NAME. */
-const GATE_NAME: Record<GateType, string> = {
-  start: 'Start',
-  finish: 'Finish',
-  gate: 'Gate',
-  level: 'Level gate',
-  knife: 'Knife-edge gate',
-  inverted: 'Inverted gate',
-  turn: 'Turn pylon',
-};
-
 const session = new RaceSession(course, {
   pilot: 'H3',
   appVersion: 'probe-h3',
@@ -72,56 +62,22 @@ const session = new RaceSession(course, {
 
 // ---------------------------------------------------------------- the messages
 
-const msg = (kind: string, rows: (string | number)[][]): Buffer =>
-  Buffer.from([['XPR', PROTOCOL, kind], ...rows].map((r) => r.join('\t')).join('\n'), 'utf8');
-
-function courseMessage(c: Course): Buffer {
-  const gateIndex = new Map(c.gates.map((g, i) => [g.id, i]));
-  return msg('course', [
-    ['name', c.name],
-    ['rev', rev],
-    ...c.gates.map((g, i) => ['gate', i, g.type, g.center.lat.toFixed(7), g.center.lon.toFixed(7), g.headingDeg.toFixed(1)]),
-    ...packPylons(c).map((p) => {
-      const gi = gateIndex.get(p.object.id.split('.')[0]!)!;
-      return ['pylon', gi, p.object.position.lat.toFixed(7), p.object.position.lon.toFixed(7)];
-    }),
-  ]);
+/** Just enough of the app's telemetry status for its status line. */
+function telemetry(): TelemetryStatus {
+  const fresh = lastFixAt > 0 && Date.now() - lastFixAt <= 2000;
+  return {
+    active: fresh ? (DEMO ? 'demo' : 'rpos') : null,
+    aircraft: null,
+    rpos: { ageS: null, hz: RPOS_HZ, error: null, shared: false },
+    replay: false,
+    webApi: { ok: false, error: null },
+    demo: { running: DEMO && fresh },
+  };
 }
 
-/** The status line of RaceView's StatusLine, for the states this probe can be in. */
-function statusLine(): string {
-  const r = session.live().race;
-  if (r.status === 'finished') return 'Finished';
-  if (r.status === 'dnf') return `Did not finish${dnfText(r) ? ` · ${dnfText(r)}` : ''}`;
-  if (!lastFixAt || Date.now() - lastFixAt > 2000) return DEMO ? 'Demo flight starting…' : 'Waiting for X-Plane…';
-  return r.status === 'running' ? 'Racing' : 'Armed — fly through the start gate';
-}
-
-function liveMessage(): Buffer {
+function liveNow(): Buffer {
   const live = session.live();
-  const r = live.race;
-  const over = r.status === 'finished' || r.status === 'dnf';
-  const next = over ? null : session.engine.nextGateIndex;
-  const gate = next !== null ? course!.gates[next]! : null;
-  const passed = new Set(r.passes.map((p) => p.gateIndex));
-  const missed = new Set(r.penalties.filter((p) => p.kind === 'missed-gate').map((p) => p.gateIndex));
-  const states = course!.gates.map((_, i) => (i === next ? 'n' : missed.has(i) ? 'm' : passed.has(i) ? 'd' : 't')).join('');
-  const lap = r.laps > 1 && r.status === 'running' ? ` · lap ${r.lap} of ${r.laps}` : '';
-  const last = r.penalties[r.penalties.length - 1];
-  const pen = last ? `+${r.penaltyTotal.toFixed(1)} s · gate ${last.gateIndex + 1}: ${penaltyReason(last, course!)}` : '';
-  const fix = live.fix;
-  return msg('live', [
-    ['rev', rev],
-    ['status', r.status],
-    ['line', statusLine()],
-    ['time', fmtTime(r.total)],
-    ['next', next ?? -1],
-    ['title', gate ? `${next! + 1} · ${GATE_NAME[gate.type]}${lap}` : ''],
-    ['needs', gate ? gateRequirements(gate, course!).join(' · ') : ''],
-    ['pen', pen],
-    ['gates', states],
-    ...(fix ? [['fix', fix.lat.toFixed(7), fix.lon.toFixed(7), fix.headingDeg.toFixed(1), DEMO ? 1 : 0]] : []),
-  ]);
+  return Buffer.from(liveMessage(course!, live, statusLine(live.race, telemetry()).text, DEMO));
 }
 
 // ---------------------------------------------------------------- the race
@@ -159,9 +115,9 @@ display.on('message', (m) => {
 
 display.bind(0, '127.0.0.1', () => {
   console.log(`${course.name} (${course.id}, rev ${rev}) → plugin on 127.0.0.1:${PLUGIN_PORT}${DEMO ? ', demo flight' : ''}`);
-  send(courseMessage(course));
-  setInterval(() => send(courseMessage(course)), COURSE_MS);
-  setInterval(() => send(liveMessage()), LIVE_MS);
+  send(Buffer.from(courseMessage(course)));
+  setInterval(() => send(Buffer.from(courseMessage(course))), COURSE_MS);
+  setInterval(() => send(liveNow()), LIVE_MS);
   setInterval(() => {
     if (hellos === 0) console.log('no hello from the plugin yet (is X-Plane running with XPR_H3_Display?)');
     hellos = 0;

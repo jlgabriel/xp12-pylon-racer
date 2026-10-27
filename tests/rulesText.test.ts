@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { Pass } from "../src/core/race/engine";
 import { sampleCourses } from "../src/core/demo/sampleCourses";
-import { dnfText, gateRequirements, penaltyReason } from "../src/renderer/race/rulesText";
+import { dnfText, gateRequirements, penaltyReason, statusLine } from "../src/core/race/rulesText";
+import type { TelemetryStatus } from "../src/shared/racerApi";
 
 const rules = sampleCourses().find((c) => c.id === "kdag-rules-test")!;
 
@@ -31,5 +32,22 @@ describe("rules text", () => {
     expect(dnfText({ dnfReason: "stopped", passes: [pass], sequence: [0, 1, 2], step: 2 })).toBe("crashed or paused after gate 2");
     expect(dnfText({ dnfReason: "missed-gate", passes: [pass], sequence: [0, 1, 2], step: 2 })).toBe("missed gate 3");
     expect(dnfText({ dnfReason: null, passes: [], sequence: [0, 1, 2], step: 0 })).toBeNull();
+  });
+
+  it("says what the status line says, for the race screen and the in-sim display alike", () => {
+    const sim = (o: Partial<TelemetryStatus> = {}): TelemetryStatus => ({
+      active: "rpos",
+      aircraft: null,
+      rpos: { ageS: 0, hz: 30, error: null, shared: false },
+      replay: false,
+      webApi: { ok: true, error: null },
+      demo: { running: false },
+      ...o,
+    });
+    expect(statusLine(null, null)).toEqual({ text: "Waiting for X-Plane…", held: false });
+    expect(statusLine({ status: "waiting" }, sim()).text).toBe("Armed — fly through the start gate");
+    expect(statusLine({ status: "running" }, sim()).text).toBe("Racing");
+    expect(statusLine({ status: "running" }, sim({ replay: true }))).toEqual({ text: "Replay: not racing", held: true });
+    expect(statusLine({ status: "finished" }, sim({ replay: true }))).toEqual({ text: "Finished", held: false });
   });
 });

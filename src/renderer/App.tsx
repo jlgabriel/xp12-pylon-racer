@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AIRCRAFT_CLASSES, classLabel, classOfAircraft, resolveClass } from "../core/ranking/classes";
 import type { SketchPoint, TelemetryStatus } from "../shared/racerApi";
-import { REPLAY, REPLAY_HINT, RPOS_SHARED } from "./app/feedText";
-import { fmtDistance, fmtTime } from "./app/format";
+import { REPLAY, REPLAY_HINT, RPOS_SHARED } from "../core/telemetry/feedText";
+import { fmtDistance, fmtTime } from "../core/format";
 import { LogoMark } from "./app/Logo";
 import { Designer } from "./design/Designer";
 import { RaceView } from "./race/RaceView";

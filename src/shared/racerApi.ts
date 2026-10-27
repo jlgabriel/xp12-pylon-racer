@@ -118,10 +118,19 @@ export interface TelemetryStatus {
   demo: { running: boolean };
 }
 
+/** Our X-Plane plugin showing the race inside the sim (main/display.ts), as its hello says. */
+export interface DisplayStatus {
+  connected: boolean;
+  plugin: string | null;
+  /** As XPLMGetVersions gives it: 12431 for 12.4.3. */
+  xplane: number | null;
+}
+
 export interface LiveUpdate {
   telemetry: TelemetryStatus;
   /** Null while no course is selected. */
   live: LiveState | null;
+  display: DisplayStatus;
 }
 
 export interface AppInfo {
