@@ -79,8 +79,19 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
 - **Tercera carrera, con el reloj a la vista: 27,51 s** ("ahora sí!"). Al terminar, "Finished",
   el tiempo grande y todas las puertas en gris. 49–60 fps y 0,05–0,07 ms por dibujo. El `1` del
   reloj queda a la derecha de su casilla, como en cualquier display de siete segmentos.
-- **Falta:** Pop out, VR, la tecla de `xpr/h3/toggle_display`, la columna `gpu` oculta contra
-  visible (versión instalada después de esta carrera) y repetir en la 12.4.4.
+- **Cuarta carrera, 27,38 s**, con la versión que mide la GPU: el reloj gris esperando, blanco
+  corriendo y gris otra vez al terminar. Idea de Juan a pensar: el tiempo final quizás debería
+  quedar destacado, no apagado.
+- **Cambiar el tamaño:** el mapa se agranda con la ventana. El reloj no, porque tiene un tope de
+  64 px.
+- **Pop out ✅:** queda como una ventana de Windows de verdad y sigue dibujando todo. Arriba a la
+  derecha se ve un cuadradito, que parece un resto de la decoración de X-Plane.
+- **GPU** (`gpu_time_per_frame_sec_approx`): con la ventana en el sim, **5,5–6 ms** a 60 fps
+  topados. **Con la ventana aparte bajó a 30–42 fps y 6,5–8,4 ms** en tres períodos. Puede ser el
+  costo de una ventana más del sistema o que Juan la estaba moviendo: repetirlo quieto.
+- El menú *Plugins › XP Pylon Racer (H3)* funciona.
+- **Falta:** oculta contra visible (no quedó ningún período con la ventana oculta), VR, una tecla
+  para `xpr/h3/toggle_display`, Pop out quieto, y repetir en la 12.4.4.
 
 ## Antes (con X-Plane cerrado)
 
