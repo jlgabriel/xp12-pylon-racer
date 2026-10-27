@@ -1,9 +1,10 @@
-// Probe H3: the in-sim display. A modern X-Plane window that draws what the app sends over UDP
+// XP Pylon Racer's in-sim display. A modern X-Plane window that draws what the app sends over UDP
 // (protocol.h): it never judges the race. The one thing it computes itself is where the next gate
 // is from the nose, from the sim's own position every frame, so the arrow is smoother than RPOS.
+// Flown as probe H3 (probes/H3/FLIGHT.md).
 //
 // Only XPLM301 APIs (X-Plane 11.50 and newer), so the same build runs on 12.4.3 and on 12.4.4.
-// Every 10 s it writes what the probe measures to Log.txt (lines start with "XPR_H3:").
+// The window stays hidden until the app first speaks, and remembers where it was left.
 
 #include <algorithm>
 #include <chrono>
@@ -11,6 +12,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -35,9 +37,11 @@
 
 namespace {
 
-constexpr const char* kVersion = "0.1.0-h3";
+#ifndef XPR_VERSION
+#define XPR_VERSION "dev"
+#endif
+constexpr const char* kVersion = XPR_VERSION;  // the app's version, from package.json (scripts/plugin.ts)
 constexpr double kStaleS = 2.0;      // no message for this long = the app is gone
-constexpr double kLogEveryS = 10.0;  // the probe's measurements, to Log.txt
 constexpr double kHelloEveryS = 1.0;
 constexpr double kCloseM = 150;      // nearer than this (or the gate's width), the arrow shows the gate's heading
 
@@ -100,35 +104,35 @@ XPLMWindowID gWindow = nullptr;
 XPLMMenuID gMenu = nullptr;
 XPLMCommandRef gToggle = nullptr;
 XPLMFlightLoopID gLoop = nullptr;
-XPLMDataRef gLat, gLon, gPsi, gFramePeriod, gGpuTime, gVr;
+XPLMDataRef gLat, gLon, gPsi, gFramePeriod, gVr;
 
 xpr::Udp gUdp;
 xpr::Course gCourse;
 xpr::Live gLive;
 bool gWrongVersion = false;
 double gLastRx = -1e9;
+/** The window shows itself the first time the app speaks, unless the pilot already showed or hid it. */
+bool gShownOnce = false;
 
 using Clock = std::chrono::steady_clock;
 const Clock::time_point gT0 = Clock::now();
 double now() { return std::chrono::duration<double>(Clock::now() - gT0).count(); }
 
-/** What the probe measures, per log period. */
+/** What the hello tells the app, per second. */
 struct Stats {
   double since = 0;
   int frames = 0;
   double frameSum = 0;  // sim/time/framerate_period, summed per flight loop
-  double gpuSum = 0;    // sim/time/gpu_time_per_frame_sec_approx: moves even with the fps capped
   int draws = 0;
   double drawSum = 0, drawMax = 0;  // ms in our draw callback
-  int rxCourse = 0, rxLive = 0, rxOther = 0;
+  int rxLive = 0;
   int fixN = 0;
-  double fixSum = 0, fixMax = 0;  // m between the sim's position now and the app's last fix
+  double fixSum = 0;  // m between the sim's position now and the app's last fix
   double fps() const { return frameSum > 0 ? frames / frameSum : 0; }
-  double gpuMs() const { return frames > 0 ? gpuSum / frames * 1000 : 0; }
   void reset(double t) { *this = Stats{}; since = t; }
 };
-Stats gStats, gHelloStats;
-double gLastLog = 0, gLastHello = 0;
+Stats gStats;
+double gLastHello = 0;
 
 // ---------------------------------------------------------------- drawing helpers
 
@@ -315,7 +319,7 @@ void draw(XPLMWindowID win, void*) {
     text(kBad, l + pad, y, gUdp.error().empty() ? "No UDP socket" : gUdp.error());
   } else if (stale) {
     text(kMuted, l + pad, y, "Waiting for XP Pylon Racer...");
-    text(kMuted, l + pad, y - lineH, "Start the app (or npm run probe:display) on this computer.");
+    text(kMuted, l + pad, y - lineH, "Open a course in the app on this computer.");
   } else if (!gCourse.valid || gCourse.rev != gLive.rev) {
     text(kMuted, l + pad, y, "Waiting for the course...");
   } else {
@@ -386,11 +390,9 @@ void draw(XPLMWindowID win, void*) {
   }
 
   double ms = std::chrono::duration<double, std::milli>(Clock::now() - start).count();
-  for (Stats* s : {&gStats, &gHelloStats}) {
-    ++s->draws;
-    s->drawSum += ms;
-    s->drawMax = std::max(s->drawMax, ms);
-  }
+  ++gStats.draws;
+  gStats.drawSum += ms;
+  gStats.drawMax = std::max(gStats.drawMax, ms);
 }
 
 int onMouse(XPLMWindowID, int, int, XPLMMouseStatus, void*) { return 1; }
@@ -398,16 +400,47 @@ int onWheel(XPLMWindowID, int, int, int, int, void*) { return 0; }
 void onKey(XPLMWindowID, char, XPLMKeyFlags, char, void*, int) {}
 XPLMCursorStatus onCursor(XPLMWindowID, int, int, void*) { return xplm_CursorDefault; }
 
+// ---------------------------------------------------------------- where the window was left
+
+/** Output/preferences/XPPylonRacer.prf: one line, the window's box in X-Plane's global desktop
+ *  coordinates. A path the C++ library cannot open only means the window starts in its corner. */
+std::string prefsFile() {
+  char path[1024] = {};
+  XPLMGetPrefsPath(path);
+  XPLMExtractFileAndPath(path);  // leaves only the folder in `path`
+  return std::string(path) + XPLMGetDirectorySeparator() + "XPPylonRacer.prf";
+}
+
 void placeDefault() {
   int l, t, r, b;
   XPLMGetScreenBoundsGlobal(&l, &t, &r, &b);
   XPLMSetWindowGeometry(gWindow, r - 420, t - 80, r - 40, t - 560);
 }
 
+/** Back where the pilot left it, if its title bar is still on the screen; the top right otherwise. */
+void placeSaved() {
+  int sl, st, sr, sb;
+  XPLMGetScreenBoundsGlobal(&sl, &st, &sr, &sb);
+  int l = 0, t = 0, r = 0, b = 0;
+  std::ifstream in(prefsFile());
+  const bool onScreen = static_cast<bool>(in >> l >> t >> r >> b) && r - l >= 260 && t - b >= 220 && r - 40 > sl &&
+                        l + 40 < sr && t <= st && t - 20 > sb;
+  if (onScreen) XPLMSetWindowGeometry(gWindow, l, t, r, b);
+  else placeDefault();
+}
+
+/** Only a window inside the sim: popped out or in VR, X-Plane places it. */
+void saveGeometry() {
+  if (!gWindow || XPLMWindowIsPoppedOut(gWindow) || XPLMWindowIsInVR(gWindow)) return;
+  int l, t, r, b;
+  XPLMGetWindowGeometry(gWindow, &l, &t, &r, &b);
+  std::ofstream(prefsFile()) << l << ' ' << t << ' ' << r << ' ' << b << '\n';
+}
+
 void createWindow() {
   XPLMCreateWindow_t p{};
   p.structSize = sizeof p;
-  p.visible = 1;
+  p.visible = 0;  // until the app speaks: a pilot who is not racing gets no window
   p.drawWindowFunc = draw;
   p.handleMouseClickFunc = onMouse;
   p.handleRightClickFunc = onMouse;
@@ -421,56 +454,41 @@ void createWindow() {
   XPLMSetWindowTitle(gWindow, "XP Pylon Racer");
   XPLMSetWindowResizingLimits(gWindow, 260, 220, 1600, 1400);
   XPLMSetWindowPositioningMode(gWindow, xplm_WindowPositionFree, -1);
-  placeDefault();
+  placeSaved();
 }
 
-// ---------------------------------------------------------------- the loop: UDP, stats, log
+// ---------------------------------------------------------------- the loop: UDP and the hello
 
-void xlog(const std::string& s) { XPLMDebugString(("XPR_H3: " + s + "\n").c_str()); }
+void xlog(const std::string& s) { XPLMDebugString(("XP Pylon Racer: " + s + "\n").c_str()); }
 
-std::string statsLine(const Stats& s, double t) {
-  double span = std::max(0.001, t - s.since);
-  char b[512];
-  std::snprintf(b, sizeof b,
-                "fps %.1f | gpu %.2f ms | draw avg %.3f ms max %.3f ms (%d draws) | rx live %.1f Hz course %d other %d | "
-                "app fix vs sim %s | window %s",
-                s.fps(), s.gpuMs(), s.draws ? s.drawSum / s.draws : 0.0, s.drawMax, s.draws, s.rxLive / span, s.rxCourse, s.rxOther,
-                s.fixN ? (std::to_string(static_cast<int>(std::lround(s.fixSum / s.fixN))) + " m avg, " +
-                          std::to_string(static_cast<int>(std::lround(s.fixMax))) + " m max").c_str()
-                       : "-",
-                !XPLMGetWindowIsVisible(gWindow) ? "hidden"
-                : XPLMWindowIsInVR(gWindow)      ? "in VR"
-                : XPLMWindowIsPoppedOut(gWindow) ? "popped out"
-                                                 : "in the sim");
-  return b;
+void show() {
+  gShownOnce = true;
+  if (gWindow) XPLMSetWindowIsVisible(gWindow, 1);
 }
 
 float onLoop(float, float, int, void*) {
   const double t = now();
   if (gLat && gLon && gPsi) gSim = {true, XPLMGetDatad(gLat), XPLMGetDatad(gLon), XPLMGetDataf(gPsi), false};
-  if (gFramePeriod) {
-    float period = XPLMGetDataf(gFramePeriod);
-    float gpu = gGpuTime ? XPLMGetDataf(gGpuTime) : 0.0f;
-    for (Stats* s : {&gStats, &gHelloStats}) ++s->frames, s->frameSum += period, s->gpuSum += gpu;
-  }
+  if (gFramePeriod) ++gStats.frames, gStats.frameSum += XPLMGetDataf(gFramePeriod);
 
   static char buf[65536];
   for (std::size_t n; (n = gUdp.receive(buf, sizeof buf)) > 0;) {
-    gLastRx = t;
     const std::string revBefore = gCourse.rev;
     xpr::Kind k = xpr::parse(buf, n, gCourse, gLive);
+    if (k == xpr::Kind::None) continue;  // not ours
+    gLastRx = t;
     gWrongVersion = k == xpr::Kind::WrongVersion;
-    for (Stats* s : {&gStats, &gHelloStats}) {
-      if (k == xpr::Kind::Live) ++s->rxLive;
-      else if (k == xpr::Kind::Course) ++s->rxCourse;
-      else ++s->rxOther;
+    if (!gShownOnce) {
+      show();
+      xlog("the app is here: showing the display");
     }
     // The course is resent every 2 s: log it when it changes, not each time.
-    if (k == xpr::Kind::Course && gCourse.rev != revBefore) xlog("course: " + gCourse.name + " (" + std::to_string(gCourse.gates.size()) + " gates, rev " + gCourse.rev + ")");
-    // How far the app's fix (RPOS, ~30 Hz) is from the sim's position as this packet arrives.
-    if (k == xpr::Kind::Live && gLive.hasFix && !gLive.demo && gSim.valid) {
-      double d = haversine(gLive.lat, gLive.lon, gSim.lat, gSim.lon);
-      for (Stats* s : {&gStats, &gHelloStats}) ++s->fixN, s->fixSum += d, s->fixMax = std::max(s->fixMax, d);
+    if (k == xpr::Kind::Course && gCourse.rev != revBefore)
+      xlog("course: " + gCourse.name + " (" + std::to_string(gCourse.gates.size()) + " gates, rev " + gCourse.rev + ")");
+    if (k == xpr::Kind::Live) {
+      ++gStats.rxLive;
+      // How far the app's fix (RPOS, ~30 Hz) is from the sim's position as this packet arrives.
+      if (gLive.hasFix && !gLive.demo && gSim.valid) ++gStats.fixN, gStats.fixSum += haversine(gLive.lat, gLive.lon, gSim.lat, gSim.lon);
     }
   }
 
@@ -478,20 +496,11 @@ float onLoop(float, float, int, void*) {
     int xp = 0, xplm = 0;
     XPLMHostApplicationID host;
     XPLMGetVersions(&xp, &xplm, &host);
-    const Stats& s = gHelloStats;
-    char b[512];
-    std::snprintf(b, sizeof b,
-                  "XPR\t%d\thello\nplugin\t%s\nxplane\t%d\nxplm\t%d\nfps\t%.1f\ndraw_avg_ms\t%.3f\ndraw_max_ms\t%.3f\nrx_hz\t%.1f\nfix_diff_m\t%s\n",
-                  xpr::kProtocol, kVersion, xp, xplm, s.fps(), s.draws ? s.drawSum / s.draws : 0.0, s.drawMax,
-                  s.rxLive / std::max(0.001, t - s.since), s.fixN ? std::to_string(s.fixSum / s.fixN).c_str() : "-");
-    gUdp.reply(b);
-    gHelloStats.reset(t);
-    gLastHello = t;
-  }
-  if (t - gLastLog >= kLogEveryS) {
-    xlog(statsLine(gStats, t));
+    const Stats& s = gStats;
+    gUdp.reply(xpr::helloMessage({kVersion, xp, xplm, s.fps(), s.draws ? s.drawSum / s.draws : 0.0, s.drawMax,
+                                  s.rxLive / std::max(0.001, t - s.since), s.fixN ? s.fixSum / s.fixN : -1.0}));
     gStats.reset(t);
-    gLastLog = t;
+    gLastHello = t;
   }
   return -1.0f;  // every frame
 }
@@ -502,7 +511,7 @@ enum MenuItem : intptr_t { kPopOut = 1, kVr, kBack };
 
 void moveTo(intptr_t where) {
   if (!gWindow) return;
-  XPLMSetWindowIsVisible(gWindow, 1);
+  show();
   if (where == kPopOut) {
     XPLMSetWindowPositioningMode(gWindow, xplm_WindowPopOut, -1);
   } else if (where == kVr) {
@@ -510,15 +519,17 @@ void moveTo(intptr_t where) {
     else xlog("Move into VR: VR is not on");
   } else {
     XPLMSetWindowPositioningMode(gWindow, xplm_WindowPositionFree, -1);
-    placeDefault();
+    placeSaved();
   }
-  xlog(std::string("window moved: ") + (where == kPopOut ? "pop out" : where == kVr ? "VR" : "back into the sim"));
 }
 
 void onMenu(void*, void* item) { moveTo(reinterpret_cast<intptr_t>(item)); }
 
 int onToggle(XPLMCommandRef, XPLMCommandPhase phase, void*) {
-  if (phase == xplm_CommandBegin && gWindow) XPLMSetWindowIsVisible(gWindow, !XPLMGetWindowIsVisible(gWindow));
+  if (phase == xplm_CommandBegin && gWindow) {
+    gShownOnce = true;  // hidden on purpose: the app does not bring it back
+    XPLMSetWindowIsVisible(gWindow, !XPLMGetWindowIsVisible(gWindow));
+  }
   return 0;
 }
 
@@ -527,29 +538,28 @@ int onToggle(XPLMCommandRef, XPLMCommandPhase phase, void*) {
 // ---------------------------------------------------------------- the plugin's entry points
 
 PLUGIN_API int XPluginStart(char* name, char* sig, char* desc) {
-  std::strcpy(name, "XP Pylon Racer display (probe H3)");
-  std::strcpy(sig, "jlgabriel.xppylonracer.h3");
+  std::strcpy(name, "XP Pylon Racer");
+  std::strcpy(sig, "jlgabriel.xppylonracer.display");
   std::strcpy(desc, "Shows the race from XP Pylon Racer inside X-Plane.");
+  XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
 
   gLat = XPLMFindDataRef("sim/flightmodel/position/latitude");
   gLon = XPLMFindDataRef("sim/flightmodel/position/longitude");
   gPsi = XPLMFindDataRef("sim/flightmodel/position/true_psi");
   gFramePeriod = XPLMFindDataRef("sim/time/framerate_period");
-  gGpuTime = XPLMFindDataRef("sim/time/gpu_time_per_frame_sec_approx");
   gVr = XPLMFindDataRef("sim/graphics/VR/enabled");
 
   int xp = 0, xplm = 0;
   XPLMHostApplicationID host;
   XPLMGetVersions(&xp, &xplm, &host);
-  xlog(std::string("start ") + kVersion + ", X-Plane " + std::to_string(xp) + ", XPLM " + std::to_string(xplm) +
-      ", built with SDK 4.3.0 at XPLM301");
+  xlog(std::string("start ") + kVersion + ", X-Plane " + std::to_string(xp) + ", XPLM " + std::to_string(xplm));
 
   createWindow();
 
-  gToggle = XPLMCreateCommand("xpr/h3/toggle_display", "XP Pylon Racer: show or hide the display");
+  gToggle = XPLMCreateCommand("xpr/toggle_display", "XP Pylon Racer: show or hide the display");
   XPLMRegisterCommandHandler(gToggle, onToggle, 1, nullptr);
-  int item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "XP Pylon Racer (H3)", nullptr, 0);
-  gMenu = XPLMCreateMenu("XP Pylon Racer (H3)", XPLMFindPluginsMenu(), item, onMenu, nullptr);
+  int item = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "XP Pylon Racer", nullptr, 0);
+  gMenu = XPLMCreateMenu("XP Pylon Racer", XPLMFindPluginsMenu(), item, onMenu, nullptr);
   XPLMAppendMenuItemWithCommand(gMenu, "Show / hide the display", gToggle);
   XPLMAppendMenuItem(gMenu, "Pop out into its own window", reinterpret_cast<void*>(kPopOut), 0);
   XPLMAppendMenuItem(gMenu, "Move into VR", reinterpret_cast<void*>(kVr), 0);
@@ -558,11 +568,11 @@ PLUGIN_API int XPluginStart(char* name, char* sig, char* desc) {
 }
 
 PLUGIN_API void XPluginStop() {
+  saveGeometry();
   if (gMenu) XPLMDestroyMenu(gMenu);
   if (gToggle) XPLMUnregisterCommandHandler(gToggle, onToggle, 1, nullptr);
   if (gWindow) XPLMDestroyWindow(gWindow);
   gMenu = nullptr, gWindow = nullptr;
-  xlog("stop");
 }
 
 PLUGIN_API int XPluginEnable() {
@@ -572,7 +582,6 @@ PLUGIN_API int XPluginEnable() {
   gLoop = XPLMCreateFlightLoop(&fl);
   XPLMScheduleFlightLoop(gLoop, -1.0f, 1);
   gStats.reset(now());
-  gHelloStats.reset(now());
   return 1;
 }
 

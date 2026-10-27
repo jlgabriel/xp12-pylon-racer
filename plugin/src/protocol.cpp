@@ -1,5 +1,6 @@
 #include "protocol.h"
 
+#include <cstdio>
 #include <cstdlib>
 
 namespace xpr {
@@ -88,6 +89,16 @@ Kind parse(const char* data, std::size_t len, Course& course, Live& live) {
 
   if (head[2] == "hello") return Kind::Hello;
   return Kind::None;
+}
+
+std::string helloMessage(const Hello& h) {
+  char fix[32] = "-";
+  if (h.fixDiffM >= 0) std::snprintf(fix, sizeof fix, "%.1f", h.fixDiffM);
+  char b[512];
+  std::snprintf(b, sizeof b,
+                "XPR\t%d\thello\nplugin\t%s\nxplane\t%d\nxplm\t%d\nfps\t%.1f\ndraw_avg_ms\t%.3f\ndraw_max_ms\t%.3f\nrx_hz\t%.1f\nfix_diff_m\t%s\n",
+                kProtocol, h.plugin.c_str(), h.xplane, h.xplm, h.fps, h.drawAvgMs, h.drawMaxMs, h.rxHz, fix);
+  return b;
 }
 
 }  // namespace xpr

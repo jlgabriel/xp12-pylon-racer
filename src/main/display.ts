@@ -1,4 +1,4 @@
-// The in-sim display: the race, sent to our X-Plane plugin (probe H3) on 127.0.0.1:49710 with every
+// The in-sim display: the race, sent to our X-Plane plugin (plugin/) on 127.0.0.1:49710 with every
 // live update. Nothing to switch on: without the plugin the datagrams go nowhere, and the plugin
 // answers with a hello once a second, which is how the app knows it is there.
 import dgram from "node:dgram";

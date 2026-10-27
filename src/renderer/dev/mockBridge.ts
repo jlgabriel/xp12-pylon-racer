@@ -76,7 +76,7 @@ export function installMockBridge(): void {
   const shared = query.has("shared");
   const replay = query.has("replay");
   // &display: our plugin shows the race inside X-Plane.
-  const displayStatus = query.has("display") ? { connected: true, plugin: "0.1.0-h3", xplane: 12431 } : { connected: false, plugin: null, xplane: null };
+  const displayStatus = query.has("display") ? { connected: true, plugin: "1.4.0", xplane: 12431 } : { connected: false, plugin: null, xplane: null };
   const telemetry = (): TelemetryStatus => {
     const streaming = replay || (shared && Math.floor(performance.now() / 3000) % 2 === 0);
     return {

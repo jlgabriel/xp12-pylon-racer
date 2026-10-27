@@ -119,7 +119,7 @@ display.bind(0, '127.0.0.1', () => {
   setInterval(() => send(Buffer.from(courseMessage(course))), COURSE_MS);
   setInterval(() => send(liveNow()), LIVE_MS);
   setInterval(() => {
-    if (hellos === 0) console.log('no hello from the plugin yet (is X-Plane running with XPR_H3_Display?)');
+    if (hellos === 0) console.log('no hello from the plugin yet (is X-Plane running with the XPPylonRacer plugin?)');
     hellos = 0;
   }, 10_000);
 });

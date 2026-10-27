@@ -1,0 +1,9 @@
+XPR	1	hello
+plugin	1.4.0
+xplane	12431
+xplm	430
+fps	59.8
+draw_avg_ms	0.065
+draw_max_ms	0.190
+rx_hz	17.0
+fix_diff_m	2.1

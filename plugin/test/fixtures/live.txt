@@ -1,0 +1,11 @@
+XPR	1	live
+rev	4d4d30053ae44774
+status	running
+line	Racing
+time	00:07.50
+next	2
+title	3 · Knife-edge gate
+needs	knife edge, 90° ±15°
+pen	
+gates	ddnttt
+fix	34.8665000	-116.8263765	270.0	1

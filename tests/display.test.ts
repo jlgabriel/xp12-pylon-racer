@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { courseRevision } from "../src/core/course/course";
 import { demoFlight } from "../src/core/demo/demoFlight";
@@ -79,5 +80,30 @@ describe("the in-sim display's wire format", () => {
     expect(parseHello(new TextEncoder().encode("RPOS\0"))).toBeNull();
     expect(xplaneVersionText(12431)).toBe("12.4.3");
     expect(xplaneVersionText(12440)).toBe("12.4.4");
+  });
+});
+
+// The plugin's test (plugin/test/wire_test.cpp) parses these same files: a change to the messages
+// shows up here first, and `npx vitest run -u` rewrites them for the plugin to check.
+describe("the messages the plugin is tested against", () => {
+  const fixture = (name: string): string => `../plugin/test/fixtures/${name}`;
+  const text = (bytes: Uint8Array): string => new TextDecoder().decode(bytes);
+
+  it("course, a race under way and a new best", async () => {
+    await expect(text(courseMessage(rules))).toMatchFileSnapshot(fixture("course.txt"));
+    const session = new RaceSession(rules, ctx);
+    let running: Uint8Array | null = null;
+    for (const f of demoFlight(rules, { rateHz: 10 })) {
+      session.feed(f, { kind: "demo", hz: 10, aircraft: null });
+      if (!running && session.live().nextGate?.index === 2) running = liveMessage(rules, session.live(), "Racing", true);
+    }
+    await expect(text(running!)).toMatchFileSnapshot(fixture("live.txt"));
+    const best = liveMessage(rules, session.live(), "Finished", false, { tone: "best", text: "New best!" });
+    await expect(text(best)).toMatchFileSnapshot(fixture("best.txt"));
+  });
+
+  it("the plugin's hello, as the plugin writes it", () => {
+    const hello = parseHello(readFileSync(new URL(fixture("hello.txt"), import.meta.url)));
+    expect(hello).toEqual({ plugin: "1.4.0", xplane: 12431, fps: 59.8 });
   });
 });

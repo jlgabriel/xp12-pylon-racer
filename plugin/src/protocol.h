@@ -1,5 +1,5 @@
-// The probe's wire format, app -> plugin, and back. No XPLM here, so the same parser runs in the
-// plugin and in the listen test (test/listen.cpp) that checks it without the sim.
+// The wire format, app -> plugin, and back (the app side is src/core/display/wire.ts). No XPLM here,
+// so the same parser runs in the plugin, in its test (test/wire_test.cpp) and in test/listen.cpp.
 //
 // One UDP datagram is one message: UTF-8 lines separated by '\n', fields by '\t' (names have spaces).
 // The first line is always `XPR <version> <kind>`; a message with another version is ignored, and
@@ -63,6 +63,15 @@ struct Live {
 };
 
 enum class Kind { None, Course, Live, Hello, WrongVersion };
+
+/** What the plugin says about itself once a second. fixDiffM < 0 = no fix from the sim to compare. */
+struct Hello {
+  std::string plugin;
+  int xplane = 0, xplm = 0;
+  double fps = 0, drawAvgMs = 0, drawMaxMs = 0, rxHz = 0, fixDiffM = -1;
+};
+
+std::string helloMessage(const Hello& h);
 
 /** Parses one datagram into `course` or `live` (only the one it carries is touched). */
 Kind parse(const char* data, std::size_t len, Course& course, Live& live);

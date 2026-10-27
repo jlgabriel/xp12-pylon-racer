@@ -2,7 +2,7 @@
 // what they understood once a second and answering `hello` like the plugin does. It binds the
 // plugin's port, so it cannot run while X-Plane has the plugin loaded.
 //
-//   xpr_h3_listen [seconds]      (0 or nothing = until Ctrl+C)
+//   xpr_listen [seconds]      (0 or nothing = until Ctrl+C)
 
 #include <chrono>
 #include <cstdio>
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
                     live.hasFix ? (live.demo ? "demo" : "sim") : "none", live.lat, live.lon, live.headingDeg);
       std::fflush(stdout);
       nCourse = nLive = nOther = nWrong = 0;
-      udp.reply("XPR\t1\thello\nplugin\tlisten-test\nxplane\t0\nxplm\t0\nfps\t0\ndraw_avg_ms\t0\ndraw_max_ms\t0\nrx_hz\t0\nfix_diff_m\t-\n");
+      udp.reply(xpr::helloMessage({"listen-test"}));
     }
     if (seconds > 0 && now - t0 >= std::chrono::duration<double>(seconds)) return 0;
     std::this_thread::sleep_for(std::chrono::milliseconds(5));

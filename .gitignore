@@ -21,8 +21,11 @@ scratch/
 # A run worth keeping is summarised into its probe's FLIGHT.md, not committed raw.
 probes/H1/XPR_*/
 probes/H0/runs/
-# Probe H3: the X-Plane SDK is downloaded, not committed; the build and the plugin folder are rebuilt
-# by `npm run probe:plugin`.
+# The in-sim display plugin: the X-Plane SDK is downloaded, not committed; the build and the plugin
+# folder are rebuilt by `npm run plugin`.
+plugin/sdk/
+plugin/build/
+plugin/out/
 probes/H3/sdk/
 probes/H3/build/
 probes/H3/XPR_*/

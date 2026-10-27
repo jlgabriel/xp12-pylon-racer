@@ -1,5 +1,6 @@
 // The in-sim display's wire format: what the app sends the X-Plane plugin, and the plugin's answer.
-// The plugin side is probes/H3/plugin/src/protocol.h; the two change together, with the version.
+// The plugin side is plugin/src/protocol.h; the two change together, with the version, and
+// plugin/test/fixtures holds these messages for the plugin's own test.
 //
 // The plugin only draws: the race is judged here, and the words are the race screen's own
 // (rulesText.ts), so the window and the sim never say different things.

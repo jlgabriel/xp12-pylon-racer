@@ -17,6 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true
   },
-  "include": ["src", "tests", "e2e", "probes", "vitest.config.ts", "playwright.config.ts"],
+  "include": ["src", "tests", "e2e", "probes", "scripts", "vitest.config.ts", "playwright.config.ts"],
   "exclude": ["src/renderer", "node_modules", "out", "dist"]
 }

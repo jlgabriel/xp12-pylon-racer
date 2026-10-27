@@ -80,9 +80,71 @@ jobs:
             dist/*.dmg
             dist/*.AppImage
 
+  # The in-sim display plugin, built on each system like the installers, then zipped into ONE download
+  # that holds all three (X-Plane picks its own folder: win_x64, mac_x64, lin_x64).
+  plugin:
+    name: plugin · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # ubuntu-22.04, not latest: a plugin built against an older glibc loads on more distributions.
+        os: [windows-latest, macos-latest, ubuntu-22.04]
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: OpenGL headers
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgl-dev
+      - name: Build and test the plugin
+        run: npm run plugin
+      - name: Upload the plugin
+        uses: actions/upload-artifact@v6
+        with:
+          name: plugin-${{ matrix.os }}
+          if-no-files-found: error
+          path: plugin/out/XPPylonRacer/
+
+  plugin-zip:
+    name: plugin zip
+    needs: plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download the three builds
+        uses: actions/download-artifact@v7
+        with:
+          path: pkg/XPPylonRacer
+          pattern: plugin-*
+          merge-multiple: true
+      - name: Zip
+        run: |
+          version=$(node -p "require('./package.json').version")
+          cp plugin/README.txt pkg/README.txt
+          cp LICENSE pkg/LICENSE.txt
+          ls -R pkg
+          test -f pkg/XPPylonRacer/win_x64/XPPylonRacer.xpl
+          test -f pkg/XPPylonRacer/mac_x64/XPPylonRacer.xpl
+          test -f pkg/XPPylonRacer/lin_x64/XPPylonRacer.xpl
+          mkdir -p dist
+          (cd pkg && zip -r -X "../dist/xp12-pylon-racer-plugin-$version.zip" .)
+      # Named like the installers so the release job picks it up with them.
+      - name: Upload the zip
+        uses: actions/upload-artifact@v6
+        with:
+          name: installers-plugin
+          if-no-files-found: error
+          path: dist/*.zip
+
   release:
     name: draft GitHub Release
-    needs: build
+    needs: [build, plugin-zip]
     runs-on: ubuntu-latest
     # Only a tag makes a release. A manual run stops after the artifacts, which is the point of it —
     # gh release create against a branch name would produce a release called "main".
