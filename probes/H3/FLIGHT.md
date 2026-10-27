@@ -105,7 +105,9 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
    flecha se mueve suave y si la puerta que sigue cambia al pasarla. Al final tiene que decir
    "Finished", y la terminal imprime el tiempo.
 10. **El costo:** con el avión estable, deja la ventana **oculta 20 s** y luego **visible 20 s**.
-    Las líneas del `Log.txt` comparan los fps.
+    Juan tiene los fps topados en 60 desde el driver de NVIDIA, así que los fps no muestran el
+    costo. Se compara la columna **`gpu … ms`** (`sim/time/gpu_time_per_frame_sec_approx`, que
+    Laminar llama aproximada) y el tiempo de dibujo propio, que es CPU.
 11. Sal al menú y corta la terminal con **Ctrl+C**.
 
 ## Después

@@ -99,7 +99,7 @@ XPLMWindowID gWindow = nullptr;
 XPLMMenuID gMenu = nullptr;
 XPLMCommandRef gToggle = nullptr;
 XPLMFlightLoopID gLoop = nullptr;
-XPLMDataRef gLat, gLon, gPsi, gFramePeriod, gVr;
+XPLMDataRef gLat, gLon, gPsi, gFramePeriod, gGpuTime, gVr;
 
 xpr::Udp gUdp;
 xpr::Course gCourse;
@@ -116,12 +116,14 @@ struct Stats {
   double since = 0;
   int frames = 0;
   double frameSum = 0;  // sim/time/framerate_period, summed per flight loop
+  double gpuSum = 0;    // sim/time/gpu_time_per_frame_sec_approx: moves even with the fps capped
   int draws = 0;
   double drawSum = 0, drawMax = 0;  // ms in our draw callback
   int rxCourse = 0, rxLive = 0, rxOther = 0;
   int fixN = 0;
   double fixSum = 0, fixMax = 0;  // m between the sim's position now and the app's last fix
   double fps() const { return frameSum > 0 ? frames / frameSum : 0; }
+  double gpuMs() const { return frames > 0 ? gpuSum / frames * 1000 : 0; }
   void reset(double t) { *this = Stats{}; since = t; }
 };
 Stats gStats, gHelloStats;
@@ -416,9 +418,9 @@ std::string statsLine(const Stats& s, double t) {
   double span = std::max(0.001, t - s.since);
   char b[512];
   std::snprintf(b, sizeof b,
-                "fps %.1f | draw avg %.3f ms max %.3f ms (%d draws) | rx live %.1f Hz course %d other %d | "
+                "fps %.1f | gpu %.2f ms | draw avg %.3f ms max %.3f ms (%d draws) | rx live %.1f Hz course %d other %d | "
                 "app fix vs sim %s | window %s",
-                s.fps(), s.draws ? s.drawSum / s.draws : 0.0, s.drawMax, s.draws, s.rxLive / span, s.rxCourse, s.rxOther,
+                s.fps(), s.gpuMs(), s.draws ? s.drawSum / s.draws : 0.0, s.drawMax, s.draws, s.rxLive / span, s.rxCourse, s.rxOther,
                 s.fixN ? (std::to_string(static_cast<int>(std::lround(s.fixSum / s.fixN))) + " m avg, " +
                           std::to_string(static_cast<int>(std::lround(s.fixMax))) + " m max").c_str()
                        : "-",
@@ -434,7 +436,8 @@ float onLoop(float, float, int, void*) {
   if (gLat && gLon && gPsi) gSim = {true, XPLMGetDatad(gLat), XPLMGetDatad(gLon), XPLMGetDataf(gPsi), false};
   if (gFramePeriod) {
     float period = XPLMGetDataf(gFramePeriod);
-    for (Stats* s : {&gStats, &gHelloStats}) ++s->frames, s->frameSum += period;
+    float gpu = gGpuTime ? XPLMGetDataf(gGpuTime) : 0.0f;
+    for (Stats* s : {&gStats, &gHelloStats}) ++s->frames, s->frameSum += period, s->gpuSum += gpu;
   }
 
   static char buf[65536];
@@ -518,6 +521,7 @@ PLUGIN_API int XPluginStart(char* name, char* sig, char* desc) {
   gLon = XPLMFindDataRef("sim/flightmodel/position/longitude");
   gPsi = XPLMFindDataRef("sim/flightmodel/position/true_psi");
   gFramePeriod = XPLMFindDataRef("sim/time/framerate_period");
+  gGpuTime = XPLMFindDataRef("sim/time/gpu_time_per_frame_sec_approx");
   gVr = XPLMFindDataRef("sim/graphics/VR/enabled");
 
   int xp = 0, xplm = 0;
