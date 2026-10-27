@@ -132,12 +132,14 @@ void glState() { XPLMSetGraphicsState(0, 0, 0, 0, 1, 0, 0); }
 
 void color(Rgb c, float a = 1.0f) { glColor4f(c.r, c.g, c.b, a); }
 
+/** Two triangles, not GL_QUADS: on 12.4.3 with Vulkan quads drew nothing (no background, no clock)
+ *  while lines and triangles did (first start, 2026-10-26). */
 void rect(float x0, float y0, float x1, float y1) {
-  glBegin(GL_QUADS);
+  glBegin(GL_TRIANGLE_STRIP);
   glVertex2f(x0, y0);
   glVertex2f(x1, y0);
-  glVertex2f(x1, y1);
   glVertex2f(x0, y1);
+  glVertex2f(x1, y1);
   glEnd();
 }
 
@@ -421,6 +423,7 @@ float onLoop(float, float, int, void*) {
   static char buf[65536];
   for (std::size_t n; (n = gUdp.receive(buf, sizeof buf)) > 0;) {
     gLastRx = t;
+    const std::string revBefore = gCourse.rev;
     xpr::Kind k = xpr::parse(buf, n, gCourse, gLive);
     gWrongVersion = k == xpr::Kind::WrongVersion;
     for (Stats* s : {&gStats, &gHelloStats}) {
@@ -428,7 +431,8 @@ float onLoop(float, float, int, void*) {
       else if (k == xpr::Kind::Course) ++s->rxCourse;
       else ++s->rxOther;
     }
-    if (k == xpr::Kind::Course) xlog("course: " + gCourse.name + " (" + std::to_string(gCourse.gates.size()) + " gates, rev " + gCourse.rev + ")");
+    // The course is resent every 2 s: log it when it changes, not each time.
+    if (k == xpr::Kind::Course && gCourse.rev != revBefore) xlog("course: " + gCourse.name + " (" + std::to_string(gCourse.gates.size()) + " gates, rev " + gCourse.rev + ")");
     // How far the app's fix (RPOS, ~30 Hz) is from the sim's position as this packet arrives.
     if (k == xpr::Kind::Live && gLive.hasFix && !gLive.demo && gSim.valid) {
       double d = haversine(gLive.lat, gLive.lon, gSim.lat, gSim.lon);

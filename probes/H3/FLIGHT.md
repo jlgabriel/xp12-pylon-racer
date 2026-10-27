@@ -46,6 +46,14 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   leía la latitud y la longitud. El flight loop **no** corre en el menú (no hubo ninguna línea de
   mediciones). Arreglado: la posición se lee sólo en el flight loop y el dibujo usa la última. Lo
   mismo valdrá para el plugin de verdad.
+- **Ya en el vuelo (KDAG 26):** el plugin contesta el `hello`. **59,5–59,8 fps** con la ventana
+  visible, **dibujo 0,065 ms** de promedio y 0,19 ms de máximo, 17 mensajes por segundo. Un solo
+  dibujo de 307 ms, en el período en que cargaba el vuelo (12 fps): a vigilar.
+- **Se dibuja con Vulkan:** la ventana, el estado, "1 · Start", "3.9 km", la flecha "ahead" y el
+  mapa con las 5 puertas en orden y el avión en el borde, mirando al oeste. El `—` se ve bien.
+- **`GL_QUADS` no dibuja nada:** no salieron ni el fondo negro, ni el reloj, ni los cuadraditos
+  de los pilones; las líneas y los triángulos sí. Ahora `rect` usa dos triángulos.
+- La pista se escribía en el `Log.txt` cada vez que llegaba (cada 2 s). Ahora, sólo cuando cambia.
 
 ## Antes (con X-Plane cerrado)
 
