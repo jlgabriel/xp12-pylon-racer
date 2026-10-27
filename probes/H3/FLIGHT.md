@@ -67,7 +67,9 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
 - Al terminar, la ventana dice "Finished" y todas las puertas pasan a gris.
 - **La flecha "se volvía loca" al pasar cada puerta** (Juan): apuntaba al centro, y pasando al
   costado el centro gira a 90° y luego queda atrás hasta que la app avisa el paso. Ahora, a
-  menos de 150 m (o del ancho de la puerta), apunta en el rumbo de la puerta. **A volar de nuevo.**
+  menos de 150 m (o del ancho de la puerta), apunta en el rumbo de la puerta. **Volado de nuevo
+  el mismo día: "la flecha ya no se vuelve loca"** ✅. El `Log.txt` de ese vuelo: 58–60 fps,
+  0,06 ms por dibujo, y la pista escrita una sola vez.
   La app tiene el mismo `TurnCue` y le pasa lo mismo, a menos frames.
 - Esta carrera se voló todavía sin el fondo negro ni el reloj (la versión con `GL_QUADS`).
 
