@@ -76,6 +76,11 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   "1 · Start" con su `·`, el nombre de la pista y los pilones en el mapa. El reloj salía blanco
   esperando la largada, cuando debía ser gris: el color se fijaba antes del `glState()` del reloj
   y se perdía. Ahora el reloj lo recibe y lo pone después.
+- **Tercera carrera, con el reloj a la vista: 27,51 s** ("ahora sí!"). Al terminar, "Finished",
+  el tiempo grande y todas las puertas en gris. 49–60 fps y 0,05–0,07 ms por dibujo. El `1` del
+  reloj queda a la derecha de su casilla, como en cualquier display de siete segmentos.
+- **Falta:** Pop out, VR, la tecla de `xpr/h3/toggle_display`, la columna `gpu` oculta contra
+  visible (versión instalada después de esta carrera) y repetir en la 12.4.4.
 
 ## Antes (con X-Plane cerrado)
 
