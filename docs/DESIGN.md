@@ -17,10 +17,10 @@ seis archivos; el plugin no cambia salvo el número de versión.
 `xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
 *Después de la H3*. Volado el mismo día en la 12.4.3 con la app (Daggett Sprint, 27,54 s); un
 arreglo de ese vuelo (la ventana que no nacía oculta) quedó sin volar. Tag `v1.4.0`, publicada el 2026-10-27
-con los seis archivos. El anuncio en X-Plane.org espera a volar ese arreglo (Juan).
+con los seis archivos.
 
 **1.3.1, 2026-10-26.** La 1.3 más la carpeta de X-Plane a la vista, con **Change…** para elegir
-otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario en X-Plane.org.
+otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario.
 
 **1.3.0, 2026-10-26.** La 1.2 más las dieciséis pistas de Juan (34 en total), abajo en *Después de
 la 1.2*. Tampoco se volaron; las notas lo dicen. Tag `v1.3.0`, mismo workflow.
@@ -35,8 +35,7 @@ release con pistas que nadie voló, y las notas lo dicen. Tag `v1.2.0`, mismo wo
 **1.0.0, publicada el 2026-10-25.** Tag `v1.0.0`; el workflow `release.yml` armó los cinco
 instaladores (Windows setup y portable, macOS x64 y arm64, AppImage) y el release
 [XP Pylon Racer 1.0.0](https://github.com/jlgabriel/xp12-pylon-racer/releases/tag/v1.0.0) se
-publicó a pedido de Juan. Juan la subió a X-Plane.org (Downloads › Utilities):
-[XP Pylon Racer](https://forums.x-plane.org/files/file/102104-xp-pylon-racer/).
+publicó a pedido de Juan.
 
 La 1.0 es la 0.2 más los pilones altos (D15), sin cambios de comportamiento desde el último vuelo.
 Juan confirmó el nombre (D2) y que esta app también registra `.pylonrace` (D14), y el README pasó a
@@ -282,7 +281,7 @@ más alta, y la descripción lo avisa.
 
 ### Después de la 1.3: la carpeta de X-Plane, a la vista
 
-Un usuario de X-Plane.org (danhopgood1, 2026-10-26) instaló pilones, la app dijo "installed" y en su
+Un usuario (2026-10-26) instaló pilones, la app dijo "installed" y en su
 X-Plane, en E:, no apareció nada. La app usa la primera instalación que siga existiendo en la lista de
 Laminar (`x-plane_install_12.txt`); con otra X-Plane 12 en C: el pack se escribió ahí. No había cómo
 verlo ni cambiarlo: la carpeta no se mostraba y "Choose folder…" sólo salía si no había ninguna (el
