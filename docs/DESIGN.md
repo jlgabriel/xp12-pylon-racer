@@ -9,6 +9,9 @@
 
 ## 0. Estado (2026-10-27, v1.4.0: la carrera dentro de X-Plane)
 
+**Sin release, 2026-10-27.** Diez pistas más de Juan (44 en total), sin volar: abajo en
+*Después de la 1.4*.
+
 **1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
 `xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
 *Después de la H3*. Volado el mismo día en la 12.4.3 con la app (Daggett Sprint, 27,54 s); un
@@ -366,6 +369,44 @@ después, si los usuarios lo piden.
 **Falta:** volar el arreglo del arranque, que la ventana vuelva donde quedó y que una ventana
 oculta por el piloto siga oculta; probarlo en macOS y Linux (sólo se compila), VR, y la 12.4.4. En macOS el
 zip bajado queda en cuarentena: el README del zip y el de la app dan el `xattr`.
+
+### Después de la 1.4: diez pistas más de Juan (sin volar todavía)
+
+Juan las preparó con ChatGPT el 2026-10-27 y las trajo como `.pylonrace`, igual que las dieciséis
+de la 1.3 (44 en total). Todas Tall y con el pilón `rodeo-25` (50 m a ese tamaño), como el Osorno:
+
+| Pista | Aeródromo | Largo | Qué pide |
+|---|---|---|---|
+| Aysén Fjord Speed Run | SCAS (34 km en línea; ~31 km por el agua) | 19,0 km | tramos de 2 km sobre el canal; todas las puertas 30–130 m |
+| Badwater Basin Precision Oval | L06 (25 km) | 2 × 4,6 km | óvalo antihorario a −82 m; 2 entre 30 y 60 m, 5 level |
+| Cochamó Granite Valley Run | SCKM (4 km) | 15,0 km | valle arriba de 7 a 335 m, paredes de 150–270 m; ≥ 50 m AGL |
+| Daggett Precision Cup | KDAG (9 km) | 2 × 5,6 km | horario; dos level y dos cuchillo por vuelta, a 600 m entre sí |
+| Futaleufú River Chase | SCFT (4,4 km) | 14,7 km | 26 puertas río abajo, once pilones de viraje alternados; 30–120 m |
+| Geiranger Fjord Challenge | XEN000I Stryn (24 km, sobre 1.400 m de montaña) | 15,0 km | la S del fiordo; 11 entre 25 y 55 m |
+| Glen Coe Highland Descent | EGEO (38 km; por Loch Linnhe) | 13,4 km | baja de 278 a 3 m; ≥ 50 m AGL |
+| Kornati Island Slalom | LDZD (34 km) | 17,0 km | mar entre islas; seis pilones de viraje alternados; 30–120 m |
+| Milford Sound Fjord Run | NZMF (2 km) | 15,5 km | fiordo abajo, slalom 12–14 al final; 25–90 m |
+| Stead Right-Hand Sprint | KRTS (4 km) | 3 × 4,1 km | óvalo horario, cinco pilones a la derecha; 20–100 m |
+
+**Qué se revisó**, con las mismas herramientas que en la 1.3: rumbos por bisectriz y lado de cada
+pilón de viraje (coinciden con el giro en todas; los alternados son a propósito); `groundElevM`
+contra el DEM Terrarium (diferencias de menos de 15 m, salvo Milford); el aeródromo más cercano en el
+apt.dat de la 12.4.3, y el terreno entre puertas y desde el aeródromo hasta la largada. En
+Futaleufú (1→2), Glen Coe (8→9) y Milford (4→5, 7→8) la recta cruza una loma o una punta; el
+camino más bajo pasa a menos de 25 m sobre la puerta más alta (en Milford, por el agua), y la
+descripción lo avisa. En Milford el DEM pone el fondo del fiordo, alrededor de 1 y 2, a 236 m: es
+un relleno malo del DEM (el resto del agua está a 0) y las puertas quedan a 0.
+
+**Qué se cambió.** Lo mismo que en la 1.3: descripciones reescritas para pilotos, sin coordenadas
+ni notas de validación, con el aeródromo y cómo llegar a la largada. Seis traían "no airport is
+assumed" o un aeródromo lejano: ahora nombran el más cercano (Aysén, Badwater, Cochamó, Geiranger,
+Glen Coe, Kornati). Los pilones de viraje pasan de 60–160 m de línea a **250 m**. La Stead
+Right-Hand Sprint avisa que el tramo 5→6 de Reno Sport 2023 pasa a 125 m de su largada: con las
+dos instaladas se ven los pilones de la otra.
+
+Falta volarlas. Lo más dudoso: si el agua del fondo de Milford Sound está a nivel del mar en la
+malla de X-Plane, si Futaleufú (puertas de 70 m, tramos de 200 m) se puede volar en un Extra, y el
+cruce de montaña de Stryn a Geiranger.
 
 ### RREF como alternativa a RPOS (no adoptada)
 

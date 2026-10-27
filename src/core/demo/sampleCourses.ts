@@ -11,7 +11,9 @@
 // a two-lap oval on Lake Llanquihue (SCTE), Lake General Carrera (SCCC), the sea round Heimaey
 // (BIVM), the east coast of Kauaʻi (PHLI), and Lake Tahoe (KTVL). Last, sixteen Juan prepared:
 // twelve over land (the Osorno volcano, canyons, badlands, valleys, a dune field and the steppe) and
-// four training versions of real air-race courses at Abu Dhabi, Chiba, Porto and Reno.
+// four training versions of real air-race courses at Abu Dhabi, Chiba, Porto and Reno; and ten more
+// of his: three fjords, two Chilean river valleys, Glen Coe, the Kornati islands, Badwater Basin, and
+// short circuits at Daggett and Stead.
 import { COURSE_FORMAT, COURSE_VERSION, parseCourse, type Course } from "../course/course";
 
 const STAMP = "2026-10-18T00:00:00Z";
@@ -935,6 +937,311 @@ export function sampleCourses(): Course[] {
         { id: "g9", type: "turn", center: { lon: -119.8948733, lat: 39.6688569 }, widthM: 250, headingDeg: 127, pylon: "rodeo-reno", groundElevM: 1522, topM: 76.2, bottomM: 15.24, turnSide: "left" },
         { id: "g10", type: "turn", center: { lon: -119.8871956, lat: 39.6664677 }, widthM: 250, headingDeg: 105, pylon: "rodeo-reno", groundElevM: 1524, topM: 76.2, bottomM: 15.24, turnSide: "left" },
       ],
+    }),
+    // Ten more prepared by Juan on 2026-10-27 and reviewed here, all with tall pylons and the 25 m
+    // air-race model (50 m at that size): fjords in Chile, Norway and New Zealand, two river valleys
+    // in Chile, Glen Coe, the Kornati islands, an oval below sea level in Death Valley, and two short
+    // circuits at Daggett and Stead. Not flown yet. Checked on the Terrarium DEM as the others.
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "aysen-fjord-speed-run",
+      name: "Aysén Fjord Speed Run",
+      author: "XP Pylon Racer",
+      description:
+        "19 km of long, fast legs over the water of the Aysén fjord, in Chilean Patagonia, between steep wooded islands. Take off from Puerto Aysén (SCAS) and follow the fjord west for about 23 km; where it opens, turn north up the channel between the islands: the start is 8 km on, flown north-north-west. Every gate is a height window, 30 to 130 m above the water. North-west and then west up the channel: 2 and 6 wings level, turn pylons 4 and 8 kept on your left and 9 on your right; leave the islet just past 8 on your left. After the finish keep going south-west over the water to slow down.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // All over water, legs of 1.5–2.4 km. The straight line from the airport crosses 1,600 m of
+      // mountain; the fjord and the channel are open water all the way.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -73.1003968, lat: -45.3449256 }, widthM: 180, headingDeg: 335, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+        { id: "g2", type: "level", center: { lon: -73.1123016, lat: -45.3270596 }, widthM: 180, headingDeg: 333, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+        { id: "g3", type: "gate", center: { lon: -73.1261905, lat: -45.3091935 }, widthM: 180, headingDeg: 323, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+        { id: "g4", type: "turn", center: { lon: -73.146504, lat: -45.295723 }, widthM: 250, headingDeg: 308, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30, turnSide: "left" },
+        { id: "g5", type: "gate", center: { lon: -73.1698413, lat: -45.2853722 }, widthM: 180, headingDeg: 294, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+        { id: "g6", type: "level", center: { lon: -73.1956349, lat: -45.2794169 }, widthM: 180, headingDeg: 279, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+        { id: "g7", type: "gate", center: { lon: -73.2214286, lat: -45.2794169 }, widthM: 180, headingDeg: 274, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+        { id: "g8", type: "turn", center: { lon: -73.2410584, lat: -45.2779505 }, widthM: 250, headingDeg: 254, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30, turnSide: "left" },
+        { id: "g9", type: "turn", center: { lon: -73.2655193, lat: -45.2908855 }, widthM: 250, headingDeg: 235, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30, turnSide: "right" },
+        { id: "g10", type: "finish", center: { lon: -73.2888889, lat: -45.3012531 }, widthM: 180, headingDeg: 239, pylon: "rodeo-25", groundElevM: 0, topM: 130, bottomM: 30 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "badwater-basin-precision-oval",
+      name: "Badwater Basin Precision Oval",
+      author: "XP Pylon Racer",
+      description:
+        "Two laps of a small oval on the salt flats of Badwater Basin, in Death Valley, 82 m below sea level: 4.6 km a lap, and your altimeter reads below zero all the way round. Take off from Furnace Creek (L06) and fly south down the valley for 25 km: the start is on the open floor, flown east. Counterclockwise, the four turn pylons (3, 4, 7, 8) kept on your left; 5 wings level and 2 between 30 and 60 m, on both laps; every other gate between 20 and 100 m. The start line closes each lap. Depending on your scenery the floor may look white, brown or wet.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 2,
+      // Flat salt, −83 to −79 m. X-Plane gives the height above the ground; the negative elevations
+      // only count without it.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -116.8183451, lat: 36.2369027 }, widthM: 150, headingDeg: 95, pylon: "rodeo-25", groundElevM: -82, topM: 100, bottomM: 20 },
+        { id: "g2", type: "gate", center: { lon: -116.8116549, lat: 36.2369027 }, widthM: 150, headingDeg: 85, pylon: "rodeo-25", groundElevM: -82, topM: 60, bottomM: 30 },
+        { id: "g3", type: "turn", center: { lon: -116.8055222, lat: 36.237802 }, widthM: 250, headingDeg: 40, pylon: "rodeo-25", groundElevM: -81, topM: 100, bottomM: 20, turnSide: "left" },
+        { id: "g4", type: "turn", center: { lon: -116.8055222, lat: 36.243198 }, widthM: 250, headingDeg: 320, pylon: "rodeo-25", groundElevM: -80, topM: 100, bottomM: 20, turnSide: "left" },
+        { id: "g5", type: "level", center: { lon: -116.8116549, lat: 36.2440973 }, widthM: 150, headingDeg: 275, pylon: "rodeo-25", groundElevM: -79, topM: 100, bottomM: 20 },
+        { id: "g6", type: "gate", center: { lon: -116.8183451, lat: 36.2440973 }, widthM: 150, headingDeg: 265, pylon: "rodeo-25", groundElevM: -81, topM: 100, bottomM: 20 },
+        { id: "g7", type: "turn", center: { lon: -116.8244778, lat: 36.243198 }, widthM: 250, headingDeg: 220, pylon: "rodeo-25", groundElevM: -83, topM: 100, bottomM: 20, turnSide: "left" },
+        { id: "g8", type: "turn", center: { lon: -116.8244778, lat: 36.237802 }, widthM: 250, headingDeg: 140, pylon: "rodeo-25", groundElevM: -81, topM: 100, bottomM: 20, turnSide: "left" },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "cochamo-granite-valley-run",
+      name: "Cochamó Granite Valley Run",
+      author: "XP Pylon Racer",
+      description:
+        "15 km up the Cochamó valley, in the Chilean Lakes region, between granite walls: from the estuary at sea level to the meadows of La Junta at 320 m. Take off from Cochamó (SCKM): the start is 4 km east-south-east, at the mouth of the river, flown north-east. Cross every gate at least 50 m above the ground. Follow the river round its bends: turn pylons 3, 11 and 16 kept on your left and 13 on your right, 14 wings level. From 10 to 13 the ground climbs 200 m in 2.3 km: climb with it. Past the finish at La Junta the valley bends east; stay out of the side valleys.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // 7 m at the start, 320–335 m from 13 on. From 2 to 13 the walls rise 150–270 m within 250 m of
+      // the line.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -72.263875, lat: -41.4972083 }, widthM: 140, headingDeg: 51, pylon: "rodeo-25", groundElevM: 7, bottomM: 50 },
+        { id: "g2", type: "gate", center: { lon: -72.252, lat: -41.4900833 }, widthM: 140, headingDeg: 41, pylon: "rodeo-25", groundElevM: 5, bottomM: 50 },
+        { id: "g3", type: "turn", center: { lon: -72.2463085, lat: -41.4819217 }, widthM: 250, headingDeg: 27, pylon: "rodeo-25", groundElevM: 18, bottomM: 50, turnSide: "left" },
+        { id: "g4", type: "gate", center: { lon: -72.2413125, lat: -41.47425 }, widthM: 140, headingDeg: 36, pylon: "rodeo-25", groundElevM: 28, bottomM: 50 },
+        { id: "g5", type: "gate", center: { lon: -72.23395, lat: -41.4695 }, widthM: 140, headingDeg: 42, pylon: "rodeo-25", groundElevM: 20, bottomM: 50 },
+        { id: "g6", type: "gate", center: { lon: -72.2286458, lat: -41.4639583 }, widthM: 140, headingDeg: 44, pylon: "rodeo-25", groundElevM: 35, bottomM: 50 },
+        { id: "g7", type: "gate", center: { lon: -72.2219167, lat: -41.46 }, widthM: 140, headingDeg: 46, pylon: "rodeo-25", groundElevM: 42, bottomM: 50 },
+        { id: "g8", type: "gate", center: { lon: -72.2147917, lat: -41.4536667 }, widthM: 140, headingDeg: 46, pylon: "rodeo-25", groundElevM: 52, bottomM: 50 },
+        { id: "g9", type: "gate", center: { lon: -72.2060833, lat: -41.4485208 }, widthM: 140, headingDeg: 54, pylon: "rodeo-25", groundElevM: 78, bottomM: 50 },
+        { id: "g10", type: "gate", center: { lon: -72.197375, lat: -41.4441667 }, widthM: 140, headingDeg: 62, pylon: "rodeo-25", groundElevM: 127, bottomM: 50 },
+        { id: "g11", type: "turn", center: { lon: -72.1915044, lat: -41.4417741 }, widthM: 250, headingDeg: 50, pylon: "rodeo-25", groundElevM: 169, bottomM: 50, turnSide: "left" },
+        { id: "g12", type: "gate", center: { lon: -72.1851042, lat: -41.4354583 }, widthM: 140, headingDeg: 34, pylon: "rodeo-25", groundElevM: 261, bottomM: 50 },
+        { id: "g13", type: "turn", center: { lon: -72.1787437, lat: -41.4295615 }, widthM: 250, headingDeg: 54, pylon: "rodeo-25", groundElevM: 321, bottomM: 50, turnSide: "right" },
+        { id: "g14", type: "level", center: { lon: -72.1672917, lat: -41.4263542 }, widthM: 140, headingDeg: 74, pylon: "rodeo-25", groundElevM: 307, bottomM: 50 },
+        { id: "g15", type: "gate", center: { lon: -72.154625, lat: -41.4239792 }, widthM: 140, headingDeg: 74, pylon: "rodeo-25", groundElevM: 321, bottomM: 50 },
+        { id: "g16", type: "turn", center: { lon: -72.1384024, lat: -41.4195735 }, widthM: 250, headingDeg: 56, pylon: "rodeo-25", groundElevM: 319, bottomM: 50, turnSide: "left" },
+        { id: "g17", type: "finish", center: { lon: -72.130875, lat: -41.4136875 }, widthM: 140, headingDeg: 51, pylon: "rodeo-25", groundElevM: 316, bottomM: 50 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "daggett-precision-cup",
+      name: "Daggett Precision Cup",
+      author: "XP Pylon Racer",
+      description:
+        "Two laps of a tight aerobatic circuit north of Daggett, 5.6 km a lap, with flat desert all round. Take off from Daggett (KDAG) and fly north-west for 9 km: the start is flown west. Clockwise, the same on both laps: 2 wings level and 3 knife edge on the south leg, turn pylons 4 and 5 kept on your right, 6 between 20 and 40 m, 7 wings level and 8 knife edge on the north leg, then 9 and 10 on your right and back through the start. Every other gate between 20 and 80 m. The attitude gates are 600 m apart: roll early, and level out before you turn. Best in an aerobatic aircraft.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 2,
+      // Flat desert, 594–623 m, 4 km north of the other Daggett courses.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -116.8484191, lat: 34.9169531 }, widthM: 100, headingDeg: 270, pylon: "rodeo-25", groundElevM: 597, topM: 80, bottomM: 20 },
+        { id: "g2", type: "level", center: { lon: -116.855, lat: 34.9169531 }, widthM: 80, headingDeg: 270, pylon: "rodeo-25", groundElevM: 594, topM: 80, bottomM: 20 },
+        { id: "g3", type: "knife", center: { lon: -116.8615809, lat: 34.9169531 }, widthM: 80, headingDeg: 270, pylon: "rodeo-25", groundElevM: 594, topM: 80, bottomM: 20 },
+        { id: "g4", type: "turn", center: { lon: -116.8670649, lat: 34.9187517 }, widthM: 250, headingDeg: 326, pylon: "rodeo-25", groundElevM: 594, topM: 80, bottomM: 20, turnSide: "right" },
+        { id: "g5", type: "turn", center: { lon: -116.8670649, lat: 34.9232483 }, widthM: 250, headingDeg: 34, pylon: "rodeo-25", groundElevM: 597, topM: 80, bottomM: 20, turnSide: "right" },
+        { id: "g6", type: "gate", center: { lon: -116.8615809, lat: 34.9250469 }, widthM: 80, headingDeg: 90, pylon: "rodeo-25", groundElevM: 600, topM: 40, bottomM: 20 },
+        { id: "g7", type: "level", center: { lon: -116.855, lat: 34.9250469 }, widthM: 80, headingDeg: 90, pylon: "rodeo-25", groundElevM: 603, topM: 80, bottomM: 20 },
+        { id: "g8", type: "knife", center: { lon: -116.8484191, lat: 34.9250469 }, widthM: 80, headingDeg: 90, pylon: "rodeo-25", groundElevM: 614, topM: 80, bottomM: 20 },
+        { id: "g9", type: "turn", center: { lon: -116.8429351, lat: 34.9232483 }, widthM: 250, headingDeg: 146, pylon: "rodeo-25", groundElevM: 622, topM: 80, bottomM: 20, turnSide: "right" },
+        { id: "g10", type: "turn", center: { lon: -116.8429351, lat: 34.9187517 }, widthM: 250, headingDeg: 214, pylon: "rodeo-25", groundElevM: 605, topM: 80, bottomM: 20, turnSide: "right" },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "futaleufu-river-chase",
+      name: "Futaleufú River Chase",
+      author: "XP Pylon Racer",
+      description:
+        "14.7 km down the Futaleufú river, in Chilean Patagonia, round its bends between steep wooded slopes: 26 gates, most of them close together. Take off from Futaleufú (SCFT): the start is 4.4 km south-south-west, over the river, flown west-south-west. Every gate is a height window, 30 to 120 m above the river. Turn pylons on the bends: kept on your left at 2, 5, 8, 17 and 25, on your right at 3, 6, 9, 14, 16 and 22; 23 wings level. From 1 to 2 the straight line crosses a spur: the river goes round it. Slow down for 4 to 6, 200 to 400 m apart. The finish is just before the road bridge, flown south-south-west; climb out along the valley. A light, nimble aircraft helps.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // Valley floor 218–297 m. The line from 1 to 2 crosses a 57 m spur; round it by the river is
+      // 22 m above the start.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -71.8753917, lat: -43.2239438 }, widthM: 70, headingDeg: 240, pylon: "rodeo-25", groundElevM: 274, topM: 120, bottomM: 30 },
+        { id: "g2", type: "turn", center: { lon: -71.8814799, lat: -43.226623 }, widthM: 250, headingDeg: 188, pylon: "rodeo-25", groundElevM: 273, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g3", type: "turn", center: { lon: -71.8755057, lat: -43.2316135 }, widthM: 250, headingDeg: 184, pylon: "rodeo-25", groundElevM: 277, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g4", type: "gate", center: { lon: -71.8839167, lat: -43.2367958 }, widthM: 70, headingDeg: 208, pylon: "rodeo-25", groundElevM: 272, topM: 120, bottomM: 30 },
+        { id: "g5", type: "turn", center: { lon: -71.883811, lat: -43.2385498 }, widthM: 250, headingDeg: 166, pylon: "rodeo-25", groundElevM: 262, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g6", type: "turn", center: { lon: -71.881509, lat: -43.2418685 }, widthM: 250, headingDeg: 171, pylon: "rodeo-25", groundElevM: 273, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g7", type: "gate", center: { lon: -71.882625, lat: -43.2456437 }, widthM: 70, headingDeg: 209, pylon: "rodeo-25", groundElevM: 268, topM: 120, bottomM: 30 },
+        { id: "g8", type: "turn", center: { lon: -71.8866526, lat: -43.2491856 }, widthM: 250, headingDeg: 194, pylon: "rodeo-25", groundElevM: 263, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g9", type: "turn", center: { lon: -71.8846024, lat: -43.2564356 }, widthM: 250, headingDeg: 195, pylon: "rodeo-25", groundElevM: 270, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g10", type: "gate", center: { lon: -71.8897292, lat: -43.2605625 }, widthM: 70, headingDeg: 215, pylon: "rodeo-25", groundElevM: 258, topM: 120, bottomM: 30 },
+        { id: "g11", type: "gate", center: { lon: -71.8924417, lat: -43.2646958 }, widthM: 70, headingDeg: 217, pylon: "rodeo-25", groundElevM: 265, topM: 120, bottomM: 30 },
+        { id: "g12", type: "gate", center: { lon: -71.8978667, lat: -43.2683125 }, widthM: 70, headingDeg: 217, pylon: "rodeo-25", groundElevM: 267, topM: 120, bottomM: 30 },
+        { id: "g13", type: "gate", center: { lon: -71.9009667, lat: -43.2730271 }, widthM: 70, headingDeg: 214, pylon: "rodeo-25", groundElevM: 290, topM: 120, bottomM: 30 },
+        { id: "g14", type: "turn", center: { lon: -71.9061632, lat: -43.2768385 }, widthM: 250, headingDeg: 239, pylon: "rodeo-25", groundElevM: 278, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g15", type: "gate", center: { lon: -71.9116875, lat: -43.2781292 }, widthM: 70, headingDeg: 246, pylon: "rodeo-25", groundElevM: 264, topM: 120, bottomM: 30 },
+        { id: "g16", type: "turn", center: { lon: -71.9194751, lat: -43.2815227 }, widthM: 250, headingDeg: 263, pylon: "rodeo-25", groundElevM: 267, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g17", type: "turn", center: { lon: -71.9260307, lat: -43.2803519 }, widthM: 250, headingDeg: 259, pylon: "rodeo-25", groundElevM: 257, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g18", type: "gate", center: { lon: -71.9308042, lat: -43.2831021 }, widthM: 70, headingDeg: 218, pylon: "rodeo-25", groundElevM: 256, topM: 120, bottomM: 30 },
+        { id: "g19", type: "gate", center: { lon: -71.93455, lat: -43.2887208 }, widthM: 70, headingDeg: 202, pylon: "rodeo-25", groundElevM: 247, topM: 120, bottomM: 30 },
+        { id: "g20", type: "gate", center: { lon: -71.9359708, lat: -43.2918854 }, widthM: 70, headingDeg: 202, pylon: "rodeo-25", groundElevM: 251, topM: 120, bottomM: 30 },
+        { id: "g21", type: "gate", center: { lon: -71.9397167, lat: -43.297375 }, widthM: 70, headingDeg: 215, pylon: "rodeo-25", groundElevM: 236, topM: 120, bottomM: 30 },
+        { id: "g22", type: "turn", center: { lon: -71.9447952, lat: -43.3010387 }, widthM: 250, headingDeg: 250, pylon: "rodeo-25", groundElevM: 245, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g23", type: "level", center: { lon: -71.9510833, lat: -43.3006687 }, widthM: 70, headingDeg: 272, pylon: "rodeo-25", groundElevM: 243, topM: 120, bottomM: 30 },
+        { id: "g24", type: "gate", center: { lon: -71.9603833, lat: -43.3010563 }, widthM: 70, headingDeg: 254, pylon: "rodeo-25", groundElevM: 233, topM: 120, bottomM: 30 },
+        { id: "g25", type: "turn", center: { lon: -71.9682912, lat: -43.304565 }, widthM: 250, headingDeg: 222, pylon: "rodeo-25", groundElevM: 227, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g26", type: "finish", center: { lon: -71.9713625, lat: -43.3093229 }, widthM: 70, headingDeg: 203, pylon: "rodeo-25", groundElevM: 219, topM: 120, bottomM: 30 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "geiranger-fjord-challenge",
+      name: "Geiranger Fjord Challenge",
+      author: "XP Pylon Racer",
+      description:
+        "15 km into the Geirangerfjord, in Norway, round its great S-bend between steep walls, to the village of Geiranger. Take off from Stryn (XEN000I in X-Plane) and fly north-north-east for 24 km over the mountains, above 1,600 m: the start is over the outer fjord, flown east-south-east. Every gate is a height window above the water: 30 to 110 m up to 10, 25 to 55 m at 11 and 25 to 80 m from 12 on. Turn pylons 4 and 7 kept on your left, 9 and 12 on your right; 5, 10 and 13 wings level. The finish is just before the village: slow down and turn back over the water, the fjord ends there.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // All over water. From 8 to 9 the walls rise 400 m within 250 m of the line. The mountains
+      // between Stryn and the fjord reach 1,400 m on the straight line.
+      gates: [
+        { id: "g1", type: "start", center: { lon: 6.9392188, lat: 62.1096827 }, widthM: 150, headingDeg: 106, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g2", type: "gate", center: { lon: 6.9779375, lat: 62.1045769 }, widthM: 150, headingDeg: 114, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g3", type: "gate", center: { lon: 7.00375, lat: 62.0969183 }, widthM: 150, headingDeg: 119, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g4", type: "turn", center: { lon: 7.0295625, lat: 62.0909615 }, widthM: 250, headingDeg: 105, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30, turnSide: "left" },
+        { id: "g5", type: "level", center: { lon: 7.0590625, lat: 62.0901106 }, widthM: 150, headingDeg: 82, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g6", type: "gate", center: { lon: 7.084875, lat: 62.0943654 }, widthM: 150, headingDeg: 60, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g7", type: "turn", center: { lon: 7.1014688, lat: 62.1011731 }, widthM: 250, headingDeg: 41, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30, turnSide: "left" },
+        { id: "g8", type: "gate", center: { lon: 7.1134531, lat: 62.1096827 }, widthM: 150, headingDeg: 39, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g9", type: "turn", center: { lon: 7.129125, lat: 62.1173413 }, widthM: 250, headingDeg: 63, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30, turnSide: "right" },
+        { id: "g10", type: "level", center: { lon: 7.1494063, lat: 62.1187029 }, widthM: 150, headingDeg: 95, pylon: "rodeo-25", groundElevM: 0, topM: 110, bottomM: 30 },
+        { id: "g11", type: "gate", center: { lon: 7.1623125, lat: 62.1168308 }, widthM: 120, headingDeg: 116, pylon: "rodeo-25", groundElevM: 0, topM: 55, bottomM: 25 },
+        { id: "g12", type: "turn", center: { lon: 7.1715313, lat: 62.1139375 }, widthM: 250, headingDeg: 125, pylon: "rodeo-25", groundElevM: 0, topM: 80, bottomM: 25, turnSide: "right" },
+        { id: "g13", type: "level", center: { lon: 7.1789063, lat: 62.1113846 }, widthM: 120, headingDeg: 131, pylon: "rodeo-25", groundElevM: 0, topM: 80, bottomM: 25 },
+        { id: "g14", type: "finish", center: { lon: 7.1862813, lat: 62.1079808 }, widthM: 120, headingDeg: 135, pylon: "rodeo-25", groundElevM: 0, topM: 80, bottomM: 25 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "glen-coe-highland-descent",
+      name: "Glen Coe Highland Descent",
+      author: "XP Pylon Racer",
+      description:
+        "13.4 km down Glen Coe, in the Scottish Highlands, from the head of the glen at 280 m to the shore of Loch Leven. Take off from Oban (EGEO) and fly north-east up Loch Linnhe to Ballachulish, about 28 km, then east up the glen, over the course, to the start at its head: turn round and cross it flying west. Cross every gate at least 50 m above the ground. A small rise to 2, then the ground falls 180 m from 2 to 5: don't dive. Turn pylons 6 and 10 kept on your left, 8 on your right; 4 and 7 wings level. From 8 to 9 the straight line crosses a low spur: the valley round it is open. The finish is at the shore of Loch Leven, flown north-west.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // 278 m at the start, 3 m at the finish. The line from 8 to 9 crosses a 42 m spur; the valley
+      // round it stays at the height of 8.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -4.902, lat: 56.6617333 }, widthM: 160, headingDeg: 272, pylon: "rodeo-25", groundElevM: 277, bottomM: 50 },
+        { id: "g2", type: "gate", center: { lon: -4.9246667, lat: 56.6600333 }, widthM: 160, headingDeg: 274, pylon: "rodeo-25", groundElevM: 307, bottomM: 50 },
+        { id: "g3", type: "gate", center: { lon: -4.9462, lat: 56.6634333 }, widthM: 160, headingDeg: 278, pylon: "rodeo-25", groundElevM: 281, bottomM: 50 },
+        { id: "g4", type: "level", center: { lon: -4.9688667, lat: 56.6634333 }, widthM: 160, headingDeg: 275, pylon: "rodeo-25", groundElevM: 234, bottomM: 50 },
+        { id: "g5", type: "gate", center: { lon: -4.9904, lat: 56.6657 }, widthM: 160, headingDeg: 281, pylon: "rodeo-25", groundElevM: 128, bottomM: 50 },
+        { id: "g6", type: "turn", center: { lon: -5.011899, lat: 56.6674274 }, widthM: 250, headingDeg: 268, pylon: "rodeo-25", groundElevM: 97, bottomM: 50, turnSide: "left" },
+        { id: "g7", type: "level", center: { lon: -5.0346, lat: 56.6645667 }, widthM: 160, headingDeg: 257, pylon: "rodeo-25", groundElevM: 85, bottomM: 50 },
+        { id: "g8", type: "turn", center: { lon: -5.0548464, lat: 56.6628329 }, widthM: 250, headingDeg: 279, pylon: "rodeo-25", groundElevM: 63, bottomM: 50, turnSide: "right" },
+        { id: "g9", type: "gate", center: { lon: -5.0737, lat: 56.6679667 }, widthM: 160, headingDeg: 307, pylon: "rodeo-25", groundElevM: 25, bottomM: 50 },
+        { id: "g10", type: "turn", center: { lon: -5.0930444, lat: 56.6777595 }, widthM: 250, headingDeg: 311, pylon: "rodeo-25", groundElevM: 26, bottomM: 50, turnSide: "left" },
+        { id: "g11", type: "finish", center: { lon: -5.106, lat: 56.6838333 }, widthM: 160, headingDeg: 310, pylon: "rodeo-25", groundElevM: 3, bottomM: 50 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "kornati-island-slalom",
+      name: "Kornati Island Slalom",
+      author: "XP Pylon Racer",
+      description:
+        "17 km over the sea among the outer Kornati islands, in Croatia: long legs first, then tighter turns past the islets. Take off from Zadar (LDZD) and fly south-south-west for 34 km, over the islands: the start is over open water, flown south-east. Every gate is a height window, 30 to 120 m above the sea. 2 and 6 wings level; turn pylons kept on your right at 3, 8 and 12, on your left at 5, 11 and 13. From 7 to 10 the course bends south round an islet and then south-west: slow down there, and go round the islands, not over them. Open water after the finish, flown east-south-east.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // All over water; no island on the straight line between two gates.
+      gates: [
+        { id: "g1", type: "start", center: { lon: 15.2021135, lat: 43.8240625 }, widthM: 160, headingDeg: 125, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g2", type: "level", center: { lon: 15.2151419, lat: 43.8175521 }, widthM: 160, headingDeg: 121, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g3", type: "turn", center: { lon: 15.2334319, lat: 43.8099368 }, widthM: 250, headingDeg: 135, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g4", type: "gate", center: { lon: 15.246989, lat: 43.7929572 }, widthM: 160, headingDeg: 133, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g5", type: "turn", center: { lon: 15.2628735, lat: 43.7884324 }, widthM: 250, headingDeg: 87, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g6", type: "level", center: { lon: 15.2773885, lat: 43.7936806 }, widthM: 160, headingDeg: 58, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g7", type: "gate", center: { lon: 15.2831789, lat: 43.7965741 }, widthM: 160, headingDeg: 82, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g8", type: "turn", center: { lon: 15.2943309, lat: 43.7932386 }, widthM: 250, headingDeg: 125, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g9", type: "gate", center: { lon: 15.3005501, lat: 43.7886169 }, widthM: 160, headingDeg: 180, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g10", type: "gate", center: { lon: 15.2882455, lat: 43.7777662 }, widthM: 160, headingDeg: 197, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+        { id: "g11", type: "turn", center: { lon: 15.2902976, lat: 43.7665093 }, widthM: 250, headingDeg: 144, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g12", type: "turn", center: { lon: 15.3059014, lat: 43.760692 }, widthM: 250, headingDeg: 126, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30, turnSide: "right" },
+        { id: "g13", type: "turn", center: { lon: 15.3183498, lat: 43.7521665 }, widthM: 250, headingDeg: 125, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30, turnSide: "left" },
+        { id: "g14", type: "finish", center: { lon: 15.3338448, lat: 43.7473843 }, widthM: 160, headingDeg: 111, pylon: "rodeo-25", groundElevM: 0, topM: 120, bottomM: 30 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "milford-sound-fjord-run",
+      name: "Milford Sound Fjord Run",
+      author: "XP Pylon Racer",
+      description:
+        "15.5 km down Milford Sound / Piopiotahi, in Fiordland, from the head of the fiord out to the Tasman Sea, between walls that rise straight from the water. Take off from Milford Sound (NZMF) and fly north-west over the water for 2 km: the start is flown north. Every gate is a height window, 25 to 90 m above the water. Turn pylons 4 and 11 kept on your right, 6 on your left; 2 and 9 wings level. After 11 slow down for the slalom: 12 on your left, 13 on your right, 14 on your left, then 15 wings level. From 4 to 5 and from 7 to 8 the straight line cuts across a point: follow the water round it. The finish is near the mouth, flown north-west, with open sea ahead.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 1,
+      // Over water. The Terrarium DEM puts the head of the sound, round 1 and 2, at 236 m (a bad
+      // fill: the rest sits at 0). From 4 to 5 and 7 to 8 the line cuts a point; the water round it
+      // is open.
+      gates: [
+        { id: "g1", type: "start", center: { lon: 167.9079375, lat: -44.658875 }, widthM: 160, headingDeg: 354, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g2", type: "level", center: { lon: 167.90625, lat: -44.6465 }, widthM: 160, headingDeg: 341, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g3", type: "gate", center: { lon: 167.89725, lat: -44.636375 }, widthM: 160, headingDeg: 305, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g4", type: "turn", center: { lon: 167.882625, lat: -44.634125 }, widthM: 250, headingDeg: 308, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25, turnSide: "right" },
+        { id: "g5", type: "gate", center: { lon: 167.87475, lat: -44.622875 }, widthM: 160, headingDeg: 334, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g6", type: "turn", center: { lon: 167.8708125, lat: -44.61725 }, widthM: 250, headingDeg: 304, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25, turnSide: "left" },
+        { id: "g7", type: "gate", center: { lon: 167.8584375, lat: -44.6166875 }, widthM: 160, headingDeg: 291, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g8", type: "gate", center: { lon: 167.8483125, lat: -44.6110625 }, widthM: 160, headingDeg: 305, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g9", type: "level", center: { lon: 167.835375, lat: -44.6054375 }, widthM: 160, headingDeg: 295, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g10", type: "gate", center: { lon: 167.824125, lat: -44.602625 }, widthM: 160, headingDeg: 290, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g11", type: "turn", center: { lon: 167.814, lat: -44.5998125 }, widthM: 250, headingDeg: 323, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25, turnSide: "right" },
+        { id: "g12", type: "turn", center: { lon: 167.812875, lat: -44.5908125 }, widthM: 250, headingDeg: 343, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25, turnSide: "left" },
+        { id: "g13", type: "turn", center: { lon: 167.8078125, lat: -44.5840625 }, widthM: 250, headingDeg: 354, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25, turnSide: "right" },
+        { id: "g14", type: "turn", center: { lon: 167.810625, lat: -44.5773125 }, widthM: 250, headingDeg: 349, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25, turnSide: "left" },
+        { id: "g15", type: "level", center: { lon: 167.803875, lat: -44.571125 }, widthM: 120, headingDeg: 321, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+        { id: "g16", type: "finish", center: { lon: 167.796, lat: -44.564375 }, widthM: 120, headingDeg: 320, pylon: "rodeo-25", groundElevM: 0, topM: 90, bottomM: 25 },
+      ],
+      rules: { pylonSize: "tall" },
+    }),
+    parseCourse({
+      format: COURSE_FORMAT,
+      version: COURSE_VERSION,
+      id: "stead-right-hand-sprint",
+      name: "Stead Right-Hand Sprint",
+      author: "XP Pylon Racer",
+      description:
+        "Three laps of a small oval north of Reno Stead, every pylon on your right: 4.1 km a lap. Take off from Reno Stead (KRTS) and fly north for 4 km: the start is flown west. Clockwise round the five turn pylons, kept on your right; every gate between 20 and 100 m. No attitude gates: smooth turns and even laps. The ground rises 25 m at the north-west end. The start line closes each lap. Reno Sport 2023 — Training passes 125 m south of the start: if its pylons are installed, you will see them there.",
+      createdAt: "2026-10-27T00:00:00Z",
+      updatedAt: "2026-10-27T00:00:00Z",
+      laps: 3,
+      // 1,542–1,567 m. The leg from 5 to 6 of Reno Sport 2023 — Training passes 125 m south of the
+      // start.
+      gates: [
+        { id: "g1", type: "start", center: { lon: -119.884, lat: 39.7006524 }, widthM: 150, headingDeg: 270, pylon: "rodeo-25", groundElevM: 1542, topM: 100, bottomM: 20 },
+        { id: "g2", type: "turn", center: { lon: -119.8933514, lat: 39.7020014 }, widthM: 250, headingDeg: 320, pylon: "rodeo-25", groundElevM: 1552, topM: 100, bottomM: 20, turnSide: "right" },
+        { id: "g3", type: "turn", center: { lon: -119.8933514, lat: 39.7055986 }, widthM: 250, headingDeg: 40, pylon: "rodeo-25", groundElevM: 1566, topM: 100, bottomM: 20, turnSide: "right" },
+        { id: "g4", type: "turn", center: { lon: -119.884, lat: 39.7069476 }, widthM: 250, headingDeg: 90, pylon: "rodeo-25", groundElevM: 1548, topM: 100, bottomM: 20, turnSide: "right" },
+        { id: "g5", type: "turn", center: { lon: -119.8746486, lat: 39.7055986 }, widthM: 250, headingDeg: 140, pylon: "rodeo-25", groundElevM: 1554, topM: 100, bottomM: 20, turnSide: "right" },
+        { id: "g6", type: "turn", center: { lon: -119.8746486, lat: 39.7020014 }, widthM: 250, headingDeg: 220, pylon: "rodeo-25", groundElevM: 1551, topM: 100, bottomM: 20, turnSide: "right" },
+      ],
+      rules: { pylonSize: "tall" },
     }),
   ];
 }

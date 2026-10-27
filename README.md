@@ -78,6 +78,16 @@ Want to see it first? **Watch demo** flies any course for you, no simulator need
 | **Chiba 2019 — Training** | Tokyo Bay, **RJTT** | The 2019 air race off Makuhari Beach, 1.6 km at 15–25 m |
 | **Porto 2017 — Training** | Porto, **LPPR** | The 2017 air race up the Douro, between the bridges |
 | **Reno Sport 2023 — Training** | Reno Stead, **KRTS** | Two laps of the Sport class course, 15–76 m at every pylon |
+| **Aysén Fjord Speed Run** | Puerto Aysén, **SCAS** | 19 km of long, fast legs over the fjord, between wooded islands |
+| **Badwater Basin Precision Oval** | Furnace Creek, **L06** | Two laps on the salt flats of Death Valley, 82 m below sea level |
+| **Cochamó Granite Valley Run** | Cochamó, **SCKM** | 15 km up a granite valley, from the estuary to La Junta at 320 m |
+| **Daggett Precision Cup** | Daggett, **KDAG** | Two laps of a tight circuit, two wings-level and two knife-edge gates a lap |
+| **Futaleufú River Chase** | Futaleufú, **SCFT** | 15 km down the river round its bends, 26 gates |
+| **Geiranger Fjord Challenge** | Stryn, **XEN000I** | 15 km round the S-bend of the Geirangerfjord to the village |
+| **Glen Coe Highland Descent** | Oban, **EGEO** | 13 km down the glen, from 280 m to the shore of Loch Leven |
+| **Kornati Island Slalom** | Zadar, **LDZD** | 17 km on the sea among the outer Kornati islands |
+| **Milford Sound Fjord Run** | Milford Sound, **NZMF** | 15.5 km down the fiord to the Tasman Sea, with a slalom at the end |
+| **Stead Right-Hand Sprint** | Reno Stead, **KRTS** | Three laps of a small oval, every pylon on your right |
 | **Stead Pylon Oval** | Reno Stead, **KRTS** | Three laps of a Reno-style oval, every pylon on your left |
 | **Daggett Air Show** | Daggett, **KDAG** | Wings level, knife edge, inverted, a height window and turn pylons |
 | **Daggett Sprint** | Daggett, **KDAG** | Five gates in a straight line: the quickest way to learn |
