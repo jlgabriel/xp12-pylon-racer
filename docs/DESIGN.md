@@ -315,7 +315,8 @@ lista *antes de la largada* lo muestra ("In the sim"). Sin el plugin no cambia n
 ventana y el plugin digan lo mismo, los textos de la carrera pasaron del renderer a `src/core`
 (`race/rulesText.ts`, con `GATE_NAME` y `statusLine`, `format.ts` y `telemetry/feedText.ts`).
 
-Falta: volarlo con la app, probar oculta contra visible, VR, la tecla y la 12.4.4; y después,
+Volado con la app el mismo día: Daggett Sprint en 27,26 s, New best, igual en la ventana y en el
+plugin. Falta: oculta contra visible, VR, la tecla y la 12.4.4; y después,
 compilar en el CI para los tres sistemas e instalarlo desde la app.
 
 ### RREF como alternativa a RPOS (no adoptada)

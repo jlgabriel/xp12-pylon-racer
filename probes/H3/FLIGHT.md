@@ -97,6 +97,11 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   nuestro plugin, y el log dice "Location undetermined". En el menú el plugin sólo dibuja "Waiting…",
   igual que en las sesiones anteriores, que no se cayeron. Lectura: de X-Plane, no nuestro. Si se
   repite, probar sin `XPR_H3_Display`.
+- **Con la app de verdad (`npm run dev`, sin `probe:display`) ✅:** la lista antes de la largada
+  dice "In the sim — the race shows in X-Plane 12.4.3 too (plugin 0.1.0-h3)", y el plugin y la
+  ventana muestran lo mismo a la vez. **Daggett Sprint en 27,26 s, limpia: New best**, guardada por
+  la app, con sectores de 6,72 / 6,85 / 6,85 / 6,84 s. El plugin terminó con "Finished 00:27.26".
+  Lo que el plugin todavía no dice: que fue la mejor marca (la app lo muestra en violeta).
 - **Falta:** oculta contra visible (no quedó ningún período con la ventana oculta), VR, una tecla
   para `xpr/h3/toggle_display`, Pop out quieto, y repetir en la 12.4.4.
 
