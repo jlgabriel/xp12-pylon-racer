@@ -129,12 +129,17 @@ double gLastLog = 0, gLastHello = 0;
 
 // ---------------------------------------------------------------- drawing helpers
 
-void glState() { XPLMSetGraphicsState(0, 0, 0, 0, 1, 0, 0); }
+/** X-Plane leaves back-face culling on in window callbacks (12.4.3, Vulkan): counter-clockwise
+ *  shapes (the background, the clock) vanished while the clockwise arrow drew. XPLMSetGraphicsState
+ *  does not touch culling, so it is switched off here. */
+void glState() {
+  XPLMSetGraphicsState(0, 0, 0, 0, 1, 0, 0);
+  glDisable(GL_CULL_FACE);
+}
 
 void color(Rgb c, float a = 1.0f) { glColor4f(c.r, c.g, c.b, a); }
 
-/** Two triangles, not GL_QUADS: on 12.4.3 with Vulkan quads drew nothing (no background, no clock)
- *  while lines and triangles did (first start, 2026-10-26). */
+/** A triangle strip (glState turns culling off, so the winding does not matter). */
 void rect(float x0, float y0, float x1, float y1) {
   glBegin(GL_TRIANGLE_STRIP);
   glVertex2f(x0, y0);

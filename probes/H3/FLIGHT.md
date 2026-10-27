@@ -51,8 +51,11 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   dibujo de 307 ms, en el período en que cargaba el vuelo (12 fps): a vigilar.
 - **Se dibuja con Vulkan:** la ventana, el estado, "1 · Start", "3.9 km", la flecha "ahead" y el
   mapa con las 5 puertas en orden y el avión en el borde, mirando al oeste. El `—` se ve bien.
-- **`GL_QUADS` no dibuja nada:** no salieron ni el fondo negro, ni el reloj, ni los cuadraditos
-  de los pilones; las líneas y los triángulos sí. Ahora `rect` usa dos triángulos.
+- **No salieron ni el fondo negro, ni el reloj, ni los cuadraditos de los pilones;** las líneas
+  y la flecha sí. Primero creímos que era `GL_QUADS`, pero con triángulos pasó lo mismo. La causa
+  es el **culling de caras traseras, que X-Plane deja encendido** en el dibujo de las ventanas: la
+  flecha va en sentido horario y se ve, los rectángulos en sentido antihorario y desaparecían.
+  `XPLMSetGraphicsState` no lo toca, así que `glState()` hace `glDisable(GL_CULL_FACE)`.
 - La pista se escribía en el `Log.txt` cada vez que llegaba (cada 2 s). Ahora, sólo cuando cambia.
 
 ## Primera carrera (2026-10-26, 12.4.3): Daggett Sprint en 27,34 s, limpia
