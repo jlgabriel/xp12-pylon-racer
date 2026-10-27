@@ -55,6 +55,19 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   de los pilones; las líneas y los triángulos sí. Ahora `rect` usa dos triángulos.
 - La pista se escribía en el `Log.txt` cada vez que llegaba (cada 2 s). Ahora, sólo cuando cambia.
 
+## Primera carrera (2026-10-26, 12.4.3): Daggett Sprint en 27,34 s, limpia
+
+- **56–60 fps** toda la carrera con la ventana visible, **dibujo 0,05–0,07 ms** de promedio y
+  menos de 0,5 ms de máximo. El pico de 307 ms no se repitió: fue al cargar el vuelo.
+- **La app atrasa ~2 m** respecto del sim (máximo 7 m) a velocidad de carrera. Es poco, pero la
+  flecha la sigue calculando el plugin.
+- Al terminar, la ventana dice "Finished" y todas las puertas pasan a gris.
+- **La flecha "se volvía loca" al pasar cada puerta** (Juan): apuntaba al centro, y pasando al
+  costado el centro gira a 90° y luego queda atrás hasta que la app avisa el paso. Ahora, a
+  menos de 150 m (o del ancho de la puerta), apunta en el rumbo de la puerta. **A volar de nuevo.**
+  La app tiene el mismo `TurnCue` y le pasa lo mismo, a menos frames.
+- Esta carrera se voló todavía sin el fondo negro ni el reloj (la versión con `GL_QUADS`).
+
 ## Antes (con X-Plane cerrado)
 
 1. Si no existe `probes/H3/XPR_H3_Display/`, rehazla con `npm run probe:plugin`.

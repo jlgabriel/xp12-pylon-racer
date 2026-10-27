@@ -39,6 +39,7 @@ constexpr const char* kVersion = "0.1.0-h3";
 constexpr double kStaleS = 2.0;      // no message for this long = the app is gone
 constexpr double kLogEveryS = 10.0;  // the probe's measurements, to Log.txt
 constexpr double kHelloEveryS = 1.0;
+constexpr double kCloseM = 150;      // nearer than this (or the gate's width), the arrow shows the gate's heading
 
 // Colors copied from src/renderer/theme/tokens.css: the plugin cannot read the app's tokens.
 struct Rgb { float r, g, b; };
@@ -328,7 +329,18 @@ void draw(XPLMWindowID win, void*) {
       if (!gLive.needs.empty()) text(kMuted, l + pad, y -= lineH, gLive.needs);
       if (me.valid) {
         double d = haversine(me.lat, me.lon, g.lat, g.lon);
-        double rel = wrap180(bearing(me.lat, me.lon, g.lat, g.lon) - me.heading);
+        // Close to the gate the bearing to its center swings round as you pass beside it, and
+        // turns behind you until the app says the gate was passed (first flight, 2026-10-26).
+        // There the arrow shows the way through the gate instead, which holds still.
+        double width = 0;
+        const xpr::Pylon* first = nullptr;
+        for (const auto& p : gCourse.pylons) {
+          if (p.gate != gLive.next) continue;
+          if (first) width = haversine(first->lat, first->lon, p.lat, p.lon);
+          else first = &p;
+        }
+        const bool close = d < std::max(kCloseM, width);
+        double rel = wrap180((close ? g.headingDeg : bearing(me.lat, me.lon, g.lat, g.lon)) - me.heading);
         int deg = static_cast<int>(std::lround(std::fabs(rel)));
         std::string cue = deg <= 10 ? "ahead" : deg >= 170 ? "behind you" : std::to_string(deg) + "\xC2\xB0 " + (rel < 0 ? "left" : "right");
         y -= 34;
