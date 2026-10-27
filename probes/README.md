@@ -64,3 +64,8 @@ devuelve exactamente el guion (32,0 m desde el pilón izquierdo y signos correct
 - **No se ven los pilones pero sí la torre:** el pack cargó y los objetos no. Ese es un resultado,
   no un fracaso. Sigue con el resto del vuelo.
 - **No se ve ni la torre:** el pack no cargó. Revisa la línea del `scenery_packs.ini`.
+
+## H3, aparte: la carrera dentro de X-Plane
+
+Un plugin propio que muestra la carrera en una ventana del sim, con la app como juez. Se vuela por
+separado; los pasos están en `probes/H3/FLIGHT.md`.
