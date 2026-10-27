@@ -12,7 +12,8 @@
 **1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
 `xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
 *Después de la H3*. Volado el mismo día en la 12.4.3 con la app (Daggett Sprint, 27,54 s); un
-arreglo de ese vuelo (la ventana que no nacía oculta) quedó sin volar.
+arreglo de ese vuelo (la ventana que no nacía oculta) quedó sin volar. Tag `v1.4.0`, publicada el 2026-10-27
+con los seis archivos. El anuncio en X-Plane.org espera a volar ese arreglo (Juan).
 
 **1.3.1, 2026-10-26.** La 1.3 más la carpeta de X-Plane a la vista, con **Change…** para elegir
 otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario en X-Plane.org.
