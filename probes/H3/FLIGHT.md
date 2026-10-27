@@ -90,6 +90,13 @@ sobre fondo negro) sin costar frames y sin que la app deje de ser el juez?
   topados. **Con la ventana aparte bajó a 30–42 fps y 6,5–8,4 ms** en tres períodos. Puede ser el
   costo de una ventana más del sistema o que Juan la estaba moviendo: repetirlo quieto.
 - El menú *Plugins › XP Pylon Racer (H3)* funciona.
+- **Un crash al arrancar** (23:27, primera vez con la app conectada por `npm run dev`): en el menú
+  principal, a los 6 s, después de `IDENT: Getting keystore from disk...`. El minidump da la
+  excepción `0x80000003` (un breakpoint, o sea un assert del propio X-Plane) en
+  `X-Plane.exe+0x15e8daa`. En la pila sólo hay código de `X-Plane.exe`, nada de `XPLM_64.dll` ni de
+  nuestro plugin, y el log dice "Location undetermined". En el menú el plugin sólo dibuja "Waiting…",
+  igual que en las sesiones anteriores, que no se cayeron. Lectura: de X-Plane, no nuestro. Si se
+  repite, probar sin `XPR_H3_Display`.
 - **Falta:** oculta contra visible (no quedó ningún período con la ventana oculta), VR, una tecla
   para `xpr/h3/toggle_display`, Pop out quieto, y repetir en la 12.4.4.
 
