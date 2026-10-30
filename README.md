@@ -224,6 +224,10 @@ copies it to the clipboard: paste it into Shirley's Challenge Creator
 rules and your records on that course. Keep XP Pylon Racer open on the same course while you fly: it
 still times and scores the race, and Shirley only watches.
 
+Every gate has a wake-up trigger, so Shirley calls it the instant you reach it ("Gate 3! Knife edge
+next."). Turn pylons have none: she calls those from the flight data. A multi-lap course becomes one
+race phase per lap, and Shirley moves through them on her own.
+
 ## Connecting to X-Plane 12
 
 There is nothing to install in X-Plane (the [in-sim display](#the-race-inside-x-plane) is

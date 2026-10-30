@@ -1,16 +1,18 @@
 # XP Pylon Racer — Documento de diseño
 
-> Versión 1.5.0 · 2026-10-27 · diez pistas más, 44 en total.
+> Versión 1.6.0 · 2026-10-30 · Shirley canta cada puerta al llegar.
 > Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
 > heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-27, v1.5.0: diez pistas más)
+## 0. Estado (2026-10-30, v1.6.0: Shirley canta cada puerta)
 
-**Sin release todavía (2026-10-30).** Export to Shirley arma un disparador por puerta, que canta la
-puerta al llegar: abajo en *Después de la 1.5*. Sin volar.
+**1.6.0, 2026-10-30.** La 1.5 más Export to Shirley con un disparador por puerta, que canta la
+puerta al llegar, y una fase de carrera por vuelta: abajo en *Después de la 1.5*. Sin volar; el
+formato de los disparadores se leyó en el servidor de pruebas de Airplane-Team el día que pasaba a
+producción. Tag `v1.6.0`, mismo workflow; el plugin no cambia salvo el número de versión.
 
 **1.5.0, 2026-10-27.** La 1.4 más diez pistas de Juan (44 en total), abajo en *Después de la 1.4*.
 No se volaron; las notas lo dicen. Tag `v1.5.0`, mismo workflow, publicada el 2026-10-27 con los
