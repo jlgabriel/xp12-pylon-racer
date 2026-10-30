@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { raceSequence } from "../src/core/course/course";
 import { sampleCourses } from "../src/core/demo/sampleCourses";
 import {
   challengeName,
   courseRecords,
   MAX_CHALLENGE_NAME,
+  raceSegments,
   raceTime,
   shirleyChallenge,
   shirleyFileName,
@@ -13,8 +15,9 @@ import {
 import type { RunSummary } from "../src/shared/racerApi";
 import { makeCourse, straightCourse } from "./helpers";
 
-// Airplane-Team's ChallengeSchema (challenge_schema.ts and waypoint.ts, read 2026-10-25), cut down to
-// the fields the export writes. Strict where Shirley only warns, so a misspelled key fails here.
+// Airplane-Team's ChallengeSchema (challenge_schema.ts and waypoint.ts, read 2026-10-25; the wake-up
+// triggers from tracked_wakeup_property.ts and coordinate_types.ts, read on stage 2026-10-30), cut
+// down to the fields the export writes. Strict where Shirley only warns, so a misspelled key fails here.
 const NAME = z
   .string()
   .min(1)
@@ -46,6 +49,12 @@ const STATE = z
     assistantModeEnabled: z.boolean().optional(),
   })
   .strict();
+const TARGET = z
+  .object({ value: z.number().positive(), label: z.string().min(1).optional(), cannedText: z.string().min(1).max(280).optional() })
+  .strict();
+const TRIGGERS = z
+  .object({ distanceTargets: z.record(z.string().regex(/^-?\d+\.\d{6},-?\d+\.\d{6}$/), z.array(TARGET).nullable().optional()).optional() })
+  .strict();
 const PHASE = z
   .object({
     name: NAME,
@@ -57,6 +66,7 @@ const PHASE = z
     transitions: z.array(z.object({ toPhaseName: NAME, conditions: z.string(), automaticTransition: z.boolean() }).strict()),
     enabledTools: TOOLS.optional(),
     enabledState: STATE.optional(),
+    wakeupTriggers: TRIGGERS.optional(),
   })
   .strict();
 const CHALLENGE = z
@@ -118,7 +128,88 @@ describe("shirleyChallenge", () => {
     expect(c.laps).toBeGreaterThan(1);
     const ch = shirleyChallenge(c, "Juan", []);
     expect(ch.prompt).toContain(`the race ends there after lap ${c.laps}`);
-    expect(ch.phases[1]!.transitions[0]!.conditions).toContain(`end of lap ${c.laps}`);
+    const lastRace = ch.phases[ch.phases.length - 2]!;
+    expect(lastRace.transitions[0]!.conditions).toContain(`end of lap ${c.laps}`);
+  });
+
+  // Flown 2026-10-27 at KDAG: Shirley set distance triggers when asked and called every gate on time.
+  it("calls every gate the instant the pilot reaches it", () => {
+    const c = course("daggett-sprint");
+    const ch = shirleyChallenge(c, "Juan", []);
+    expect(ch.phases.map((p) => p.name)).toEqual(["Brief", "Race", "Debrief"]);
+    const targets = ch.phases[1]!.wakeupTriggers!.distanceTargets!;
+    const start = c.gates[0]!;
+    expect(Object.keys(targets)).toHaveLength(c.gates.length);
+    expect(targets[`${start.center.lat.toFixed(6)},${start.center.lon.toFixed(6)}`]).toEqual([
+      { value: 0.038, label: "Start gate", cannedText: "Start gate! Clock's running." },
+    ]);
+    expect(Object.values(targets).map((t) => t![0]!.cannedText)).toEqual([
+      "Start gate! Clock's running.",
+      "Gate 2!",
+      "Gate 3!",
+      "Gate 4!",
+      "Finish!",
+    ]);
+  });
+
+  it("wakes Shirley a mile out so she starts the race in time", () => {
+    const c = course("daggett-sprint");
+    const brief = shirleyChallenge(c, "Juan", []).phases[0]!;
+    const key = `${c.gates[0]!.center.lat.toFixed(6)},${c.gates[0]!.center.lon.toFixed(6)}`;
+    expect(brief.wakeupTriggers!.distanceTargets![key]).toEqual([{ value: 1, label: "Approaching the start gate" }]);
+  });
+
+  it("leaves turn pylons without a trigger and says what the next gate asks for", () => {
+    const c = makeCourse([
+      { type: "start", x: 0, y: -1000, heading: 0, width: 100 },
+      { type: "gate", x: 0, y: -500, heading: 0 },
+      { type: "knife", x: 0, y: 0, heading: 0 },
+      { type: "turn", x: 0, y: 500, heading: 0, turnSide: "right" },
+      { type: "finish", x: 0, y: 1000, heading: 0 },
+    ]);
+    const race = shirleyChallenge(c, "Juan", []).phases[1]!;
+    const calls = Object.values(race.wakeupTriggers!.distanceTargets!).map((t) => t![0]!.cannedText);
+    expect(calls).toEqual(["Start gate! Clock's running.", "Gate 2! Knife edge next.", "Gate 3! Pylon next, keep it on your right.", "Finish!"]);
+    expect(race.prompt).toContain("Turn pylons have no call");
+  });
+
+  it("splits a multi-lap race into phases that hand over before the longest leg", () => {
+    // Legs: start→g2 200 m, g2→g3 1300 m (the longest), g3→g4 283 m, g4→start 1100 m.
+    const c = makeCourse(
+      [
+        { type: "start", x: 0, y: 0, heading: 0 },
+        { type: "gate", x: 0, y: 200, heading: 90 },
+        { type: "gate", x: 1300, y: 200, heading: 135 },
+        { type: "gate", x: 1100, y: 0, heading: 270 },
+      ],
+      { laps: 2 },
+    );
+    expect(raceSegments(c)).toEqual([
+      [0, 1],
+      [2, 3, 4, 5],
+      [6, 7, 8],
+    ]);
+    const ch = shirleyChallenge(c, "Juan", []);
+    expect(ch.phases.map((p) => p.name)).toEqual(["Brief", "Race1", "Race2", "Race3", "Debrief"]);
+    expect(ch.phases[0]!.transitions[0]!.toPhaseName).toBe("Race1");
+    expect(ch.phases[1]!.transitions[0]).toMatchObject({ toPhaseName: "Race2", automaticTransition: true });
+    expect(ch.phases[1]!.transitions[0]!.conditions).toContain("gate 2 of lap 1");
+    const calls = (i: number) => Object.values(ch.phases[i]!.wakeupTriggers!.distanceTargets!).map((t) => t![0]!.cannedText);
+    expect(calls(1)).toEqual(["Start gate! Clock's running.", "Gate 2!"]);
+    expect(calls(2)).toEqual(["Gate 3!", "Gate 4!", "Lap 2!", "Gate 2!"]);
+    expect(calls(3)).toEqual(["Gate 3!", "Gate 4!", "Finish!"]);
+  });
+
+  it("never hands over at a turn pylon, and arms each gate once per phase on every course", () => {
+    for (const c of sampleCourses()) {
+      const segments = raceSegments(c);
+      expect(segments.flat(), c.id).toEqual(raceSequence(c).map((_, at) => at));
+      for (const s of segments.slice(0, -1)) expect(c.gates[raceSequence(c)[s[s.length - 1]!]!]!.type, c.id).not.toBe("turn");
+      for (const p of shirleyChallenge(c, "Juan", []).phases.filter((p) => p.name.startsWith("Race"))) {
+        const gates = raceSegments(c)[p.name === "Race" ? 0 : Number(p.name.slice(4)) - 1]!.map((at) => c.gates[raceSequence(c)[at]!]!);
+        expect(Object.keys(p.wakeupTriggers!.distanceTargets!), c.id).toHaveLength(gates.filter((g) => g.type !== "turn").length);
+      }
+    }
   });
 
   it("names the side of a turn pylon to fly by", () => {

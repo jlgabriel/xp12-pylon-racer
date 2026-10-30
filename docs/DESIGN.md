@@ -9,6 +9,9 @@
 
 ## 0. Estado (2026-10-27, v1.5.0: diez pistas más)
 
+**Sin release todavía (2026-10-30).** Export to Shirley arma un disparador por puerta, que canta la
+puerta al llegar: abajo en *Después de la 1.5*. Sin volar.
+
 **1.5.0, 2026-10-27.** La 1.4 más diez pistas de Juan (44 en total), abajo en *Después de la 1.4*.
 No se volaron; las notas lo dicen. Tag `v1.5.0`, mismo workflow, publicada el 2026-10-27 con los
 seis archivos; el plugin no cambia salvo el número de versión.
@@ -155,7 +158,8 @@ schema, recortado a los campos que se escriben.
 
 - Tres fases: `Brief` (presentación de la pista camino a la salida, silencio máx. 60 s) → `Race`
   (relato en vivo: silencio máx. `RACE_QUIET_S` = 6 s, `challengeTimer`, `recordFlightData`) →
-  `Debrief` (veredicto, `analyzeFlightData`, otra corrida vuelve a `Brief`).
+  `Debrief` (veredicto, `analyzeFlightData`, otra corrida vuelve a `Brief`). Después de la 1.5
+  llevan disparadores por puerta y una fase de carrera por vuelta: *Después de la 1.5*.
 - Las puertas de una vuelta van como `navigateToStateWaypoints`, con lo que pide cada una en su
   `context`; rumbos verdaderos (no se llena `magneticHeadingDeg`), alturas en m y ft.
 - **La app juzga, Shirley relata.** Shirley no ve el reloj ni las penalizaciones de la app: el prompt
@@ -190,7 +194,7 @@ Dos errores de Shirley, corregidos en el prompt:
 2. Escribió 1:00.079 cuando Juan leyó "01:00.79". Ahora el prompt explica el formato
    minutos:segundos.centésimas de la app.
 
-Pendiente: volver a volar con el prompt corregido.
+Se volvió a volar con el prompt corregido el 2026-10-27: abajo en *Después de la 1.5*.
 
 ### Después de la 1.1: cuatro pistas del catálogo (sin volar todavía)
 
@@ -407,6 +411,48 @@ dos instaladas se ven los pilones de la otra.
 Falta volarlas. Lo más dudoso: si el agua del fondo de Milford Sound está a nivel del mar en la
 malla de X-Plane, si Futaleufú (puertas de 70 m, tramos de 200 m) se puede volar en un Extra, y el
 cruce de montaña de Stryn a Geiranger.
+
+### Después de la 1.5: Shirley canta cada puerta (sin volar todavía)
+
+**El vuelo que lo trajo, 2026-10-27** (Daggett Sprint, Cessna 172SP, Shirley en el modelo Quick;
+airplane.team/share/fEqLACwQ). Con el prompt corregido del 2026-10-25, Shirley sólo se despertaba
+cada 6 s de silencio y decía "gate in seconds" sin saber cuándo pasaba Juan. Cuando él le pidió que
+lo detectara, ella misma llamó a `SetWakeUpTriggers` con un punto por puerta (0,04 NM y un texto
+fijo) y cantó las cinco justo a tiempo: 21:40:10, :25, :40, :57 y 21:41:13, cada ~15 s como piden
+600 m a ~75 kt. La app: **1:02,75**, limpia. El prompt corregido funcionó (contó las puertas a
+cualquier altura y leyó bien el 1:00,79 del récord).
+
+Se le mandó a Alex el reporte. Respondió que es su sistema nuevo de *wakeups*, que una fase del
+challenge los puede armar sola (`wakeupTriggers`), que cada uno salta una vez, que los de una fase se
+borran al terminarla, y que para varias vueltas por ahora hay que usar una fase por vuelta. El formato
+de los disparadores por distancia se leyó en `types/tracked_wakeup_property.ts` de
+frontend-stage.airplane.team el 2026-10-30 (a producción "mañana", según Alex):
+`distanceTargets` con clave `"lat,lon"` de seis decimales y una lista de `{ value (NM), label,
+cannedText }`; salta al bajar de `value` y se borra; dos iguales se funden en uno.
+
+**Qué hace ahora `src/core/export/shirley.ts`:**
+
+- Cada puerta de la fase de carrera lleva su disparador: radio de medio ancho + 20 m (0,038 NM en
+  las puertas de 100 m de Daggett, casi lo que eligió Shirley) y un texto que se dice al instante:
+  "Start gate! Clock's running.", "Gate 3!", "Lap 2!", "Finish!", con lo que pide la siguiente
+  ("Knife edge next.", "Pylon next, keep it on your right.").
+- **Los pilones de viraje no llevan disparador**: se rodean a una distancia que nadie sabe, y con un
+  radio fijo saltaría muy temprano o nunca. Esperan el disparador de "punto más cercano" que ofreció
+  Alex; mientras, Shirley los canta con sus despertares de 6 s.
+- **Varias vueltas** (9 de las 44 pistas): como cada disparador salta una vez y una fase arma cada
+  punto una sola vez, la carrera se parte en fases `Race1`…`RaceN` (`raceSegments`). Cada una pasa la
+  posta en la puerta antes del tramo más largo (nunca un pilón de viraje, que no despierta a
+  Shirley), para darle el mayor tiempo posible de cambiar de fase. En una vuelta sigue habiendo una
+  sola `Race`.
+- El `Brief` despierta a Shirley a 1 NM de la largada, para que entre a la carrera a tiempo sin que
+  el piloto diga "let's go" (antes sólo se despertaba cada 60 s).
+- `challengeTimer` y `recordFlightData` siguen en cada fase de carrera; el schema dice que los datos
+  sólo se borran al pasar de falso a verdadero, así que de `Race1` a `Race2` no se pierden.
+
+Falta volarlo: Daggett sin pedirle nada a Shirley; una pista de varias vueltas (Munich Diamond:
+`Race1` hasta la g3 de la vuelta 1), donde el riesgo es que el cambio de fase, que decide Shirley y
+tarda unos segundos, llegue tarde a la puerta siguiente; el Extra, con puertas cada 3 a 5 s, por si
+los textos se pisan; y Precise, que Alex cree que puede andar mejor.
 
 ### RREF como alternativa a RPOS (no adoptada)
 
