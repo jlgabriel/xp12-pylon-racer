@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { raceSequence } from "../src/core/course/course";
+import { haversine } from "../src/core/geo/geo";
+import { gatePassLine } from "../src/core/race/engine";
 import { sampleCourses } from "../src/core/demo/sampleCourses";
 import {
   challengeName,
@@ -159,7 +161,7 @@ describe("shirleyChallenge", () => {
     expect(brief.wakeupTriggers!.distanceTargets![key]).toEqual([{ value: 1, label: "Approaching the start gate" }]);
   });
 
-  it("leaves turn pylons without a trigger and says what the next gate asks for", () => {
+  it("says what the next gate asks for, and calls a turn pylon as a pylon", () => {
     const c = makeCourse([
       { type: "start", x: 0, y: -1000, heading: 0, width: 100 },
       { type: "gate", x: 0, y: -500, heading: 0 },
@@ -169,8 +171,34 @@ describe("shirleyChallenge", () => {
     ]);
     const race = shirleyChallenge(c, "Juan", []).phases[1]!;
     const calls = Object.values(race.wakeupTriggers!.distanceTargets!).map((t) => t![0]!.cannedText);
-    expect(calls).toEqual(["Start gate! Clock's running.", "Gate 2! Knife edge next.", "Gate 3! Pylon next, keep it on your right.", "Finish!"]);
-    expect(race.prompt).toContain("Turn pylons have no call");
+    expect(calls).toEqual(["Start gate! Clock's running.", "Gate 2! Knife edge next.", "Gate 3! Pylon next, keep it on your right.", "Pylon 4!", "Finish!"]);
+    expect(race.prompt).toContain("Every gate and turn pylon has a wake-up trigger");
+  });
+
+  // Juan's idea (2026-10-31): the pass line of a turn pylon is a gate with one invisible pylon.
+  it("lines a turn pylon's pass line with small invisible gates", () => {
+    const c = makeCourse([
+      { type: "start", x: 0, y: -1000, heading: 0 },
+      { type: "turn", x: 0, y: 0, heading: 90, turnSide: "left", width: 500 },
+      { type: "finish", x: 1000, y: 0, heading: 90 },
+    ]);
+    const turn = c.gates[1]!;
+    const line = gatePassLine(turn);
+    const targets = Object.entries(shirleyChallenge(c, "Juan", []).phases[1]!.wakeupTriggers!.distanceTargets!).filter(
+      ([, t]) => t![0]!.label === "Pylon 2",
+    );
+    // 500 m would take seven circles of 40 m; capped at four, 125 m apart, each 62.5 m + 2 m of overlap.
+    expect(targets).toHaveLength(4);
+    const points = targets.map(([key]) => {
+      const [lat, lon] = key.split(",").map(Number);
+      return { lat: lat!, lon: lon! };
+    });
+    points.forEach((p, i) => {
+      expect(haversine(line.a, p)).toBeCloseTo((i + 0.5) * 125, 0);
+      // On the pass line, which runs from the pylon to its far end.
+      expect(haversine(line.a, p) + haversine(p, line.b)).toBeCloseTo(500, 0);
+    });
+    expect(targets.every(([, t]) => t![0]!.value === 0.035 && t![0]!.cannedText === "Pylon 2!")).toBe(true);
   });
 
   it("splits a multi-lap race into phases that hand over before the longest leg", () => {
@@ -200,14 +228,14 @@ describe("shirleyChallenge", () => {
     expect(calls(3)).toEqual(["Gate 3!", "Gate 4!", "Finish!"]);
   });
 
-  it("never hands over at a turn pylon, and arms each gate once per phase on every course", () => {
+  it("covers the whole race once and arms every gate of a phase, on every course", () => {
     for (const c of sampleCourses()) {
       const segments = raceSegments(c);
       expect(segments.flat(), c.id).toEqual(raceSequence(c).map((_, at) => at));
-      for (const s of segments.slice(0, -1)) expect(c.gates[raceSequence(c)[s[s.length - 1]!]!]!.type, c.id).not.toBe("turn");
       for (const p of shirleyChallenge(c, "Juan", []).phases.filter((p) => p.name.startsWith("Race"))) {
-        const gates = raceSegments(c)[p.name === "Race" ? 0 : Number(p.name.slice(4)) - 1]!.map((at) => c.gates[raceSequence(c)[at]!]!);
-        expect(Object.keys(p.wakeupTriggers!.distanceTargets!), c.id).toHaveLength(gates.filter((g) => g.type !== "turn").length);
+        const gates = segments[p.name === "Race" ? 0 : Number(p.name.slice(4)) - 1]!.map((at) => c.gates[raceSequence(c)[at]!]!);
+        const expected = gates.reduce((n, g) => n + (g.type === "turn" ? Math.min(4, Math.ceil(g.widthM / 80)) : 1), 0);
+        expect(Object.keys(p.wakeupTriggers!.distanceTargets!), c.id).toHaveLength(expected);
       }
     }
   });

@@ -12,7 +12,8 @@
 // frontend-stage.airplane.team 2026-10-30): its call is spoken the instant the pilot reaches it.
 // Flown 2026-10-27, Shirley set these herself when asked and called every gate on time.
 import { courseRevision, raceSequence, type Course, type Gate, type GateType } from "../course/course";
-import { haversine } from "../geo/geo";
+import { destination, haversine, initialBearing, type LonLat } from "../geo/geo";
+import { gatePassLine } from "../race/engine";
 import { leaderboard, classesOf } from "../ranking/ranking";
 import { classLabel } from "../ranking/classes";
 import { lapLength } from "../run/summaries";
@@ -40,6 +41,14 @@ const BRIEF_WAKE_NM = 1;
 /** A gate's trigger fires this far outside its half-width: room for a pass off the centerline, and
  *  about a second early at C172 speed. Shirley's own pick at Daggett (100 m gates) was 0.04 NM. */
 const GATE_TRIGGER_MARGIN_M = 20;
+/** The invisible gates along a turn pylon's pass line are this big where the line allows (the call
+ *  comes at most this far early)... */
+const TURN_TRIGGER_RADIUS_M = 40;
+/** ...but a pylon gets no more than this many, or Osorno's 32 pylons on 500 m lines would make a
+ *  73,000-character challenge. A 500 m line gets four of 62.5 m. */
+const MAX_TURN_TRIGGERS = 4;
+/** Neighboring invisible gates overlap this much, so no pass slips between two of them. */
+const TURN_TRIGGER_OVERLAP_M = 2;
 const M_PER_NM = 1852;
 
 export interface ShirleyWaypoint {
@@ -198,7 +207,7 @@ export function shirleyChallenge(course: Course, pilot: string, records: readonl
           },
         ],
         enabledState: { wakeUpAfterQuietPeriodSeconds: BRIEF_QUIET_S },
-        wakeupTriggers: { distanceTargets: { [coordinateKey(start)]: [{ value: BRIEF_WAKE_NM, label: "Approaching the start gate" }] } },
+        wakeupTriggers: { distanceTargets: { [coordinateKey(start.center)]: [{ value: BRIEF_WAKE_NM, label: "Approaching the start gate" }] } },
       },
       ...race,
       {
@@ -222,7 +231,8 @@ export function shirleyChallenge(course: Course, pilot: string, records: readonl
 
 /** The race as phases of positions in `raceSequence(course)`. A trigger fires once and a phase can
  *  arm a gate only once, so a multi-lap race needs a phase per lap. Each one hands over at the gate
- *  before the longest leg, the most time for Shirley to switch before the next gate comes up. */
+ *  before the longest leg, the most time for Shirley to switch before the next gate comes up. A turn
+ *  pylon can hand over too: its triggers wake Shirley like a gate's. */
 export function raceSegments(course: Pick<Course, "gates" | "laps">): number[][] {
   const seq = raceSequence(course);
   if (course.laps === 1) return [seq.map((_, at) => at)];
@@ -235,13 +245,11 @@ export function raceSegments(course: Pick<Course, "gates" | "laps">): number[][]
   return out;
 }
 
-/** The gate whose leg to the next one is longest. Never a turn pylon: it has no trigger to wake
- *  Shirley for the handover (the start is always a candidate). */
+/** The gate whose leg to the next one is longest. */
 function handoffGate(gates: readonly Gate[]): number {
   let best = 0;
   let bestM = -1;
   gates.forEach((g, i) => {
-    if (g.type === "turn") return;
     const legM = haversine(g.center, gates[(i + 1) % gates.length]!.center);
     if (legM > bestM) [best, bestM] = [i, legM];
   });
@@ -253,11 +261,7 @@ function racePhases(course: Course, types: ReadonlySet<GateType>, toBeat: string
   const segments = raceSegments(course);
   const name = (k: number): string => (segments.length === 1 ? "Race" : `Race${k + 1}`);
   const over = "the run is over: they say so, crash, land, or turn away from the course";
-  const turns = types.has("turn");
-  const calls = [
-    `Every gate${turns ? " except the turn pylons" : ""} has a wake-up trigger: the instant the pilot reaches it, its call ("Gate 3!") is spoken for you. Never repeat that call; follow it with one quick comment on the pass or what comes next.`,
-    turns ? "Turn pylons have no call: call them yourself from the distance to their waypoint." : null,
-  ];
+  const calls = `Every gate${types.has("turn") ? " and turn pylon" : ""} has a wake-up trigger: the instant the pilot reaches it, its call ("Gate 3!") is spoken for you. Never repeat that call; follow it with one quick comment on the pass or what comes next.`;
 
   return segments.map((positions, k) => {
     const first = positions[0]!;
@@ -272,7 +276,7 @@ function racePhases(course: Course, types: ReadonlySet<GateType>, toBeat: string
         segments.length === 1 ? "Live commentary of the run" : `Live commentary from ${stepText(course, seq, first)} to ${stepText(course, seq, end)}`,
       prompt: [
         "The run is on. Commentate live: the next gate and what it asks for, speed, height above the ground, bank and g, the line through the turns. Short punchy call-outs, never questions.",
-        ...calls,
+        calls,
         handover,
         "Your challenge timer started before the start gate, so it is not the race time.",
       ]
@@ -302,22 +306,35 @@ function racePhases(course: Course, types: ReadonlySet<GateType>, toBeat: string
   });
 }
 
-/** One trigger per gate of the phase, turn pylons left out: they are passed at a distance nobody
- *  knows, so a fixed radius would fire far too early or never. */
+/** One trigger per gate of the phase. A turn pylon is passed anywhere along its pass line (the
+ *  engine's), so one big circle would fire far too early on a 500 m line: it gets a chain of small
+ *  invisible gates along the line instead, each saying the same call. */
 function gateTriggers(course: Course, seq: readonly number[], positions: readonly number[]): ShirleyWakeupTriggers {
   const distanceTargets: Record<string, ShirleyWakeupTarget[]> = {};
   for (const at of positions) {
     const g = course.gates[seq[at]!]!;
-    if (g.type === "turn") continue;
-    const value = Math.round(((g.widthM / 2 + GATE_TRIGGER_MARGIN_M) / M_PER_NM) * 1000) / 1000;
-    distanceTargets[coordinateKey(g)] = [{ value, label: stepLabel(course, seq, at), cannedText: gateCall(course, seq, at) }];
+    const target = (radiusM: number): ShirleyWakeupTarget[] => [
+      { value: Math.round((radiusM / M_PER_NM) * 1000) / 1000, label: stepLabel(course, seq, at), cannedText: gateCall(course, seq, at) },
+    ];
+    if (g.type !== "turn") {
+      distanceTargets[coordinateKey(g.center)] = target(g.widthM / 2 + GATE_TRIGGER_MARGIN_M);
+      continue;
+    }
+    const line = gatePassLine(g);
+    const bearing = initialBearing(line.a, line.b);
+    const count = Math.min(MAX_TURN_TRIGGERS, Math.max(1, Math.ceil(g.widthM / (2 * TURN_TRIGGER_RADIUS_M))));
+    const spacingM = g.widthM / count;
+    for (let i = 0; i < count; i++) {
+      // Circles just overlapping, so a pass anywhere on the line is inside one.
+      distanceTargets[coordinateKey(destination(line.a, (i + 0.5) * spacingM, bearing))] = target(spacingM / 2 + TURN_TRIGGER_OVERLAP_M);
+    }
   }
   return { distanceTargets };
 }
 
 /** Shirley's key for a point: "lat,lon" with exactly six decimals. */
-function coordinateKey(g: Gate): string {
-  return `${g.center.lat.toFixed(6)},${g.center.lon.toFixed(6)}`;
+function coordinateKey(p: LonLat): string {
+  return `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`;
 }
 
 /** The lap a position of the race sequence belongs to; the start line closing a lap is its last step. */
@@ -330,7 +347,8 @@ function stepLabel(course: Course, seq: readonly number[], at: number): string {
   if (at === seq.length - 1) return "Finish";
   if (at === 0) return "Start gate";
   if (gate === 0) return `Lap ${lapAt(course, at)} done`;
-  return course.laps > 1 ? `Gate ${gate + 1}, lap ${lapAt(course, at)}` : `Gate ${gate + 1}`;
+  const name = `${kindName(course.gates[gate]!)} ${gate + 1}`;
+  return course.laps > 1 ? `${name}, lap ${lapAt(course, at)}` : name;
 }
 
 /** A step in prose: "the start gate", "gate 4 of lap 2", "the start line closing lap 1". */
@@ -339,14 +357,26 @@ function stepText(course: Course, seq: readonly number[], at: number): string {
   if (at === seq.length - 1) return course.laps > 1 ? "the finish on the start line" : "the finish gate";
   if (at === 0) return "the start gate";
   if (gate === 0) return `the start line closing lap ${lapAt(course, at)}`;
-  return course.laps > 1 ? `gate ${gate + 1} of lap ${lapAt(course, at)}` : `gate ${gate + 1}`;
+  const name = `${kindName(course.gates[gate]!).toLowerCase()} ${gate + 1}`;
+  return course.laps > 1 ? `${name} of lap ${lapAt(course, at)}` : name;
+}
+
+/** "Pylon" for a turn pylon, "Gate" for the rest; numbered like the course's gates. */
+function kindName(g: Gate): string {
+  return g.type === "turn" ? "Pylon" : "Gate";
 }
 
 /** What Shirley says the instant the pilot reaches a gate, with what the next one asks for. */
 function gateCall(course: Course, seq: readonly number[], at: number): string {
   const gate = seq[at]!;
   const last = at === seq.length - 1;
-  const call = last ? "Finish!" : at === 0 ? "Start gate! Clock's running." : gate === 0 ? `Lap ${lapAt(course, at) + 1}!` : `Gate ${gate + 1}!`;
+  const call = last
+    ? "Finish!"
+    : at === 0
+      ? "Start gate! Clock's running."
+      : gate === 0
+        ? `Lap ${lapAt(course, at) + 1}!`
+        : `${kindName(course.gates[gate]!)} ${gate + 1}!`;
   const next = last ? null : nextUp(course.gates[seq[at + 1]!]!);
   return next ? `${call} ${next}` : call;
 }
