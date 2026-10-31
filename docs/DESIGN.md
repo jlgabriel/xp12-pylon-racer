@@ -1,20 +1,22 @@
 # XP Pylon Racer — Design document
 
-> Version 1.6.0 · 2026-10-30 · Shirley calls every gate as you reach it.
+> Version 1.7.0 · 2026-10-31 · Shirley calls turn pylons too; the minimap keeps the whole trail.
 > Sister of [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) and
 > heir to the discipline of [XOP](https://github.com/jlgabriel/xp12-object-placer).
 > What comes from each, and what is rejected on purpose: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Status (2026-10-30, v1.6.0: Shirley calls every gate)
+## 0. Status (2026-10-31, v1.7.0: Shirley calls turn pylons too)
 
-**Unreleased (2026-10-31).** Turn pylons get invisible gates for Shirley along their pass line (below
+**1.7.0, 2026-10-31.** 1.6 plus invisible gates for Shirley along each turn pylon's pass line (below
 in *After 1.5*), **flown the same day** at Daggett Air Show: every gate and both pylons called once,
-on time; the multi-lap phases flown too, at Daggett Precision Cup, both handovers in time. The docs were translated to English: everything on
-GitHub is in English (Juan, 2026-10-31). The minimap's blue trail showed only the last minute of a
-3-minute run: kept by count (2,400 fixes, inherited from Pylon Racer), RPOS's ~30 Hz filled it in
-80 s. It now keeps a point every 10 m (`TRAIL_STEP_M`), up to 30 km.
+on time. The multi-lap phases of 1.6 were flown too, at Daggett Precision Cup: both handovers in
+time. The minimap's blue trail showed only the last minute of a 3-minute run: kept by count (2,400
+fixes, inherited from Pylon Racer), RPOS's ~30 Hz filled it in 80 s. It now keeps a point every 10 m
+(`TRAIL_STEP_M`), up to 30 km; seen in the renderer preview, not yet in a flight. The docs were
+translated to English: everything on GitHub is in English (Juan, 2026-10-31). Tag `v1.7.0`, same
+workflow; the plugin does not change except for the version number.
 
 **1.6.0, 2026-10-30.** 1.5 plus Export to Shirley with one trigger per gate, which calls the gate
 as you reach it, and one race phase per lap: below in *After 1.5*. Not flown; the trigger format was

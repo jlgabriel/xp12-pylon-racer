@@ -1,6 +1,6 @@
 {
   "name": "xp12-pylon-racer",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "type": "module",
   "description": "XP Pylon Racer — design pylon race courses for X-Plane 12, fly them, and race the clock.",
