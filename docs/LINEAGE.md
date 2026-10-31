@@ -1,69 +1,69 @@
-# Linaje: qué viene de Pylon Racer, qué viene de XOP y qué se rechaza
+# Lineage: what comes from Pylon Racer, what comes from XOP, and what is rejected
 
-XP Pylon Racer tiene dos padres. De **Pylon Racer** (Aerofly FS4) hereda el juego: las reglas, el
-motor de carrera, el formato de pista y la interfaz. De **XOP** (XP Object Placer) hereda todo lo
-que sabe de X-Plane: el DSF, el instalador y la disciplina de las sondas.
+XP Pylon Racer has two parents. From **Pylon Racer** (Aerofly FS4) it inherits the game: the rules,
+the race engine, the course format and the interface. From **XOP** (XP Object Placer) it inherits
+everything it knows about X-Plane: the DSF, the installer and the probe discipline.
 
-Este archivo existe para que en seis meses nadie, persona o agente, "arregle" algo aquí
-reintroduciendo un concepto de Aerofly que se dejó fuera a propósito. **Si vas a agregar algo de la
-última tabla, vas a cometer un error.**
+This file exists so that six months from now nobody, person or agent, "fixes" something here by
+bringing back an Aerofly concept that was left out on purpose. **If you are about to add something
+from the last table, you are making a mistake.**
 
-## Copiado de XOP, línea por línea
+## Copied from XOP, line by line
 
-Cada archivo lleva una cabecera que lo dice. Se copiaron también sus tests: que pasen aquí los
-números de XOP es lo que prueba que la copia no se desvió. Estos archivos conservan el estilo de XOP
-(comillas simples, imports con `.js`); el resto del repo sigue el de Pylon Racer.
+Each file has a header that says so. Their tests were copied too: XOP's numbers passing here is what
+proves the copy did not drift. These files keep XOP's style (single quotes, imports with `.js`); the
+rest of the repo follows Pylon Racer's.
 
-| Archivo | Por qué viaja |
+| File | Why it travels |
 |---|---|
-| `src/core/dsf/writeDsfBinary.ts`, `tile.ts`, `validate.ts` | El DSF binario que X-Plane 12.4.3 carga (XOP H0b, H8). Sin DSFTool. |
-| `src/core/install/sceneryPacksIni.ts` | Una línea en `scenery_packs.ini`, sin reordenar ni normalizar nada más, respetando los finales de línea del archivo. |
-| `src/core/install/parseInstallList.ts`, `src/main/findInstallations.ts` | Encontrar X-Plane 12 desde la lista del instalador de Laminar. |
-| `src/main/containedPath.ts` | Ninguna ruta sale de `Custom Scenery`. |
-| `src/core/model.ts` | **Recortado** a `LonLat` y `PlacedObject`, lo que importa el DSF. `libraryPath` conserva el nombre aunque aquí sea una ruta relativa al pack: renombrarlo obligaría a tocar el código copiado. |
-| `tests/writeDsfBinary.test.ts`, `tile.test.ts`, `sceneryPacksIni.test.ts`, `parseInstallList.test.ts`, `containedPath.test.ts` | Con `XOP_DSFTOOL` apuntando a DSFTool, también la lectura de vuelta (en este computador: `D:\Simuladores\Ortho4XP1.3\Utils\DSFTool.exe`). |
+| `src/core/dsf/writeDsfBinary.ts`, `tile.ts`, `validate.ts` | The binary DSF that X-Plane 12.4.3 loads (XOP H0b, H8). No DSFTool. |
+| `src/core/install/sceneryPacksIni.ts` | One line in `scenery_packs.ini`, without reordering or normalizing anything else, keeping the file's line endings. |
+| `src/core/install/parseInstallList.ts`, `src/main/findInstallations.ts` | Find X-Plane 12 from Laminar's installer list. |
+| `src/main/containedPath.ts` | No path leaves `Custom Scenery`. |
+| `src/core/model.ts` | **Trimmed** to `LonLat` and `PlacedObject`, what the DSF needs. `libraryPath` keeps its name even though here it is a path relative to the pack: renaming it would force changes to the copied code. |
+| `tests/writeDsfBinary.test.ts`, `tile.test.ts`, `sceneryPacksIni.test.ts`, `parseInstallList.test.ts`, `containedPath.test.ts` | With `XOP_DSFTOOL` pointing to DSFTool, also the read-back (on this computer: `D:\Simuladores\Ortho4XP1.3\Utils\DSFTool.exe`). |
 
-**Adaptado, no copiado:** `src/main/installer.ts` sigue las reglas de `installPack` de XOP
-(armar al lado y cambiar con un rename, respaldo del ini, un archivo bloqueado no es culpa de
-X-Plane) con el marcador propio `pylon-racer.json` y el prefijo `XPR_`. El test de propiedad del
-marcador nunca se vuelve más estricto (la regla `packContract` de XOP).
+**Adapted, not copied:** `src/main/installer.ts` follows XOP's `installPack` rules (build alongside
+and swap with a rename, back up the ini, a locked file is not X-Plane's fault) with its own marker
+`pylon-racer.json` and the `XPR_` prefix. The marker ownership test never gets stricter (XOP's
+`packContract` rule).
 
-**Por copiar si hace falta:** `airports/` (búsqueda en el `apt.dat` del usuario). Hoy el diseñador
-busca con Nominatim, como Pylon Racer.
+**To copy if needed:** `airports/` (search in the user's `apt.dat`). Today the designer searches with
+Nominatim, like Pylon Racer.
 
-## Portado de Pylon Racer (v0.1)
+## Ported from Pylon Racer (v0.1)
 
-Todo `src/` salvo lo de Aerofly: `course/` (modelo zod, revisión FNV, `raceSequence`, `edit.ts`),
-`race/`, `run/`, `session/`, `ranking/`, `demo/`, `files/` (`.pylonrace`), `geo/` (el `geo.ts` de
-Pylon Racer, que es el de PCT con lo que necesita el motor), `main/` y el renderer completo con sus
-tokens, fuentes e íconos. Sus tests vinieron con el código.
+All of `src/` except the Aerofly parts: `course/` (zod model, FNV revision, `raceSequence`,
+`edit.ts`), `race/`, `run/`, `session/`, `ranking/`, `demo/`, `files/` (`.pylonrace`), `geo/` (Pylon
+Racer's `geo.ts`, which is PCT's with what the engine needs), `main/` and the whole renderer with its
+tokens, fonts and icons. Their tests came with the code.
 
-Lo que cambió al portar:
+What changed in the port:
 
-| Pieza | En Pylon Racer | Aquí |
+| Piece | In Pylon Racer | Here |
 |---|---|---|
-| Telemetría | UDP ForeFlight 49002 + AeroflyReader.dll | RPOS (UDP 49000) + Web API para el avión (`core/telemetry/rpos.ts`, `webapi.ts`) |
+| Telemetry | ForeFlight UDP 49002 + AeroflyReader.dll | RPOS (UDP 49000) + Web API for the aircraft (`core/telemetry/rpos.ts`, `webapi.ts`) |
 | `SourceKind` | `udp`, `reader`, `demo` | `rpos`, `demo` |
-| Pilones | `.tmb` vendidos en `assets/` | generados (`core/pylon/`, `core/export/pylons.ts`), **mismos ids** |
-| Escenario | POI `.tsl` (`export/poi.ts`) | pack con DSF (`export/pack.ts`) |
-| Clases | ids de carpeta de AFS4 | códigos ICAO leídos de los `.acf` |
-| Revisión de una pista | — | distinta: cada pilón tiene altura conocida (DESIGN D11), y la pista elige su tamaño (D15) |
-| Test dorado del `.tsl` | el `.tsl` completo | sólo las posiciones de los pilones, que siguen idénticas al exportador viejo |
+| Pylons | `.tmb` sold in `assets/` | generated (`core/pylon/`, `core/export/pylons.ts`), **same ids** |
+| Scenery | `.tsl` POI (`export/poi.ts`) | pack with DSF (`export/pack.ts`) |
+| Classes | AFS4 folder ids | ICAO codes read from the `.acf` files |
+| Course revision | — | different: each pylon has a known height (DESIGN D11), and the course picks its size (D15) |
+| Golden test of the `.tsl` | the whole `.tsl` | only the pylon positions, which stay identical to the old exporter |
 
-## La disciplina (de PCT, vía XOP)
+## The discipline (from PCT, via XOP)
 
-Sondear antes de diseñar · control positivo · ángulos que no sean múltiplos de 90° · el log del sim
-como instrumento más barato (`Log.txt`) · core puro sin E/S · docs escritos contra el código ·
-verificar la UI en el renderer real · el instalador sólo toca lo suyo · hitos chicos con nombre.
+Probe before designing · positive control · angles that are not multiples of 90° · the sim's log as
+the cheapest instrument (`Log.txt`) · pure core with no I/O · docs written against the code · verify
+the UI in the real renderer · the installer only touches its own things · small named milestones.
 
-## Rechazado a propósito
+## Rejected on purpose
 
-| Concepto de Aerofly | Por qué no viaja | Qué lo reemplaza |
+| Aerofly concept | Why it does not travel | What replaces it |
 |---|---|---|
-| Carpeta POI `<coord>_pr_<slug>` y `.tsl` | Formato de escenario de Aerofly | Pack `XPR_<slug>` con DSF (DESIGN §3) |
-| `autoheight` | En X-Plane un `OBJECT` siempre se apoya en la malla | Nada: el DSF no lleva altura |
-| Pilones `.tmb` de krzysk1 y Rodeo | Formato compilado de Aerofly; el permiso de Rodeo era para AFS4 | Pilones generados (`src/core/pylon/`) |
-| AeroflyReader.dll y `compassFromReader` (`90 − ángulo`) | La DLL es de Aerofly; la conversión arreglaba un ángulo matemático que X-Plane, según su documento, no entrega (H0 lo confirma) | RPOS, rumbo verdadero en grados |
-| `isNullIsland` como "estoy en el menú" | Señal de Aerofly; X-Plane puede comportarse distinto | Se conserva el filtro (no cuesta nada); lo que diga H0 decide |
-| Clases por id de carpeta (`c172`, `extra330`) | En X-Plane no hay ids fijos | `acf_ICAO` + elección del piloto |
-| Elevación de Open-Meteo como fuente de la regla de altura | Aerofly por UDP no daba AGL | AGL de RPOS; Open-Meteo queda de respaldo y para el demo |
+| POI folder `<coord>_pr_<slug>` and `.tsl` | Aerofly's scenery format | `XPR_<slug>` pack with DSF (DESIGN §3) |
+| `autoheight` | In X-Plane an `OBJECT` always rests on the mesh | Nothing: the DSF carries no height |
+| `.tmb` pylons from krzysk1 and Rodeo | Compiled Aerofly format; Rodeo's permission was for AFS4 | Generated pylons (`src/core/pylon/`) |
+| AeroflyReader.dll and `compassFromReader` (`90 − angle`) | The DLL is Aerofly's; the conversion fixed a mathematical angle that X-Plane, according to its documentation, does not deliver (H0 confirms it) | RPOS, true heading in degrees |
+| `isNullIsland` as "I'm in the menu" | Aerofly signal; X-Plane may behave differently | The filter stays (it costs nothing); what H0 says decides |
+| Classes by folder id (`c172`, `extra330`) | X-Plane has no fixed ids | `acf_ICAO` + pilot's choice |
+| Open-Meteo elevation as the source for the height rule | Aerofly over UDP gave no AGL | AGL from RPOS; Open-Meteo stays as fallback and for the demo |

@@ -1,71 +1,71 @@
-# Sondas v0.0: un vuelo de unos 15 minutos
+# v0.0 probes: a flight of about 15 minutes
 
-Las tres sondas se vuelan juntas. H1 pone los pilones, H0 graba todo lo que dice X-Plane y H2 cruza
-la grabación con los pilones. Cada `FLIGHT.md` explica la pregunta y cómo se lee la respuesta; esta
-página es sólo la lista de qué hacer.
+The three probes are flown together. H1 places the pylons, H0 records everything X-Plane says and H2
+cross-checks the recording against the pylons. Each `FLIGHT.md` explains the question and how to read
+the answer; this page is only the list of what to do.
 
-Probado sin sim contra `npm run probe:fake`, un X-Plane falso con un vuelo de guion: el análisis
-devuelve exactamente el guion (32,0 m desde el pilón izquierdo y signos correctos).
+Tested without the sim against `npm run probe:fake`, a fake X-Plane with a scripted flight: the
+analysis returns exactly the script (32.0 m from the left pylon and correct signs).
 
-## Antes (con X-Plane cerrado)
+## Before (with X-Plane closed)
 
-1. **Instalar el pack de pilones.** Ya está generado en `probes/H1/XPR_H1_Pylons/`. Si se borró,
-   se rehace con `npm run probe:pack`.
-   - Copia la carpeta `XPR_H1_Pylons` a `D:\Laminar\XP12-Last-Release\X-Plane 12\Custom Scenery\`.
-   - Respalda `Custom Scenery\scenery_packs.ini` y agrega esta línea **justo debajo** de
-     `SCENERY_PACK *GLOBAL_AIRPORTS*`, donde ya está la de XOP:
+1. **Install the pylon pack.** It is already generated in `probes/H1/XPR_H1_Pylons/`. If it was
+   deleted, rebuild it with `npm run probe:pack`.
+   - Copy the `XPR_H1_Pylons` folder to `D:\Laminar\XP12-Last-Release\X-Plane 12\Custom Scenery\`.
+   - Back up `Custom Scenery\scenery_packs.ini` and add this line **right below**
+     `SCENERY_PACK *GLOBAL_AIRPORTS*`, where XOP's is already:
      ```
      SCENERY_PACK Custom Scenery/XPR_H1_Pylons/
      ```
-2. **Cierra Pylon Racer (Aerofly)** si está abierto: también escucha en el puerto 49002, y con dos
-   programas en el mismo puerto no se sabe a cuál le llegan los paquetes.
-3. En una terminal, en la carpeta `xp12-pylon-racer`:
+2. **Close Pylon Racer (Aerofly)** if it is open: it also listens on port 49002, and with two
+   programs on the same port you cannot tell which one the packets reach.
+3. In a terminal, in the `xp12-pylon-racer` folder:
    ```
    npm run probe:listen
    ```
-   Déjala corriendo **antes** de abrir X-Plane: así también graba el menú y el beacon. Cada 2 s
-   imprime una línea con las tasas.
+   Leave it running **before** opening X-Plane: that way it also records the menu and the beacon.
+   Every 2 s it prints a line with the rates.
 
-## En X-Plane
+## In X-Plane
 
-4. **Menú principal, 20 s sin tocar nada.**
-5. **Settings › Network:** comprueba que **no** esté marcado "Disable Incoming Traffic". Busca
-   cualquier opción para ForeFlight, "mapping apps" o EFB; si hay una, actívala y **anota el nombre
-   exacto**.
-6. **Vuelo nuevo:** Cessna 172 de serie, **SCEL, pista 17L**, de día, **sin viento** (el viento
-   no rompe el análisis, pero lo ensucia).
-7. **En la cabecera, antes de despegar:** mira pista abajo. Tendrían que verse **tres pares de
-   pilones** a 1500, 2000 y 2500 m: verde, rojo y naranja, cada uno con franjas blancas, sobre el
-   pavimento y 40 m entre sí. A la izquierda del par verde, a 150 m, una torre de control chica.
-   **Una captura.**
-8. **Despega y pasa bajo, entre 5 y 15 m, por los tres pares.** Los pilones miden 20 m. Después
-   de cada par anota por dónde pasaste: *cerca del izquierdo / al centro / cerca del derecho*.
-9. **Sube a unos 300 m** y haz **un giro completo a la derecha** con unos 30° de alabeo, luego **uno
-   completo a la izquierda**.
-10. **Pausa (P) unos 10 s** y sigue.
-11. **Vuelve al menú** y espera 10 s. Luego **Ctrl+C** en la terminal: escribe el resumen.
+4. **Main menu, 20 s without touching anything.**
+5. **Settings › Network:** check that "Disable Incoming Traffic" is **not** ticked. Look for any
+   option for ForeFlight, "mapping apps" or EFB; if there is one, turn it on and **write down the
+   exact name**.
+6. **New flight:** stock Cessna 172, **SCEL, runway 17L**, daytime, **no wind** (wind does not break
+   the analysis, but it makes it noisy).
+7. **At the threshold, before takeoff:** look down the runway. You should see **three pairs of
+   pylons** at 1500, 2000 and 2500 m: green, red and orange, each with white stripes, on the
+   pavement and 40 m apart. To the left of the green pair, at 150 m, a small control tower.
+   **One screenshot.**
+8. **Take off and fly low, between 5 and 15 m, through the three pairs.** The pylons are 20 m tall.
+   After each pair note where you passed: *near the left / center / near the right*.
+9. **Climb to about 300 m** and make **one full right turn** with about 30° of bank, then **one full
+   left turn**.
+10. **Pause (P) for about 10 s** and continue.
+11. **Go back to the menu** and wait 10 s. Then **Ctrl+C** in the terminal: it writes the summary.
 
-## Después
+## After
 
-12. En la terminal:
+12. In the terminal:
     ```
-    npm run probe:gates -- probes/H0/runs/<la carpeta que creó>
+    npm run probe:gates -- probes/H0/runs/<the folder it created>
     ```
-13. Pásame la carpeta de la corrida (con `summary.md` y `gates.md`), la captura y tus tres notas
-    de las puertas. El `Log.txt` de X-Plane lo leo yo directo del disco.
-14. **Desinstalar:** borra la carpeta `XPR_H1_Pylons` y su línea en `scenery_packs.ini`, con
-    X-Plane cerrado.
+13. Send me the run folder (with `summary.md` and `gates.md`), the screenshot and your three notes
+    for the gates. I read X-Plane's `Log.txt` directly from disk.
+14. **Uninstall:** delete the `XPR_H1_Pylons` folder and its line in `scenery_packs.ini`, with
+    X-Plane closed.
 
-## Si algo sale raro
+## If something looks odd
 
-- **La línea de la terminal muestra RPOS en 0 Hz con el avión ya en la pista:** algo bloquea el
-  puerto 49000 (el firewall o el tráfico entrante desactivado). Anota qué ves y sigue igual: la
-  Web API y el 49002 graban de todos modos.
-- **No se ven los pilones pero sí la torre:** el pack cargó y los objetos no. Ese es un resultado,
-  no un fracaso. Sigue con el resto del vuelo.
-- **No se ve ni la torre:** el pack no cargó. Revisa la línea del `scenery_packs.ini`.
+- **The terminal line shows RPOS at 0 Hz with the aircraft already on the runway:** something is
+  blocking port 49000 (the firewall or incoming traffic disabled). Note what you see and carry on:
+  the Web API and 49002 record anyway.
+- **The pylons are not visible but the tower is:** the pack loaded and the objects did not. That is
+  a result, not a failure. Continue with the rest of the flight.
+- **Not even the tower is visible:** the pack did not load. Check the `scenery_packs.ini` line.
 
-## H3, aparte: la carrera dentro de X-Plane
+## H3, separate: the race inside X-Plane
 
-Un plugin propio que muestra la carrera en una ventana del sim, con la app como juez. Se vuela por
-separado; los pasos están en `probes/H3/FLIGHT.md`.
+A plugin of our own that shows the race in a sim window, with the app as judge. It is flown
+separately; the steps are in `probes/H3/FLIGHT.md`.

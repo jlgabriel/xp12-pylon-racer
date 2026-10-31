@@ -1,613 +1,630 @@
-# XP Pylon Racer — Documento de diseño
+# XP Pylon Racer — Design document
 
-> Versión 1.6.0 · 2026-10-30 · Shirley canta cada puerta al llegar.
-> Hermana de [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) y
-> heredera de la disciplina de [XOP](https://github.com/jlgabriel/xp12-object-placer).
-> Qué viene de cada una, y qué se rechaza a propósito: [LINEAGE.md](LINEAGE.md).
+> Version 1.6.0 · 2026-10-30 · Shirley calls every gate as you reach it.
+> Sister of [Pylon Racer](https://github.com/jlgabriel/afs4-pylon-racer) (Aerofly FS4, 1.0.1) and
+> heir to the discipline of [XOP](https://github.com/jlgabriel/xp12-object-placer).
+> What comes from each, and what is rejected on purpose: [LINEAGE.md](LINEAGE.md).
 
 ---
 
-## 0. Estado (2026-10-30, v1.6.0: Shirley canta cada puerta)
+## 0. Status (2026-10-30, v1.6.0: Shirley calls every gate)
 
-**1.6.0, 2026-10-30.** La 1.5 más Export to Shirley con un disparador por puerta, que canta la
-puerta al llegar, y una fase de carrera por vuelta: abajo en *Después de la 1.5*. Sin volar; el
-formato de los disparadores se leyó en el servidor de pruebas de Airplane-Team el día que pasaba a
-producción. Tag `v1.6.0`, mismo workflow; el plugin no cambia salvo el número de versión.
+**Unreleased (2026-10-31).** Turn pylons get invisible gates for Shirley along their pass line (below
+in *After 1.5*), not flown yet. The docs were translated to English: everything on GitHub is in
+English (Juan, 2026-10-31).
 
-**1.5.0, 2026-10-27.** La 1.4 más diez pistas de Juan (44 en total), abajo en *Después de la 1.4*.
-No se volaron; las notas lo dicen. Tag `v1.5.0`, mismo workflow, publicada el 2026-10-27 con los
-seis archivos; el plugin no cambia salvo el número de versión.
+**1.6.0, 2026-10-30.** 1.5 plus Export to Shirley with one trigger per gate, which calls the gate
+as you reach it, and one race phase per lap: below in *After 1.5*. Not flown; the trigger format was
+read on Airplane-Team's test server the day it went to production. Tag `v1.6.0`, same workflow; the
+plugin does not change except for the version number.
 
-**1.4.0, 2026-10-27.** La 1.3.1 más el plugin de la sonda H3 convertido en el plugin del release:
-`xp12-pylon-racer-plugin-<versión>.zip`, un archivo aparte con Windows, macOS y Linux. Abajo en
-*Después de la H3*. Volado el mismo día en la 12.4.3 con la app (Daggett Sprint, 27,54 s); un
-arreglo de ese vuelo (la ventana que no nacía oculta) quedó sin volar. Tag `v1.4.0`, publicada el 2026-10-27
-con los seis archivos.
+**1.5.0, 2026-10-27.** 1.4 plus ten courses from Juan (44 in total), below in *After 1.4*. They
+were not flown; the notes say so. Tag `v1.5.0`, same workflow, published 2026-10-27 with the six
+files; the plugin does not change except for the version number.
 
-**1.3.1, 2026-10-26.** La 1.3 más la carpeta de X-Plane a la vista, con **Change…** para elegir
-otra: abajo en *Después de la 1.3*. Viene del primer reporte de un usuario.
+**1.4.0, 2026-10-27.** 1.3.1 plus the H3 probe's plugin turned into the release plugin:
+`xp12-pylon-racer-plugin-<version>.zip`, a separate file with Windows, macOS and Linux. Below in
+*After H3*. Flown the same day on 12.4.3 with the app (Daggett Sprint, 27.54 s); one fix from that
+flight (the window that was not born hidden) was left unflown. Tag `v1.4.0`, published 2026-10-27
+with the six files.
 
-**1.3.0, 2026-10-26.** La 1.2 más las dieciséis pistas de Juan (34 en total), abajo en *Después de
-la 1.2*. Tampoco se volaron; las notas lo dicen. Tag `v1.3.0`, mismo workflow.
+**1.3.1, 2026-10-26.** 1.3 plus the X-Plane folder in plain view, with **Change…** to pick another
+one: below in *After 1.3*. It comes from the first user report.
 
-**1.2.0, 2026-10-26.** La 1.1 más nueve pistas incluidas (18 en total), abajo en *Después de la
-1.1*, y el arreglo del motor que trajo Uyuni. Juan la pidió sin poder volarlas antes: es el primer
-release con pistas que nadie voló, y las notas lo dicen. Tag `v1.2.0`, mismo workflow.
+**1.3.0, 2026-10-26.** 1.2 plus Juan's sixteen courses (34 in total), below in *After 1.2*. They
+were not flown either; the notes say so. Tag `v1.3.0`, same workflow.
 
-**1.1.0, 2026-10-25.** La 1.0 más la *Queenstown Lake Race* como novena pista incluida y
-**Export to Shirley…** (abajo, ambas voladas el mismo día). Tag `v1.1.0`, mismo workflow.
+**1.2.0, 2026-10-26.** 1.1 plus nine included courses (18 in total), below in *After 1.1*, and the
+engine fix that Uyuni brought. Juan asked for it without being able to fly them first: it is the
+first release with courses nobody flew, and the notes say so. Tag `v1.2.0`, same workflow.
 
-**1.0.0, publicada el 2026-10-25.** Tag `v1.0.0`; el workflow `release.yml` armó los cinco
-instaladores (Windows setup y portable, macOS x64 y arm64, AppImage) y el release
-[XP Pylon Racer 1.0.0](https://github.com/jlgabriel/xp12-pylon-racer/releases/tag/v1.0.0) se
-publicó a pedido de Juan.
+**1.1.0, 2026-10-25.** 1.0 plus the *Queenstown Lake Race* as the ninth included course and
+**Export to Shirley…** (below, both flown the same day). Tag `v1.1.0`, same workflow.
 
-La 1.0 es la 0.2 más los pilones altos (D15), sin cambios de comportamiento desde el último vuelo.
-Juan confirmó el nombre (D2) y que esta app también registra `.pylonrace` (D14), y el README pasó a
-ser la guía de la 1.0: instalación de un build sin firmar en cada sistema, tamaño de pilones, RPOS a
-~30 Hz y cómo se comparte una pista Tall con Pylon Racer. Typecheck, 287 tests unitarios (284 sin
-DSFTool: 3 son la lectura de vuelta), 3 e2e y los builds de Windows en verde; la app empaquetada
-abre como "XP Pylon Racer 1.0.0".
+**1.0.0, published 2026-10-25.** Tag `v1.0.0`; the `release.yml` workflow built the five installers
+(Windows setup and portable, macOS x64 and arm64, AppImage) and the release
+[XP Pylon Racer 1.0.0](https://github.com/jlgabriel/xp12-pylon-racer/releases/tag/v1.0.0) was
+published at Juan's request.
 
-Lo que sigue es cómo se llegó.
+1.0 is 0.2 plus the tall pylons (D15), with no behavior changes since the last flight. Juan
+confirmed the name (D2) and that this app also registers `.pylonrace` (D14), and the README became
+the 1.0 guide: installing an unsigned build on each system, pylon size, RPOS at ~30 Hz and how to
+share a Tall course with Pylon Racer. Typecheck, 287 unit tests (284 without DSFTool: 3 are the
+read-back), 3 e2e and the Windows builds green; the packaged app opens as "XP Pylon Racer 1.0.0".
 
-### Hasta la 0.2
+What follows is how we got here.
 
-La app completa está portada: diseñador, carrera en vivo, ranking por clase, compartir
-`.pylonrace`, demo e instalación del pack. Typecheck, 271 tests unitarios (con la lectura de vuelta
-por DSFTool) y 3 e2e sobre Electron en verde.
+### Up to 0.2
 
-**El mismo día Juan voló las sondas y una carrera real.** Todo lo que era supuesto quedó confirmado
-sin cambiar una línea de la app (detalle en cada `probes/H*/FLIGHT.md`):
+The whole app is ported: designer, live race, ranking by class, `.pylonrace` sharing, demo and pack
+installation. Typecheck, 271 unit tests (with the DSFTool read-back) and 3 e2e on Electron green.
 
-| Supuesto | Dónde vive | Resultado |
+**The same day Juan flew the probes and a real race.** Everything that was an assumption was
+confirmed without changing a line of the app (detail in each `probes/H*/FLIGHT.md`):
+
+| Assumption | Where it lives | Result |
 |---|---|---|
-| RPOS con los campos y signos del documento de Laminar | `src/core/telemetry/rpos.ts` | ✅ rumbo de brújula, vz al sur, roll + = derecha, pitch + = arriba. **~29,5 Hz**, no 40 (H0) |
-| La Web API da `acf_ICAO` | `src/core/telemetry/webapi.ts`, `src/main/telemetry.ts` | ✅ REST en `/api/v3`; el Vertigo dice `Extra` → Aerobatic (H0) |
-| X-Plane carga `OBJECT_DEF` relativos al pack, con textura PNG | `src/core/export/pack.ts` | ✅ sin errores en `Log.txt` (H1) |
-| Los pilones se ven apoyados en el suelo, con su pintura | `src/core/pylon/` | ✅ capturas y replay (H1) |
-| La posición de RPOS y la de los pilones coinciden al metro | — | ✅ tres puertas, lado y medida coinciden con el replay (H2) |
-| Qué manda X-Plane en el menú y en pausa | `isNullIsland`, el motor (`STILL_S`) | menú: nada; pausa: posición congelada a 30 Hz (H0) |
+| RPOS with the fields and signs from Laminar's document | `src/core/telemetry/rpos.ts` | ✅ compass heading, vz south, roll + = right, pitch + = up. **~29.5 Hz**, not 40 (H0) |
+| The Web API gives `acf_ICAO` | `src/core/telemetry/webapi.ts`, `src/main/telemetry.ts` | ✅ REST on `/api/v3`; the Vertigo says `Extra` → Aerobatic (H0) |
+| X-Plane loads pack-relative `OBJECT_DEF`, with a PNG texture | `src/core/export/pack.ts` | ✅ no errors in `Log.txt` (H1) |
+| The pylons sit on the ground, with their paint | `src/core/pylon/` | ✅ screenshots and replay (H1) |
+| RPOS's position and the pylons' position coincide to the meter | — | ✅ three gates, side and measure match the replay (H2) |
+| What X-Plane sends in the menu and when paused | `isNullIsland`, the engine (`STILL_S`) | menu: nothing; paused: position frozen at 30 Hz (H0) |
 
-**Primera carrera:** Daggett Sprint, instalada por la app, en KDAG con el Extra. **29,13 s, limpia**:
-las cinco pasadas a menos de 6 m del centro, entre 10 y 20 m de altura, y una carrera guardada con
-`source: rpos 30 Hz` y la clase Aerobatic.
+**First race:** Daggett Sprint, installed by the app, at KDAG with the Extra. **29.13 s, clean**:
+all five passes within 6 m of the center, at 10 to 20 m height, and a saved race with
+`source: rpos 30 Hz` and the Aerobatic class.
 
-**Lo que dejó el vuelo, resuelto en la 0.2** (typecheck, 280 tests y 3 e2e en verde; volada el mismo día, abajo):
+**What the flight left, resolved in 0.2** (typecheck, 280 tests and 3 e2e green; flown the same day, below):
 
-1. **RPOS compartido.** RPOS tiene un solo suscriptor: X-Plane lo manda sólo al último que lo pidió.
-   `src/core/telemetry/rposShare.ts` (puro, `tests/rposShare.test.ts`) reconoce la pelea por su firma:
-   el flujo se corta y vuelve **justo después de nuestra petición** (X-Plane estaba sirviendo, pero a
-   otro). Dos de esas "tomas" en 40 s = otro programa pide RPOS. Un tirón o una carga de escenario
-   vuelven solos, el menú no contesta y un sim reiniciado contesta una sola vez: ninguno cuenta.
-   Mientras dura, la app **espacia sus peticiones** (2 → 4 → 8 → 10 s), así el otro programa funciona
-   casi siempre (simulado: recibe el 80 % del flujo en vez de la mitad) y la app vuelve a pedir de vez
-   en cuando para recuperar RPOS cuando el otro se cierre (~15 s en la simulación). 10 s de flujo sin
-   cortes lo despejan. La UI lo dice en la píldora (*X-Plane RPOS taken*), en "Flight data" y en la
-   línea de estado.
-2. **Replay.** El hub lee `sim/time/is_in_replay` por la Web API REST cada 250 ms (el avión, cada
-   5 s) y no pasa fixes al motor mientras vale 1. La UI dice *Replay: not racing*. Sin Web API, todo
-   pasa como en la 0.1. Si se cuela algún fix del replay antes de verlo, el motor ya trata el salto
-   como DNF "reset".
-3. El WebSocket de la Web API sólo abre en `/api/v1` en 12.4.3. La app no lo usa; la grabadora ya
-   lo sabe.
+1. **Shared RPOS.** RPOS has a single subscriber: X-Plane sends it only to the last one that asked.
+   `src/core/telemetry/rposShare.ts` (pure, `tests/rposShare.test.ts`) recognizes the fight by its
+   signature: the flow cuts out and comes back **right after our request** (X-Plane was serving, but
+   to someone else). Two of those "takes" in 40 s = another program asks for RPOS. A hiccup or a
+   scenery load comes back on its own, the menu does not answer and a restarted sim answers once:
+   none of them count. While it lasts, the app **spaces out its requests** (2 → 4 → 8 → 10 s), so
+   the other program works almost always (simulated: it gets 80 % of the flow instead of half) and
+   the app asks again now and then to recover RPOS when the other one closes (~15 s in the
+   simulation). 10 s of flow without cuts clear it. The UI says so in the pill (*X-Plane RPOS
+   taken*), in "Flight data" and in the status line.
+2. **Replay.** The hub reads `sim/time/is_in_replay` through the REST Web API every 250 ms (the
+   aircraft, every 5 s) and passes no fixes to the engine while it is 1. The UI says *Replay: not
+   racing*. Without the Web API, everything passes as in 0.1. If a replay fix slips in before it is
+   seen, the engine already treats the jump as a DNF "reset".
+3. The Web API WebSocket only opens on `/api/v1` in 12.4.3. The app does not use it; the recorder
+   already knows.
 
-**Medido el 2026-10-24 con X-Plane 12.4.3 abierto, para la 0.2** (sin volar: el sim estaba en replay):
+**Measured on 2026-10-24 with X-Plane 12.4.3 open, for 0.2** (not flown: the sim was in replay):
 
-| Pregunta | Respuesta |
+| Question | Answer |
 |---|---|
-| ¿Qué dataref dice "replay"? | `sim/time/is_in_replay`: int, **sólo lectura**, valía 1 en replay. `sim/operation/prefs/replay_mode` también existe, pero es escribible y es un enum (valía 7): no sirve de booleano. Ids de la Web API ~1,6e12 (caben en un double). |
-| RPOS con dos sockets | El segundo que pide se lo queda entero (75 paquetes en 2 s contra 0). |
-| ¿Un `RPOS 0` de quien no es dueño? | **Corta el flujo del dueño.** Por eso la app (y la grabadora H0) sólo piden 0 al cerrar si el flujo les está llegando. |
-| ¿RREF admite varios suscriptores? | **Sí**: dos sockets pidiendo `sim/flightmodel/position/latitude` a 20 Hz reciben ~19 Hz cada uno, y el 0 de uno no corta al otro. |
+| Which dataref says "replay"? | `sim/time/is_in_replay`: int, **read-only**, it was 1 in replay. `sim/operation/prefs/replay_mode` also exists, but it is writable and an enum (it was 7): it does not work as a boolean. Web API ids ~1.6e12 (they fit in a double). |
+| RPOS with two sockets | The second one to ask keeps it all (75 packets in 2 s against 0). |
+| A `RPOS 0` from someone who is not the owner? | **It cuts the owner's flow.** That is why the app (and the H0 recorder) only ask for 0 on closing if the flow is reaching them. |
+| Does RREF allow several subscribers? | **Yes**: two sockets asking for `sim/flightmodel/position/latitude` at 20 Hz get ~19 Hz each, and one's 0 does not cut the other. |
 
-**Volada el 2026-10-24** (X-Plane 12.4.3, KDAG, Extra de Vertigo, la 0.2 corriendo con `npm run dev`;
-log de la app y corrida H0 `runs/2026-10-25T02-32-07`, local):
+**Flown on 2026-10-24** (X-Plane 12.4.3, KDAG, Vertigo's Extra, 0.2 running with `npm run dev`;
+app log and H0 run `runs/2026-10-25T02-32-07`, local):
 
-| Prueba | Resultado |
+| Test | Result |
 |---|---|
-| Carrera normal | Daggett Sprint, **29,02 s** limpia (la 0.1: 29,13 s). |
-| Otro programa pidiendo RPOS (`npm run probe:listen`) | *RPOS taken* **7 s** después de que arrancó la grabadora. |
-| Backoff | Funciona, pero rinde menos que en la simulación: la grabadora tuvo RPOS **6,4 s de cada ~10 (63 %)**, no el 80 %, porque tarda ~4 s en volver a pedirlo (revisa cada 2 s si lleva 2 s callada). Se deja el máximo en 10 s (Juan): subirlo a 20 s daría ~80 % pero hasta ~30 s para recuperar RPOS. |
-| Al cerrar la grabadora | La app recupera RPOS en ~2 s y despeja el aviso a los ~12 s. |
-| Replay | Detectado al entrar; el replay pasó por las puertas y **no se guardó ninguna carrera**; la pantalla muestra *Replay: not racing* y los valores de vuelo en "—". |
-| Al salir del replay | "X-Plane is flying again": la app vuelve a seguir el vuelo y a quedar armada. |
-| Ids de la Web API | Cambian en cada sesión de X-Plane (1626080912064 → 3170083268528 para `is_in_replay`): bien que el hub los busque por nombre. |
+| Normal race | Daggett Sprint, **29.02 s** clean (0.1: 29.13 s). |
+| Another program asking for RPOS (`npm run probe:listen`) | *RPOS taken* **7 s** after the recorder started. |
+| Backoff | It works, but yields less than in the simulation: the recorder had RPOS **6.4 s out of every ~10 (63 %)**, not 80 %, because it takes ~4 s to ask for it again (it checks every 2 s whether it has been silent for 2 s). The maximum stays at 10 s (Juan): raising it to 20 s would give ~80 % but up to ~30 s to recover RPOS. |
+| On closing the recorder | The app recovers RPOS in ~2 s and clears the warning at ~12 s. |
+| Replay | Detected on entry; the replay went through the gates and **no race was saved**; the screen shows *Replay: not racing* and the flight values as "—". |
+| On leaving replay | "X-Plane is flying again": the app goes back to following the flight and gets armed again. |
+| Web API ids | They change on every X-Plane session (1626080912064 → 3170083268528 for `is_in_replay`): good that the hub looks them up by name. |
 
-### Después de la 0.2: pilones altos, volados el 2026-10-25
+### After 0.2: tall pylons, flown 2026-10-25
 
-Juan: el tamaño actual está bien, pero
-en un sim cuesta verlos. Cada pista elige ahora el tamaño de sus pilones en el diseñador (*Pylons*:
-Standard o Tall ×2), todos a la vez; decisión D15. Typecheck, 287 tests y 3 e2e en verde (el e2e del
-diseñador cambia a Tall, reinstala y revisa que el pack lleve `pylon_*_tall.obj` de 30 m).
+Juan: the current size is fine, but
+they are hard to see in a sim. Each course now picks its pylon size in the designer (*Pylons*:
+Standard or Tall ×2), all at once; decision D15. Typecheck, 287 tests and 3 e2e green (the
+designer's e2e switches to Tall, reinstalls and checks that the pack carries the 30 m
+`pylon_*_tall.obj`).
 
-| Prueba (KDAG, Extra de Vertigo, `npm run dev`) | Resultado |
+| Test (KDAG, Vertigo's Extra, `npm run dev`) | Result |
 |---|---|
-| Reinstalar la Daggett Sprint en Tall | El pack trae sólo `pylon_{blue,green,home,red}_tall`: 30 m × 2,4 m de radio y 50 m × 4 m la meta; el DSF apunta sólo a ellos. Sin errores en `Log.txt`. |
-| Verlos en el sim | "Muy buen tamaño" (Juan). |
-| Ranking | Revisión nueva (`3959655537af3ac1`): la carrera abrió su propio ranking, aparte de los 29,02 s en Standard. |
-| Pilón tocado | 41,93 s: 35,93 de vuelo y dos toques. Puerta 3 a 4,3 m del centro y puerta 4 a **5,73 m**, que sólo es toque con el radio de Tall (6,2 m; en Standard serían 5 m). Los dos fueron a 12–15 m de altura, también bajo un pilón Standard, así que la altura nueva (30 m) no quedó separada de la vieja en este vuelo. |
+| Reinstall the Daggett Sprint as Tall | The pack carries only `pylon_{blue,green,home,red}_tall`: 30 m × 2.4 m radius and 50 m × 4 m for the finish; the DSF points only to them. No errors in `Log.txt`. |
+| See them in the sim | "Very good size" (Juan). |
+| Ranking | New revision (`3959655537af3ac1`): the race opened its own ranking, apart from the 29.02 s at Standard. |
+| Pylon touched | 41.93 s: 35.93 of flight and two touches. Gate 3 at 4.3 m from the center and gate 4 at **5.73 m**, which is only a touch with Tall's radius (6.2 m; at Standard it would be 5 m). Both were at 12–15 m height, also under a Standard pylon, so the new height (30 m) was not separated from the old one in this flight. |
 
-### Después de la 1.0: la primera pista sobre agua, volada el 2026-10-25
+### After 1.0: the first course over water, flown 2026-10-25
 
-La *Queenstown Lake Race* (9 puertas, Tall, sobre el lago Wakatipu cerca de NZQN) la diseñó ChatGPT
-y Juan la importó desde Descargas con la 1.0.0 portable. Antes de volarla Juan corrió el viraje g5
-~335 m al suroeste: en la posición original quedaba a ~400 m de la orilla este, con la ladera a
-+30–60 m sobre el lago (elevaciones de Open-Meteo), y pasar por el este con un radio de ~400 m
-podía sacar al avión sobre ella.
+The *Queenstown Lake Race* (9 gates, Tall, over Lake Wakatipu near NZQN) was designed by ChatGPT
+and Juan imported it from Downloads with the 1.0.0 portable. Before flying it Juan moved turn g5
+~335 m to the southwest: in the original position it was ~400 m from the east shore, with the slope
+at +30–60 m above the lake (Open-Meteo elevations), and passing by the east with a radius of ~400 m
+could take the aircraft over it.
 
-| Prueba (Extra de Vertigo, la 1.0.0 portable) | Resultado |
+| Test (Vertigo's Extra, the 1.0.0 portable) | Result |
 |---|---|
-| Pack sobre agua | El DSF `-46+168` carga sin errores en `Log.txt` (0 tris: sólo objetos). |
-| Verlos sobre el lago | Apoyados en la superficie, ni hundidos ni flotando, con su reflejo en el agua: captura del replay en la meta, los dos `home` Tall de 50 m. |
+| Pack over water | The `-46+168` DSF loads without errors in `Log.txt` (0 tris: objects only). |
+| See them over the lake | Resting on the surface, neither sunk nor floating, with their reflection in the water: replay screenshot at the finish, the two 50 m Tall `home` pylons. |
 
-Pasó a ser la novena pista incluida (`sampleCourses.ts`, sólo en esta app), tal como Juan la voló:
-misma revisión (`4e1a66db22f68f91`), así la carrera de arriba sigue en su ranking. Conserva el id
-`queenstown-lake-race-01` del archivo compartido, y la copia que Juan importó toma el texto nuevo
-al abrir la app (su sello va en `SAMPLE_EARLIER_STAMPS`).
-| Altura sobre el suelo en el lago | La AGL de RPOS se mide **desde la superficie del agua**: `altMslM − aglM` = 311,0 m en las nueve pasadas (el lago, 310 m). Las ventanas de altura sirven sobre agua. |
-| Carrera | **2:44,71**: 2:42,71 de vuelo y +2 s en g3 por pasar a 52 m (el piso es 55 m). g5 rodeado a 45 m del pilón, con 56° de alabeo a 239 km/h; g6 a 156 m (ventana 70–160). |
+It became the ninth included course (`sampleCourses.ts`, only in this app), just as Juan flew it:
+same revision (`4e1a66db22f68f91`), so the race above stays in its ranking. It keeps the id
+`queenstown-lake-race-01` from the shared file, and the copy Juan imported takes the new text when
+the app opens (its stamp goes in `SAMPLE_EARLIER_STAMPS`).
+| Height above ground at the lake | RPOS's AGL is measured **from the water surface**: `altMslM − aglM` = 311.0 m on all nine passes (the lake, 310 m). Height windows work over water. |
+| Race | **2:44.71**: 2:42.71 of flight and +2 s at g3 for passing at 52 m (the floor is 55 m). g5 rounded at 45 m from the pylon, with 56° of bank at 239 km/h; g6 at 156 m (window 70–160). |
 
-### Después de la 1.0: Export to Shirley (sin volar todavía)
+### After 1.0: Export to Shirley (not flown yet)
 
-Juan está suscrito a [FlyShirley](https://airplane.team), el copiloto con IA, que acepta *challenges*
-en JSON con fases, instrucciones y estado. **Export to Shirley…** (junto a *Share…*) convierte la
-pista en uno para que Shirley relate la carrera; se lo anunció a Alex, el autor, en el Discord de
-FlyShirley. `src/core/export/shirley.ts` (puro, `tests/shirley.test.ts`) sigue el `ChallengeSchema`
-publicado (repo `Airplane-Team/sample-challenges` y la pestaña *Challenge Specification* de
-airplane.team/capabilities/specifications, leídos el 2026-10-25); el test lleva un espejo estricto del
-schema, recortado a los campos que se escriben.
+Juan is subscribed to [FlyShirley](https://airplane.team), the AI copilot, which accepts
+*challenges* in JSON with phases, instructions and state. **Export to Shirley…** (next to
+*Share…*) turns the course into one so that Shirley narrates the race; Alex, the author, was told
+about it on FlyShirley's Discord. `src/core/export/shirley.ts` (pure, `tests/shirley.test.ts`)
+follows the published `ChallengeSchema` (repo `Airplane-Team/sample-challenges` and the *Challenge
+Specification* tab of airplane.team/capabilities/specifications, read 2026-10-25); the test carries
+a strict mirror of the schema, trimmed to the fields that are written.
 
-- Tres fases: `Brief` (presentación de la pista camino a la salida, silencio máx. 60 s) → `Race`
-  (relato en vivo: silencio máx. `RACE_QUIET_S` = 6 s, `challengeTimer`, `recordFlightData`) →
-  `Debrief` (veredicto, `analyzeFlightData`, otra corrida vuelve a `Brief`). Después de la 1.5
-  llevan disparadores por puerta y una fase de carrera por vuelta: *Después de la 1.5*.
-- Las puertas de una vuelta van como `navigateToStateWaypoints`, con lo que pide cada una en su
-  `context`; rumbos verdaderos (no se llena `magneticHeadingDeg`), alturas en m y ft.
-- **La app juzga, Shirley relata.** Shirley no ve el reloj ni las penalizaciones de la app: el prompt
-  le prohíbe anunciarlos como hechos y le pide el resultado oficial al piloto en el debrief.
-- Se apagan las herramientas que mueven el avión o el sim (`setPosition`, `resetFlight`,
-  `setSimulatorSetpoints`, `setDestinationRunway`): un reposicionamiento a mitad de carrera es DNF.
-- Los récords de la revisión actual (líder por clase y el mejor del piloto) entran al prompt.
-- Se guarda un `.json` y se copia al portapapeles: el Challenge Creator (airplane.team/fly/create)
-  recibe el challenge pegado.
+- Three phases: `Brief` (course introduction on the way to the start, max silence 60 s) → `Race`
+  (live narration: max silence `RACE_QUIET_S` = 6 s, `challengeTimer`, `recordFlightData`) →
+  `Debrief` (verdict, `analyzeFlightData`, another run goes back to `Brief`). After 1.5 they carry
+  per-gate triggers and one race phase per lap: *After 1.5*.
+- The gates of a lap go as `navigateToStateWaypoints`, with what each one asks in its `context`;
+  true headings (`magneticHeadingDeg` is not filled), heights in m and ft.
+- **The app judges, Shirley narrates.** Shirley does not see the app's clock or penalties: the
+  prompt forbids announcing them as facts and asks the pilot for the official result in the debrief.
+- The tools that move the aircraft or the sim are turned off (`setPosition`, `resetFlight`,
+  `setSimulatorSetpoints`, `setDestinationRunway`): a repositioning mid-race is a DNF.
+- The records of the current revision (leader per class and the pilot's best) go into the prompt.
+- A `.json` is saved and copied to the clipboard: the Challenge Creator (airplane.team/fly/create)
+  accepts the challenge pasted in.
 
-El challenge pasa el schema actual de Shirley en las nueve pistas (hoy 34: el test las recorre todas) (transcrito de la web, sin claves
-descartadas) y el Challenge Creator lo aceptó sin avisos.
+The challenge passes Shirley's current schema on all nine courses (today 34: the test walks through
+all of them) (transcribed from the web, no dropped keys) and the Challenge Creator accepted it
+without warnings.
 
-**Volado el 2026-10-25** (Daggett Sprint Tall, Cessna 172SP, la 1.0.0 portable midiendo; vuelo
-compartido en airplane.team/share/2mMcEFrN):
+**Flown on 2026-10-25** (Daggett Sprint Tall, Cessna 172SP, the 1.0.0 portable measuring; flight
+shared at airplane.team/share/2mMcEFrN):
 
-| Prueba | Resultado |
+| Test | Result |
 |---|---|
-| Brief | Presentó la pista bien, con el récord de 41,93 s y que el Skyhawk corre en otra clase. Hasta vio el freno de estacionamiento puesto. |
-| Transiciones | `Brief` → `Race` y `Race` → `Debrief` solas, sin el botón *Transition Phase*. |
-| Relato en vivo | Alcanza: cantó cada puerta. Por su cuenta se puso *wake-up triggers* en la longitud de cada puerta (la pista va de este a oeste). |
-| Conexión | Shirley usa el WebSocket de la Web API, no RPOS: la app no mostró *RPOS taken*. |
-| Debrief | Pidió el tiempo oficial. |
-| App | **1:00,79**, limpia, cero penalizaciones; las cinco pasadas entre 15 y 20 m AGL. |
+| Brief | It presented the course well, with the 41.93 s record and that the Skyhawk races in another class. It even saw the parking brake on. |
+| Transitions | `Brief` → `Race` and `Race` → `Debrief` on their own, without the *Transition Phase* button. |
+| Live narration | It is enough: it called every gate. On its own it set *wake-up triggers* at each gate's longitude (the course runs east to west). |
+| Connection | Shirley uses the Web API WebSocket, not RPOS: the app did not show *RPOS taken*. |
+| Debrief | It asked for the official time. |
+| App | **1:00.79**, clean, zero penalties; the five passes between 15 and 20 m AGL. |
 
-Dos errores de Shirley, corregidos en el prompt:
-1. Dijo "way over the tops" y que esas puertas no contarían: las pasadas fueron a 15–20 m, bajo los
-   30 m de los pilones Tall, y sin límite de altura la puerta cuenta a cualquier altura. Venía del
-   "below its top" de la regla del toque y de dar alturas en metros cuando ella lee pies (60 ft contra
-   "30 m"). Ahora las alturas van en pies primero, y una línea dice que sin límite de altura toda puerta
-   cuenta, también por encima de los pilones.
-2. Escribió 1:00.079 cuando Juan leyó "01:00.79". Ahora el prompt explica el formato
-   minutos:segundos.centésimas de la app.
+Two Shirley mistakes, fixed in the prompt:
+1. It said "way over the tops" and that those gates would not count: the passes were at 15–20 m,
+   under the 30 m of the Tall pylons, and without a height limit the gate counts at any height. It
+   came from the "below its top" of the touch rule and from giving heights in meters when she reads
+   feet (60 ft against "30 m"). Now heights go in feet first, and a line says that without a height
+   limit every gate counts, also above the pylons.
+2. It wrote 1:00.079 when Juan read "01:00.79". Now the prompt explains the app's
+   minutes:seconds.hundredths format.
 
-Se volvió a volar con el prompt corregido el 2026-10-27: abajo en *Después de la 1.5*.
+It was flown again with the corrected prompt on 2026-10-27: below in *After 1.5*.
 
-### Después de la 1.1: cuatro pistas del catálogo (sin volar todavía)
+### After 1.1: four courses from the catalog (not flown yet)
 
-Juan trajo un catálogo de 23 pistas propuestas (`Catalogo_Circuitos_XP_Pylon_Racer.md`, sólo ideas:
-lugar, aeródromo, largo, puertas y dificultad, sin coordenadas). Se hicieron las cuatro primeras de su
-lista de prioridades después de Queenstown, todas Tall:
+Juan brought a catalog of 23 proposed courses (`Catalogo_Circuitos_XP_Pylon_Racer.md`, ideas only:
+place, airfield, length, gates and difficulty, no coordinates). The first four on his priority list
+after Queenstown were made, all Tall:
 
-| Pista | Aeródromo | Largo | Qué pide |
+| Course | Airfield | Length | What it asks |
 |---|---|---|---|
-| Pucón Volcano Race | SCPC | 14,9 km | lago Villarrica; 3 level, 6 pilón de viraje a la izquierda, 9 cuchillo |
-| Uyuni Salt Flats Speed Challenge | SLUY | 3 × 6,4 km | óvalo en el salar a 3.654 m, pilones a la derecha, salida bajo 60 m |
-| Monument Valley Challenge | UT25 (`XKUT25` en el apt.dat de X-Plane) | 16,4 km | el piso del valle al este de los Mittens; 4 level, dos virajes a la izquierda |
-| Rapa Nui Coastal Race | SCIP | 15,5 km | mar al sur de la isla, giro frente a Rano Kau; 3 y 6 level |
+| Pucón Volcano Race | SCPC | 14.9 km | Lake Villarrica; 3 level, 6 left turn pylon, 9 knife-edge |
+| Uyuni Salt Flats Speed Challenge | SLUY | 3 × 6.4 km | oval on the salt flat at 3,654 m, pylons on the right, start below 60 m |
+| Monument Valley Challenge | UT25 (`XKUT25` in X-Plane's apt.dat) | 16.4 km | the valley floor east of the Mittens; 4 level, two left turns |
+| Rapa Nui Coastal Race | SCIP | 15.5 km | sea south of the island, turn off Rano Kau; 3 and 6 level |
 
-**Cómo se trazaron.** Sobre el DEM Terrarium de AWS (teselas z13, ~25 m; Open-Meteo limita a ~600
-puntos por minuto y no alcanza para mapear): un mapa ASCII de cada zona, las puertas a mano y un
-chequeo que calcula los rumbos por bisectriz, mira que el centro y los dos pilones caigan en el agua
-(±2 m del nivel del lago o del mar) o en suelo llano, y recorre el camino cada 100 m y a 250–400 m de
-cada lado: nada sube más de 30 m sobre el recorrido. Las cotas de `groundElevM`, de Open-Meteo como en
-las demás. Los cuatro aeródromos están en el apt.dat de la 12.4.3.
+**How they were traced.** On AWS's Terrarium DEM (z13 tiles, ~25 m; Open-Meteo limits to ~600 points
+per minute, which is not enough to map): an ASCII map of each area, the gates by hand and a check
+that computes the headings by bisector, verifies that the center and the two pylons fall on water
+(±2 m of lake or sea level) or on flat ground, and walks the path every 100 m and at 250–400 m on
+each side: nothing rises more than 30 m above the route. The `groundElevM` values come from
+Open-Meteo, as with the others. All four airfields are in the 12.4.3 apt.dat.
 
-**Descartada: Milford Sound.** En el fiordo el DEM no deja claro dónde termina el agua (cortes de
-50 m de ancho donde el mapa muestra 1 km), así que no se puede asegurar que los pilones queden sobre
-el agua y no en el acantilado. El catálogo mismo la deja para después de probar mallas complejas.
+**Discarded: Milford Sound.** In the fjord the DEM does not make clear where the water ends (cuts
+50 m wide where the map shows 1 km), so it cannot be guaranteed that the pylons land on the water
+and not on the cliff. The catalog itself leaves it for after testing complex meshes.
 
-**Arreglo en el motor que trajo Uyuni.** A 5 Hz la demo pone un fix exactamente sobre la línea de
-salida: el segmento que termina ahí y el que empieza ahí la cruzaban los dos, y el segundo cerraba la
-vuelta 1 en 0 s con las cuatro puertas perdidas. Ahora un cruce al principio de un segmento no cuenta
-si el segmento anterior ya cruzó esa misma línea en ese mismo punto (`crossedAtEnd` en
-`src/core/race/engine.ts`). Descartar todo cruce al principio del segmento rompía otras pistas: con
-el redondeo, a veces el anterior no lo ve. En vuelo real es casi imposible, pero no cuesta nada.
+**Engine fix that Uyuni brought.** At 5 Hz the demo puts a fix exactly on the start line: the
+segment that ends there and the one that starts there both crossed it, and the second one closed lap
+1 in 0 s with the four gates missed. Now a crossing at the start of a segment does not count if the
+previous segment already crossed that same line at that same point (`crossedAtEnd` in
+`src/core/race/engine.ts`). Discarding every crossing at the start of a segment broke other
+courses: with rounding, sometimes the previous one does not see it. In real flight it is almost
+impossible, but it costs nothing.
 
-Falta volarlas: que los pilones se vean sobre el agua y el salar, el viraje de Pucón (90°, a 1,8 km
-de la orilla oeste más cercana), la subida desde SLUY y si los 16 km de Monument Valley se hacen
-largos.
+Still to fly: that the pylons show up over the water and the salt flat, Pucón's turn (90°, at 1.8 km
+from the nearest west shore), the climb out of SLUY and whether Monument Valley's 16 km feel long.
 
-**Cinco más el mismo día**, a pedido de Juan, con el mismo método. Cuatro del catálogo y una propia:
+**Five more the same day**, at Juan's request, with the same method. Four from the catalog and one
+of our own:
 
-| Pista | Aeródromo | Largo | Qué pide |
+| Course | Airfield | Length | What it asks |
 |---|---|---|---|
-| Puerto Varas Lake Oval | SCTE (21 km) | 2 × 7 km | lago Llanquihue, antihorario, pilones a la izquierda: la más fácil |
-| General Carrera Lake Race | SCCC | 15,3 km | 3 y 8 level, 6 viraje a la izquierda |
-| Heimaey Volcano Island Race | BIVM | 17,2 km | mar al este y sur de la isla, entre ella y Bjarnarey, vuelta por fuera; 3 y 7 level |
-| Kauai Coast Challenge | PHLI | 15,7 km | costa este de Kauaʻi hasta Hoary Head, dos virajes a la izquierda; 2 y 7 level |
-| Lake Tahoe Emerald Run (propia) | KTVL | 15,3 km | a 1.897 m, hacia Emerald Bay sin entrar; 2 level, 7 cuchillo |
+| Puerto Varas Lake Oval | SCTE (21 km) | 2 × 7 km | Lake Llanquihue, counterclockwise, pylons on the left: the easiest |
+| General Carrera Lake Race | SCCC | 15.3 km | 3 and 8 level, 6 left turn |
+| Heimaey Volcano Island Race | BIVM | 17.2 km | sea east and south of the island, between it and Bjarnarey, lap on the outside; 3 and 7 level |
+| Kauai Coast Challenge | PHLI | 15.7 km | east coast of Kauaʻi to Hoary Head, two left turns; 2 and 7 level |
+| Lake Tahoe Emerald Run (our own) | KTVL | 15.3 km | at 1,897 m, toward Emerald Bay without entering; 2 level, 7 knife-edge |
 
-En el mar el DEM Terrarium trae la profundidad (Heimaey: −20 a −110 m; Kauaʻi: hasta −700 m), así
-que "sobre el agua" ahí es bajo 2 m; Open-Meteo da 0. En Heimaey la primera vuelta a la isla
-completa daba 24,5 km y pasaba a menos de 400 m de los islotes del oeste: quedó en el lado este.
+At sea the Terrarium DEM carries the depth (Heimaey: −20 to −110 m; Kauaʻi: down to −700 m), so
+"over water" there is below 2 m; Open-Meteo gives 0. At Heimaey the first lap around the whole
+island came to 24.5 km and passed within 400 m of the western islets: it stayed on the east side.
 
-**Descartadas: Lago Bled y Venecia.** Bled es chico (2 × 1,2 km) y entre la isla y la orilla sur
-quedan ~250 m: no da para pilones Tall a la velocidad de esta app. En la laguna de Venecia el DEM
-da la misma cota (0–3 m) al agua, las barras y las islas: no se puede saber dónde cae un pilón.
+**Discarded: Lake Bled and Venice.** Bled is small (2 × 1.2 km) and between the island and the
+south shore there are ~250 m: not enough for Tall pylons at this app's speed. In the Venice lagoon
+the DEM gives the same elevation (0–3 m) to the water, the sandbars and the islands: there is no
+telling where a pylon lands.
 
-### Después de la 1.2: dieciséis pistas de Juan (sin volar todavía)
+### After 1.2: sixteen courses from Juan (not flown yet)
 
-Juan las preparó con ChatGPT y las trajo como `.pylonrace` para revisarlas e incluirlas (34 en total).
-Doce sobre tierra, Tall, y cuatro versiones de entrenamiento de pistas reales de carreras aéreas,
-Standard:
+Juan prepared them with ChatGPT and brought them as `.pylonrace` to review and include (34 in
+total). Twelve over land, Tall, and four training versions of real air race courses, Standard:
 
-| Pista | Aeródromo | Largo | Qué pide |
+| Course | Airfield | Length | What it asks |
 |---|---|---|---|
-| Osorno Spiral Ascent | SCTE (57 km) | 24,2 km | espiral de dos vueltas al volcán, 950 → 2.660 m; 33 pilones a la izquierda, a 500 m, ≥ 80 m AGL |
-| Quebrada de las Conchas Run | SA02 (26 km) | 13,9 km | el cañón río arriba; ocho pilones de viraje en las curvas |
-| San Rafael Desert Run | KHVE (18 km) | 16,0 km | horario; 4, 7, 8 a la derecha; 3 y 10 level |
-| Swaledale Valley Sprint | EGXE (29 km) | 12,9 km | valle arriba hacia el oeste; 3 y 10 level, 7 entre 40 y 90 m |
-| Auvergne Volcano Circuit | LFLC (22 km) | 12,4 km | horario entre los puys; 4 y 9 a la derecha; 3 y 8 level |
-| Bardenas Badlands Race | XLE001L Ablitas (22 km) | 11,9 km | antihorario; 2 cuchillo, 5 y 9 a la izquierda, 8 level |
-| Gorafe Ravine Run | LEGR (73 km: no hay nada más cerca) | 15,1 km | baja 350 m por las ramblas; siete pilones de viraje, 6 level |
-| Cappadocia Ridge Challenge | LTAZ (27 km) | 13,7 km | 3 y 10 level; de 5 a 6 el suelo sube 228 m en 1,4 km |
-| Flinders Valley Run | YRYK (2 km) | 14,8 km | ida y vuelta por el valle, viraje de 136° en 7; 3 y 10 level |
-| Lindis Pass Traverse | NZWF (30 km) | 13,1 km | sube 375 m al paso y baja; cinco pilones de viraje, 13 level |
-| Namib Dune Run | FYSS (1,5 km) | 15,2 km | junto a la duna Elim; 7 a la derecha, 5 y 9 level |
-| Orkhon Steppe Circuit | ZMHH (2 km) | 2 × 8,1 km | estepa plana a 1.440 m, antihorario; 4 y 8 level |
-| Abu Dhabi 2014 — Training | OMAD (14 km) | 2,3 km | sobre el mar, 15–25 m en cada puerta; slalom, tres level |
-| Chiba 2019 — Training | RJTT (25 km) | 1,6 km | igual, frente a Makuhari; posiciones aproximadas |
-| Porto 2017 — Training | LPPR (12 km) | 1,75 km | sobre el Duero, río arriba; el puente Luís I 250 m después de la meta |
-| Reno Sport 2023 — Training | KRTS | 2 × 12 km | el circuito Sport de Reno, pilones a la izquierda, 15–76 m |
+| Osorno Spiral Ascent | SCTE (57 km) | 24.2 km | two-lap spiral around the volcano, 950 → 2,660 m; 33 pylons on the left, at 500 m, ≥ 80 m AGL |
+| Quebrada de las Conchas Run | SA02 (26 km) | 13.9 km | the canyon upriver; eight turn pylons at the bends |
+| San Rafael Desert Run | KHVE (18 km) | 16.0 km | clockwise; 4, 7, 8 on the right; 3 and 10 level |
+| Swaledale Valley Sprint | EGXE (29 km) | 12.9 km | valley upstream to the west; 3 and 10 level, 7 between 40 and 90 m |
+| Auvergne Volcano Circuit | LFLC (22 km) | 12.4 km | clockwise among the puys; 4 and 9 on the right; 3 and 8 level |
+| Bardenas Badlands Race | XLE001L Ablitas (22 km) | 11.9 km | counterclockwise; 2 knife-edge, 5 and 9 on the left, 8 level |
+| Gorafe Ravine Run | LEGR (73 km: nothing closer) | 15.1 km | drops 350 m through the ramblas; seven turn pylons, 6 level |
+| Cappadocia Ridge Challenge | LTAZ (27 km) | 13.7 km | 3 and 10 level; from 5 to 6 the ground rises 228 m in 1.4 km |
+| Flinders Valley Run | YRYK (2 km) | 14.8 km | out and back through the valley, 136° turn at 7; 3 and 10 level |
+| Lindis Pass Traverse | NZWF (30 km) | 13.1 km | climbs 375 m to the pass and descends; five turn pylons, 13 level |
+| Namib Dune Run | FYSS (1.5 km) | 15.2 km | beside the Elim dune; 7 on the right, 5 and 9 level |
+| Orkhon Steppe Circuit | ZMHH (2 km) | 2 × 8.1 km | flat steppe at 1,440 m, counterclockwise; 4 and 8 level |
+| Abu Dhabi 2014 — Training | OMAD (14 km) | 2.3 km | over the sea, 15–25 m at each gate; slalom, three level |
+| Chiba 2019 — Training | RJTT (25 km) | 1.6 km | same, off Makuhari; approximate positions |
+| Porto 2017 — Training | LPPR (12 km) | 1.75 km | over the Douro, upriver; the Luís I bridge 250 m after the finish |
+| Reno Sport 2023 — Training | KRTS | 2 × 12 km | Reno's Sport circuit, pylons on the left, 15–76 m |
 
-**Qué se revisó.** Que pasen el schema y la demo limpia (a 5, 10 y 30 Hz, de 60 a 110 m/s; a 1 Hz
-con 110 m/s fallan éstas y varias de antes: la demo no alcanza a nivelar entre una muestra y otra);
-rumbos por bisectriz y lado de cada pilón de viraje contra el giro (sólo los slalom alternan, a
-propósito); `groundElevM` contra el DEM Terrarium (coinciden: ChatGPT usó el mismo); los aeródromos
-en el apt.dat de la 12.4.3. Y el terreno entre puertas: en Quebrada, Gorafe, Auvergne, Lindis y la
-base del Osorno la recta entre dos puertas cruza lomas de 60 a 150 m. Una búsqueda del camino más bajo
-(dentro de 1,4 veces la recta) encontró en todos un paso por el valle a menos de 35 m sobre la puerta
-más alta, y la descripción lo avisa.
+**What was reviewed.** That they pass the schema and the clean demo (at 5, 10 and 30 Hz, from 60 to
+110 m/s; at 1 Hz with 110 m/s these and several earlier ones fail: the demo cannot level out between
+one sample and the next); headings by bisector and the side of each turn pylon against the turn
+(only the slaloms alternate, on purpose); `groundElevM` against the Terrarium DEM (they match:
+ChatGPT used the same one); the airfields in the 12.4.3 apt.dat. And the terrain between gates: at
+Quebrada, Gorafe, Auvergne, Lindis and the base of Osorno the straight line between two gates
+crosses ridges of 60 to 150 m. A lowest-path search (within 1.4 times the straight line) found in
+all of them a pass through the valley less than 35 m above the highest gate, and the description
+warns about it.
 
-### Después de la 1.3: la carpeta de X-Plane, a la vista
+### After 1.3: the X-Plane folder, in plain view
 
-Un usuario (2026-10-26) instaló pilones, la app dijo "installed" y en su
-X-Plane, en E:, no apareció nada. La app usa la primera instalación que siga existiendo en la lista de
-Laminar (`x-plane_install_12.txt`); con otra X-Plane 12 en C: el pack se escribió ahí. No había cómo
-verlo ni cambiarlo: la carpeta no se mostraba y "Choose folder…" sólo salía si no había ninguna (el
-README prometía lo contrario).
+A user (2026-10-26) installed pylons, the app said "installed" and nothing showed up in their
+X-Plane, on E:. The app uses the first installation that still exists in Laminar's list
+(`x-plane_install_12.txt`); with another X-Plane 12 on C: the pack was written there. There was no
+way to see or change it: the folder was not shown and "Choose folder…" only appeared if there was
+none (the README promised the opposite).
 
-Ahora la lista *antes de la largada* tiene una fila **X-Plane** con la carpeta (y la versión del
-`Log.txt`) y **Change…**; el aviso de instalación dice dónde se instaló; y una carpeta que no es X-Plane
-ya no se ignora en silencio: lo dice, con el botón para elegir otra. La elección sigue en
-`settings.json` (`xplaneDir`), como antes.
+Now the *before the start* list has an **X-Plane** row with the folder (and the `Log.txt` version)
+and **Change…**; the install notice says where it was installed; and a folder that is not X-Plane
+is no longer silently ignored: it says so, with the button to pick another. The choice stays in
+`settings.json` (`xplaneDir`), as before.
 
-En el mismo reporte preguntó por los pilones de viraje: pasar más afuera de la media línea (`widthM`,
-300 m en Stead) no cuenta. Es a propósito y no cambia.
+In the same report they asked about turn pylons: passing farther out than the center line
+(`widthM`, 300 m at Stead) does not count. That is on purpose and does not change.
 
-**Qué se cambió.** Autor `XP Pylon Racer` (decía ChatGPT); ids sin `local-` ni `-01`; puertas
-`g1…gN` (las de entrenamiento traían `chicane-2a` y parecidos, y la app numera por posición);
-reglas por defecto fuera del archivo. Las descripciones, reescritas para pilotos: sin coordenadas
-ni notas de validación, con el aeródromo, dónde queda la salida y qué pide cada puerta. Los pilones
-de viraje de las pistas Tall pasan de 120–160 m de línea a **250 m**, como Queenstown y las del
-catálogo. En Porto la descripción decía "climb and turn as needed" después de la meta: ahora avisa
-que el puente Luís I está 250 m más adelante.
+**What was changed.** Author `XP Pylon Racer` (it said ChatGPT); ids without `local-` or `-01`;
+gates `g1…gN` (the training ones came with `chicane-2a` and the like, and the app numbers by
+position); default rules out of the file. The descriptions, rewritten for pilots: no coordinates or
+validation notes, with the airfield, where the start is and what each gate asks. The turn pylons of
+the Tall courses go from 120–160 m of line to **250 m**, like Queenstown and the catalog ones. At
+Porto the description said "climb and turn as needed" after the finish: now it warns that the Luís I
+bridge is 250 m ahead.
 
-Falta volarlas. Lo más dudoso: la cumbre del Osorno (la meta queda 170 m sobre el último pilón y a
-360 m), si los cañones de Quebrada y Gorafe se ven en la malla de X-Plane, y si las de
-entrenamiento, con puertas de 40 m entre 15 y 25 m, se pueden volar a la velocidad de un Extra.
+Still to fly. Most doubtful: Osorno's summit (the finish is 170 m above the last pylon and at 360
+m), whether the Quebrada and Gorafe canyons show in X-Plane's mesh, and whether the training ones,
+with 40 m gates between 15 and 25 m, can be flown at an Extra's speed.
 
-### Después de la 1.3.1: la carrera dentro de X-Plane (sonda H3, volada el 2026-10-26)
+### After 1.3.1: the race inside X-Plane (probe H3, flown 2026-10-26)
 
-Juan vuela con un monitor y hoy necesita *Pin on top*. La sonda H3 (`probes/H3/FLIGHT.md`) es un
-plugin propio en C++ (SDK 4.3.0, sólo APIs de XPLM301, así que sirve igual en la 12.4.3 y en la
-12.4.4). Abre una ventana sobre fondo negro con el estado, el reloj, la puerta que sigue con su
-flecha y la pista. **Sólo muestra: el juez sigue siendo la app.** Lo único que calcula es la flecha,
-con la posición del sim en cada frame. Cuatro carreras de la Daggett Sprint (27,3–27,5 s) a 60 fps
-topados, con 0,06 ms por dibujo y 5,5–6 ms de GPU. Tres lecciones para el plugin de verdad: leer la
-posición sólo en el flight loop (en el menú llenaba el `Log.txt`), apagar el culling antes de dibujar
-y, cerca de una puerta, que la flecha muestre su rumbo y no su centro.
+Juan flies on one monitor and today needs *Pin on top*. The H3 probe (`probes/H3/FLIGHT.md`) is a
+plugin of our own in C++ (SDK 4.3.0, only XPLM301 APIs, so it works the same on 12.4.3 and on
+12.4.4). It opens a window on a black background with the state, the clock, the next gate with its
+arrow and the course. **It only displays: the judge is still the app.** The only thing it computes
+is the arrow, with the sim's position on every frame. Four Daggett Sprint races (27.3–27.5 s) at a
+capped 60 fps, with 0.06 ms per draw and 5.5–6 ms of GPU. Three lessons for the real plugin: read
+the position only in the flight loop (in the menu it filled `Log.txt`), turn culling off before
+drawing and, near a gate, have the arrow show its heading and not its center.
 
-**La app ya le habla al plugin**: `src/main/display.ts` manda la carrera a `127.0.0.1:49710` con cada
-actualización (`src/core/display/wire.ts`, el formato de `protocol.h`). Cuando el plugin contesta, la
-lista *antes de la largada* lo muestra ("In the sim"). Sin el plugin no cambia nada. Para que la
-ventana y el plugin digan lo mismo, los textos de la carrera pasaron del renderer a `src/core`
-(`race/rulesText.ts`, con `GATE_NAME` y `statusLine`, `format.ts` y `telemetry/feedText.ts`).
+**The app now talks to the plugin**: `src/main/display.ts` sends the race to `127.0.0.1:49710` with
+every update (`src/core/display/wire.ts`, the `protocol.h` format). When the plugin answers, the
+*before the start* list shows it ("In the sim"). Without the plugin nothing changes. So that the
+window and the plugin say the same thing, the race texts moved from the renderer to `src/core`
+(`race/rulesText.ts`, with `GATE_NAME` and `statusLine`, `format.ts` and `telemetry/feedText.ts`).
 
-Volado con la app el mismo día: Daggett Sprint en 27,26 s, New best, igual en la ventana y en el
-plugin. Falta: oculta contra visible, VR, la tecla y la 12.4.4; y después,
-compilar en el CI para los tres sistemas e instalarlo desde la app.
+Flown with the app the same day: Daggett Sprint in 27.26 s, New best, the same in the window and in
+the plugin. Still to do: hidden versus visible, VR, the key and 12.4.4; and then, build in CI for
+the three systems and install it from the app.
 
-### Después de la H3: el plugin en el release (1.4.0, volado el 2026-10-27)
+### After H3: the plugin in the release (1.4.0, flown 2026-10-27)
 
-Juan pidió dejarlo lanzado como un archivo aparte, y así va: el release trae, junto a los
-instaladores, `xp12-pylon-racer-plugin-<versión>.zip` con la carpeta `XPPylonRacer/` (`win_x64`,
-`mac_x64`, `lin_x64`), un `README.txt` y la licencia. La app no lo instala: se copia a
-`Resources/plugins/` con X-Plane cerrado, como cualquier plugin. Instalarlo desde la app queda para
-después, si los usuarios lo piden.
+Juan asked to ship it as a separate file, and so it goes: the release brings, next to the
+installers, `xp12-pylon-racer-plugin-<version>.zip` with the `XPPylonRacer/` folder (`win_x64`,
+`mac_x64`, `lin_x64`), a `README.txt` and the license. The app does not install it: it is copied to
+`Resources/plugins/` with X-Plane closed, like any plugin. Installing it from the app is left for
+later, if users ask for it.
 
-**Qué cambió desde la sonda.** El código pasó de `probes/H3/plugin/` a `plugin/`.
-- Nombre *XP Pylon Racer*, firma `jlgabriel.xppylonracer.display`, comando `xpr/toggle_display`,
-  menú *Plugins › XP Pylon Racer*. La versión es la de la app (`package.json`).
-- **La ventana nace oculta** y aparece la primera vez que la app le habla: quien instala el plugin y
-  vuela sin la app no ve nada. Si el piloto la oculta, la app no la vuelve a abrir hasta el próximo
-  arranque de X-Plane. **Vuelve donde la dejaste** (`Output/preferences/XPPylonRacer.prf`, sólo
-  dentro del sim; si ya no cabe en la pantalla, arriba a la derecha).
-- Ya no escribe mediciones en el `Log.txt` cada 10 s: sólo el arranque, la pista cuando cambia y
-  cuando aparece la app. El `hello` sigue llevando fps y tiempo de dibujo.
-- **El protocolo se prueba de los dos lados.** `tests/display.test.ts` escribe los mensajes reales
-  de la app en `plugin/test/fixtures/` (`toMatchFileSnapshot`; `npx vitest run -u` los rehace) y
-  `xpr_wire_test` los parsea; el `hello` lo arma `protocol.cpp` y el test de la app lee el mismo
-  archivo. La versión del protocolo sigue en 1.
-- `npm run plugin` baja el SDK 4.3.0 de Laminar (verificado por su sha256), compila, corre el test
-  y arma `plugin/out/XPPylonRacer/<sistema>/`. En macOS, universal (arm64 + x86_64), mínimo 12.0 y
-  firma ad-hoc; en Linux, compilado en ubuntu-22.04 con el runtime de C++ adentro. El CI lo compila
-  en los tres sistemas en cada push, y el workflow de release arma el zip.
+**What changed since the probe.** The code moved from `probes/H3/plugin/` to `plugin/`.
+- Name *XP Pylon Racer*, signature `jlgabriel.xppylonracer.display`, command `xpr/toggle_display`,
+  menu *Plugins › XP Pylon Racer*. The version is the app's (`package.json`).
+- **The window is born hidden** and appears the first time the app talks to it: whoever installs the
+  plugin and flies without the app sees nothing. If the pilot hides it, the app does not open it
+  again until the next X-Plane start. **It comes back where you left it**
+  (`Output/preferences/XPPylonRacer.prf`, only inside the sim; if it no longer fits on the screen,
+  top right).
+- It no longer writes measurements to `Log.txt` every 10 s: only the startup, the course when it
+  changes and when the app appears. The `hello` still carries fps and draw time.
+- **The protocol is tested from both sides.** `tests/display.test.ts` writes the app's real messages
+  to `plugin/test/fixtures/` (`toMatchFileSnapshot`; `npx vitest run -u` rebuilds them) and
+  `xpr_wire_test` parses them; the `hello` is built by `protocol.cpp` and the app's test reads the
+  same file. The protocol version stays at 1.
+- `npm run plugin` downloads Laminar's SDK 4.3.0 (verified by its sha256), builds, runs the test and
+  assembles `plugin/out/XPPylonRacer/<system>/`. On macOS, universal (arm64 + x86_64), minimum 12.0
+  and ad-hoc signature; on Linux, built on ubuntu-22.04 with the C++ runtime inside. CI builds it on
+  the three systems on every push, and the release workflow assembles the zip.
 
-**Volado el 2026-10-27** (12.4.3, KDAG, Extra, la app con `npm run dev`, el plugin del borrador):
-- **Con la app cerrada la ventana apareció igual**, diciendo "Waiting for XP Pylon Racer…". El
-  `Log.txt` no tenía ningún mensaje recibido: la ventana se crea oculta, pero
-  `XPLMSetWindowPositioningMode` la muestra. Arreglado (se oculta después de ubicarla) e instalado,
-  **sin volar**.
-- Al abrir la app la ventana tomó la carrera al tiro: "Armed", el reloj en gris, "1 · Start" a
-  3,9 km y "ahead", las cinco puertas en el mapa.
-- **Daggett Sprint en 27,54 s, limpia** ("todo bien!"): el plugin terminó con "Finished", el reloj
-  en blanco y "+0.28 vs your best", igual que la app. Es la primera vez que se ve la línea `result`.
-- Al cerrar X-Plane se guardó la ventana en `XPPylonRacer.prf`. No se alcanzó a probar que vuelva
-  ahí, ni ocultarla con la app abierta.
+**Flown on 2026-10-27** (12.4.3, KDAG, Extra, the app with `npm run dev`, the draft plugin):
+- **With the app closed the window appeared anyway**, saying "Waiting for XP Pylon Racer…".
+  `Log.txt` had no received message: the window is created hidden, but
+  `XPLMSetWindowPositioningMode` shows it. Fixed (it is hidden after being placed) and installed,
+  **not flown**.
+- On opening the app the window picked up the race at once: "Armed", the clock in gray, "1 · Start"
+  at 3.9 km and "ahead", the five gates on the map.
+- **Daggett Sprint in 27.54 s, clean** ("all good!"): the plugin ended with "Finished", the clock in
+  white and "+0.28 vs your best", the same as the app. It is the first time the `result` line is
+  seen.
+- On closing X-Plane the window was saved in `XPPylonRacer.prf`. There was no time to test that it
+  comes back there, or hiding it with the app open.
 
-**Falta:** volar el arreglo del arranque, que la ventana vuelva donde quedó y que una ventana
-oculta por el piloto siga oculta; probarlo en macOS y Linux (sólo se compila), VR, y la 12.4.4. En macOS el
-zip bajado queda en cuarentena: el README del zip y el de la app dan el `xattr`.
+**Still to do:** fly the startup fix, that the window comes back where it was left and that a window
+hidden by the pilot stays hidden; test it on macOS and Linux (it is only built), VR, and 12.4.4. On
+macOS the downloaded zip ends up in quarantine: the zip's README and the app's give the `xattr`.
 
-### Después de la 1.4: diez pistas más de Juan (sin volar todavía)
+### After 1.4: ten more courses from Juan (not flown yet)
 
-Juan las preparó con ChatGPT el 2026-10-27 y las trajo como `.pylonrace`, igual que las dieciséis
-de la 1.3 (44 en total). Todas Tall y con el pilón `rodeo-25` (50 m a ese tamaño), como el Osorno:
+Juan prepared them with ChatGPT on 2026-10-27 and brought them as `.pylonrace`, like the sixteen
+from 1.3 (44 in total). All Tall and with the `rodeo-25` pylon (50 m at that size), like Osorno:
 
-| Pista | Aeródromo | Largo | Qué pide |
+| Course | Airfield | Length | What it asks |
 |---|---|---|---|
-| Aysén Fjord Speed Run | SCAS (34 km en línea; ~31 km por el agua) | 19,0 km | tramos de 2 km sobre el canal; todas las puertas 30–130 m |
-| Badwater Basin Precision Oval | L06 (25 km) | 2 × 4,6 km | óvalo antihorario a −82 m; 2 entre 30 y 60 m, 5 level |
-| Cochamó Granite Valley Run | SCKM (4 km) | 15,0 km | valle arriba de 7 a 335 m, paredes de 150–270 m; ≥ 50 m AGL |
-| Daggett Precision Cup | KDAG (9 km) | 2 × 5,6 km | horario; dos level y dos cuchillo por vuelta, a 600 m entre sí |
-| Futaleufú River Chase | SCFT (4,4 km) | 14,7 km | 26 puertas río abajo, once pilones de viraje alternados; 30–120 m |
-| Geiranger Fjord Challenge | XEN000I Stryn (24 km, sobre 1.400 m de montaña) | 15,0 km | la S del fiordo; 11 entre 25 y 55 m |
-| Glen Coe Highland Descent | EGEO (38 km; por Loch Linnhe) | 13,4 km | baja de 278 a 3 m; ≥ 50 m AGL |
-| Kornati Island Slalom | LDZD (34 km) | 17,0 km | mar entre islas; seis pilones de viraje alternados; 30–120 m |
-| Milford Sound Fjord Run | NZMF (2 km) | 15,5 km | fiordo abajo, slalom 12–14 al final; 25–90 m |
-| Stead Right-Hand Sprint | KRTS (4 km) | 3 × 4,1 km | óvalo horario, cinco pilones a la derecha; 20–100 m |
+| Aysén Fjord Speed Run | SCAS (34 km in a line; ~31 km over water) | 19.0 km | 2 km legs over the channel; all gates 30–130 m |
+| Badwater Basin Precision Oval | L06 (25 km) | 2 × 4.6 km | counterclockwise oval at −82 m; 2 between 30 and 60 m, 5 level |
+| Cochamó Granite Valley Run | SCKM (4 km) | 15.0 km | valley upstream from 7 to 335 m, walls of 150–270 m; ≥ 50 m AGL |
+| Daggett Precision Cup | KDAG (9 km) | 2 × 5.6 km | clockwise; two level and two knife-edge per lap, 600 m apart |
+| Futaleufú River Chase | SCFT (4.4 km) | 14.7 km | 26 gates downriver, eleven alternating turn pylons; 30–120 m |
+| Geiranger Fjord Challenge | XEN000I Stryn (24 km, over 1,400 m of mountain) | 15.0 km | the fjord's S; 11 between 25 and 55 m |
+| Glen Coe Highland Descent | EGEO (38 km; via Loch Linnhe) | 13.4 km | drops from 278 to 3 m; ≥ 50 m AGL |
+| Kornati Island Slalom | LDZD (34 km) | 17.0 km | sea among islands; six alternating turn pylons; 30–120 m |
+| Milford Sound Fjord Run | NZMF (2 km) | 15.5 km | down the fjord, slalom 12–14 at the end; 25–90 m |
+| Stead Right-Hand Sprint | KRTS (4 km) | 3 × 4.1 km | clockwise oval, five pylons on the right; 20–100 m |
 
-**Qué se revisó**, con las mismas herramientas que en la 1.3: rumbos por bisectriz y lado de cada
-pilón de viraje (coinciden con el giro en todas; los alternados son a propósito); `groundElevM`
-contra el DEM Terrarium (diferencias de menos de 15 m, salvo Milford); el aeródromo más cercano en el
-apt.dat de la 12.4.3, y el terreno entre puertas y desde el aeródromo hasta la largada. En
-Futaleufú (1→2), Glen Coe (8→9) y Milford (4→5, 7→8) la recta cruza una loma o una punta; el
-camino más bajo pasa a menos de 25 m sobre la puerta más alta (en Milford, por el agua), y la
-descripción lo avisa. En Milford el DEM pone el fondo del fiordo, alrededor de 1 y 2, a 236 m: es
-un relleno malo del DEM (el resto del agua está a 0) y las puertas quedan a 0.
+**What was reviewed**, with the same tools as in 1.3: headings by bisector and the side of each
+turn pylon (they match the turn in all of them; the alternating ones are on purpose); `groundElevM`
+against the Terrarium DEM (differences under 15 m, except Milford); the nearest airfield in the
+12.4.3 apt.dat, and the terrain between gates and from the airfield to the start. At Futaleufú
+(1→2), Glen Coe (8→9) and Milford (4→5, 7→8) the straight line crosses a ridge or a point; the
+lowest path passes less than 25 m above the highest gate (at Milford, over the water), and the
+description warns about it. At Milford the DEM puts the fjord floor, around 1 and 2, at 236 m: it
+is a bad DEM fill (the rest of the water is at 0) and the gates are left at 0.
 
-**Qué se cambió.** Lo mismo que en la 1.3: descripciones reescritas para pilotos, sin coordenadas
-ni notas de validación, con el aeródromo y cómo llegar a la largada. Seis traían "no airport is
-assumed" o un aeródromo lejano: ahora nombran el más cercano (Aysén, Badwater, Cochamó, Geiranger,
-Glen Coe, Kornati). Los pilones de viraje pasan de 60–160 m de línea a **250 m**. La Stead
-Right-Hand Sprint avisa que el tramo 5→6 de Reno Sport 2023 pasa a 125 m de su largada: con las
-dos instaladas se ven los pilones de la otra.
+**What was changed.** The same as in 1.3: descriptions rewritten for pilots, no coordinates or
+validation notes, with the airfield and how to get to the start. Six came with "no airport is
+assumed" or a distant airfield: now they name the nearest one (Aysén, Badwater, Cochamó, Geiranger,
+Glen Coe, Kornati). The turn pylons go from 60–160 m of line to **250 m**. The Stead
+Right-Hand Sprint warns that leg 5→6 of Reno Sport 2023 passes 125 m from its start: with both
+installed you see the other one's pylons.
 
-Falta volarlas. Lo más dudoso: si el agua del fondo de Milford Sound está a nivel del mar en la
-malla de X-Plane, si Futaleufú (puertas de 70 m, tramos de 200 m) se puede volar en un Extra, y el
-cruce de montaña de Stryn a Geiranger.
+Still to fly. Most doubtful: whether the water at the bottom of Milford Sound is at sea level in
+X-Plane's mesh, whether Futaleufú (70 m gates, 200 m legs) can be flown in an Extra, and the
+mountain crossing from Stryn to Geiranger.
 
-### Después de la 1.5: Shirley canta cada puerta (sin volar todavía)
+### After 1.5: Shirley calls every gate (not flown yet)
 
-**El vuelo que lo trajo, 2026-10-27** (Daggett Sprint, Cessna 172SP, Shirley en el modelo Quick;
-airplane.team/share/fEqLACwQ). Con el prompt corregido del 2026-10-25, Shirley sólo se despertaba
-cada 6 s de silencio y decía "gate in seconds" sin saber cuándo pasaba Juan. Cuando él le pidió que
-lo detectara, ella misma llamó a `SetWakeUpTriggers` con un punto por puerta (0,04 NM y un texto
-fijo) y cantó las cinco justo a tiempo: 21:40:10, :25, :40, :57 y 21:41:13, cada ~15 s como piden
-600 m a ~75 kt. La app: **1:02,75**, limpia. El prompt corregido funcionó (contó las puertas a
-cualquier altura y leyó bien el 1:00,79 del récord).
+**The flight that brought it, 2026-10-27** (Daggett Sprint, Cessna 172SP, Shirley on the Quick
+model; airplane.team/share/fEqLACwQ). With the corrected prompt from 2026-10-25, Shirley only woke
+up after 6 s of silence and said "gate in seconds" without knowing when Juan would pass. When he
+asked her to detect it, she herself called `SetWakeUpTriggers` with one point per gate (0.04 NM and
+a fixed text) and called all five right on time: 21:40:10, :25, :40, :57 and 21:41:13, every ~15 s
+as 600 m at ~75 kt asks for. The app: **1:02.75**, clean. The corrected prompt worked (it counted
+the gates at any height and read the record's 1:00.79 correctly).
 
-Se le mandó a Alex el reporte. Respondió que es su sistema nuevo de *wakeups*, que una fase del
-challenge los puede armar sola (`wakeupTriggers`), que cada uno salta una vez, que los de una fase se
-borran al terminarla, y que para varias vueltas por ahora hay que usar una fase por vuelta. El formato
-de los disparadores por distancia se leyó en `types/tracked_wakeup_property.ts` de
-frontend-stage.airplane.team el 2026-10-30 (a producción "mañana", según Alex):
-`distanceTargets` con clave `"lat,lon"` de seis decimales y una lista de `{ value (NM), label,
-cannedText }`; salta al bajar de `value` y se borra; dos iguales se funden en uno.
+The report was sent to Alex. He answered that it is his new *wakeups* system, that a challenge
+phase can arm them by itself (`wakeupTriggers`), that each one fires once, that a phase's triggers
+are deleted when it ends, and that for several laps for now you have to use one phase per lap. The
+format of the distance triggers was read in `types/tracked_wakeup_property.ts` of
+frontend-stage.airplane.team on 2026-10-30 (to production "tomorrow", according to Alex):
+`distanceTargets` keyed by `"lat,lon"` with six decimals and a list of `{ value (NM), label,
+cannedText }`; it fires when dropping below `value` and is deleted; two identical ones merge into
+one.
 
-**Qué hace ahora `src/core/export/shirley.ts`:**
+**What `src/core/export/shirley.ts` does now:**
 
-- Cada puerta de la fase de carrera lleva su disparador: radio de medio ancho + 20 m (0,038 NM en
-  las puertas de 100 m de Daggett, casi lo que eligió Shirley) y un texto que se dice al instante:
-  "Start gate! Clock's running.", "Gate 3!", "Lap 2!", "Finish!", con lo que pide la siguiente
-  ("Knife edge next.", "Pylon next, keep it on your right.").
-- **Los pilones de viraje no llevan disparador**: se rodean a una distancia que nadie sabe, y con un
-  radio fijo saltaría muy temprano o nunca. Esperan el disparador de "punto más cercano" que ofreció
-  Alex; mientras, Shirley los canta con sus despertares de 6 s.
-- **Varias vueltas** (9 de las 44 pistas): como cada disparador salta una vez y una fase arma cada
-  punto una sola vez, la carrera se parte en fases `Race1`…`RaceN` (`raceSegments`). Cada una pasa la
-  posta en la puerta antes del tramo más largo (nunca un pilón de viraje, que no despierta a
-  Shirley), para darle el mayor tiempo posible de cambiar de fase. En una vuelta sigue habiendo una
-  sola `Race`.
-- El `Brief` despierta a Shirley a 1 NM de la largada, para que entre a la carrera a tiempo sin que
-  el piloto diga "let's go" (antes sólo se despertaba cada 60 s).
-- `challengeTimer` y `recordFlightData` siguen en cada fase de carrera; el schema dice que los datos
-  sólo se borran al pasar de falso a verdadero, así que de `Race1` a `Race2` no se pierden.
+- Each gate of the race phase carries its trigger: radius of half the width + 20 m (0.038 NM on
+  Daggett's 100 m gates, almost what Shirley chose) and a text that is said at once: "Start gate!
+  Clock's running.", "Gate 3!", "Lap 2!", "Finish!", with what the next one asks ("Knife edge
+  next.", "Pylon next, keep it on your right.").
+- **Turn pylons, after 1.6.0 (unreleased):** Juan's idea, an invisible pylon. The engine already
+  judges a turn pylon by its pass line, from the pylon out to the side the pilot must fly, as long as
+  the gate's width (`gatePassLine`): it is a gate with one visible pylon. So the export lines that
+  line with small invisible gates, each a trigger saying "Pylon 4!": circles of at most 40 m,
+  overlapping by 2 m, and no more than four per pylon (`MAX_TURN_TRIGGERS`), so a 500 m line gets
+  four of 62.5 m. A pass outside the line gets no call, just as the app does not count it. Neither
+  the app, the course, its revision nor X-Plane changes. Without the cap, Osorno (32 pylons on
+  500 m lines) made a 73,000-character challenge; with it, 53,000, and nobody knows Shirley's limit
+  yet. An oblique pass between two circles may get the call twice. 1.6.0 shipped without this:
+  there, turn pylons had no trigger and Shirley called them from her 6 s wake-ups.
+- **Several laps** (9 of the 44 courses): since each trigger fires once and a phase arms each point
+  only once, the race is split into phases `Race1`…`RaceN` (`raceSegments`). Each one hands over at
+  the gate before the longest leg, to give her the most time to change phase. With one lap there is
+  still a single `Race`.
+- The `Brief` wakes Shirley at 1 NM from the start, so that she enters the race on time without the
+  pilot saying "let's go" (before, she only woke up every 60 s).
+- `challengeTimer` and `recordFlightData` stay on each race phase; the schema says the data is only
+  deleted when going from false to true, so going from `Race1` to `Race2` loses nothing.
 
-Falta volarlo: Daggett sin pedirle nada a Shirley; una pista de varias vueltas (Munich Diamond:
-`Race1` hasta la g3 de la vuelta 1), donde el riesgo es que el cambio de fase, que decide Shirley y
-tarda unos segundos, llegue tarde a la puerta siguiente; el Extra, con puertas cada 3 a 5 s, por si
-los textos se pisan; y Precise, que Alex cree que puede andar mejor.
+Still to fly: Daggett without asking Shirley anything; a multi-lap course (Munich Diamond: `Race1`
+up to g3 of lap 1), where the risk is that the phase change, which Shirley decides and takes a few
+seconds, arrives late for the next gate; the Extra, with gates every 3 to 5 s, in case the texts
+step on each other; and Precise, which Alex thinks may work better.
 
-### RREF como alternativa a RPOS (no adoptada)
+### RREF as an alternative to RPOS (not adopted)
 
-Comparte sin pelear, pero cada valor llega
-como **float de 32 bits**: lat/lon perderían precisión (~0,7 m de paso a 117° de longitud, contra el
-double de RPOS), y una muestra son ~10 datarefs sueltos sin garantía de llegar en el mismo paquete.
-Sirve para leer banderas (el replay, sin HTTP) o como fuente de respaldo con posición
-`local_x/y/z`; queda anotado para cuando un piloto necesite volar con un mapa móvil que no suelte RPOS.
+It shares without fighting, but each value arrives
+as a **32-bit float**: lat/lon would lose precision (~0.7 m step at 117° longitude, against RPOS's
+double), and a sample is ~10 loose datarefs with no guarantee of arriving in the same packet.
+It works for reading flags (replay, without HTTP) or as a fallback source with `local_x/y/z`
+position; noted for when a pilot needs to fly with a mobile map that will not let go of RPOS.
 
 ---
 
-## 1. Qué es
+## 1. What it is
 
-Pylon Racer para **X-Plane 12**: una app de escritorio que es a la vez
+Pylon Racer for **X-Plane 12**: a desktop app that is at once
 
-- **un creador de pistas de pilones**: diseñas el circuito sobre un mapa y la app lo instala en
-  X-Plane como un scenery pack con un clic;
-- **un juego de carreras**: sigue tu vuelo en vivo, aplica las reglas, cronometra, guarda cada
-  carrera y te da un ranking por clase de avión entre los pilotos de este computador.
+- **a pylon course creator**: you design the circuit on a map and the app installs it in
+  X-Plane as a scenery pack with one click;
+- **a racing game**: it follows your flight live, applies the rules, times you, saves every
+  race and gives you a ranking by aircraft class among the pilots on this computer.
 
-El ciclo es el mismo de Pylon Racer: **diseñar o abrir una pista → instalarla → volar → ver el
-resultado → reintentar.** Lo que cambia es todo lo que toca al simulador.
+The cycle is the same as Pylon Racer's: **design or open a course → install it → fly → see the
+result → retry.** What changes is everything that touches the simulator.
 
 ---
 
-## 2. Decisiones
+## 2. Decisions
 
-| # | Decisión | Por qué |
+| # | Decision | Why |
 |---|----------|---------|
-| D1 | **App aparte, no un "modo X-Plane" dentro de Pylon Racer** (Juan, 2026-10-24). | Igual que XOP respecto de PCT (XOP D1): cada app habla el idioma de su simulador desde el primer commit, y la 1.0 de Aerofly ya publicada no se ensucia con ramas `if (xplane)`. |
-| D2 | **Nombre: XP Pylon Racer** (Juan lo confirmó el 2026-10-25), repo `jlgabriel/xp12-pylon-racer`, público desde la 1.0. | Sigue el patrón de XOP (`xp12-object-placer`, "XP Object Placer"). |
-| D3 | **Vocabulario de X-Plane desde el primer commit**: pack, DSF, OBJ8, dataref, RPOS. | Nada de POI, `.tsl`, `autoheight` ni carpetas `<coord>_pr_`: son conceptos de Aerofly (LINEAGE). |
-| D4 | **GPL-3.0-or-later.** | Permite copiar código de Pylon Racer y de XOP (mismo autor, misma licencia). |
-| D5 | **Cero assets de terceros. Los pilones los genera la app** (OBJ8 + PNG propios, `src/core/pylon/`). | Los Reno de krzysk1 y los de Rodeo son `.tmb` de Aerofly: no sirven en X-Plane, y el permiso de Rodeo fue para Pylon Racer. Un pilón generado tiene altura y radio **exactos**, que es justo lo que pide la regla de "pilón tocado". Si un artista ofrece un pilón OBJ8 más adelante, se suma sin cambiar el modelo. |
-| D6 | **Sondear antes de diseñar** (XOP D6). | Cada dato duro del sim se mide con una sonda que no puede salir bien por casualidad (control positivo). Las sondas de la v0.0 están en `probes/`. |
-| D7 | **Mismo formato de pista `.pylonrace`.** Una pista hecha en una app se abre en la otra. | Es lo único que cruza entre los dos simuladores. Los ids de pilón de Aerofly (`red`, `rodeo-reno`…) se traducen a un pilón generado del mismo color y rol; ninguno se pierde. |
-| D8 | **Rankings separados por simulador.** Ni se importan ni se comparan tiempos de Aerofly. | Física, terreno y tasa de datos distintos: un tiempo de AFS4 y uno de X-Plane no miden lo mismo. |
-| D9 | **Heredadas de Pylon Racer sin reabrir:** sin servidor; app individual (se comparten sólo pistas); sin medallas, fantasma ni sonido; UI en inglés y docs en español con "tú"; diseño sobre tokens. | Decisiones de Juan del 2026-10-24 para Pylon Racer. |
-| D10 | **Heredadas de XOP sin reabrir:** el DSF binario lo escribe la app, sin DSFTool (XOP D10); la línea de `scenery_packs.ini` la escribe el instalador, con respaldo (XOP D8); instalar y desinstalar con X-Plane cerrado (XOP D16); el instalador sólo toca carpetas propias con marcador. | Medido y publicado en XOP 1.0–1.4. |
-| D11 | **Cada modelo de pilón sabe su altura, al tamaño que pida la pista (D15); el `pylonHeightM` de la pista no se usa** (sigue en el formato, por compatibilidad). El diseñador ya no lo muestra. | Pilones generados. Consecuencia: la **revisión** de una misma pista es distinta en cada app (la altura entra en cómo se puntúa), lo que calza con D8. |
-| D12 | **Clase de avión por código ICAO** (`acf_ICAO`), sin distinguir mayúsculas. La tabla se leyó de los `.acf` de la instalación 12.4.3 de Juan, nunca de memoria. | En X-Plane no hay ids de carpeta fijos. Un avión desconocido: el piloto elige la clase, recordada por su código. |
-| D13 | **X-Plane se encuentra solo** (primera instalación usable de `x-plane_install_12.txt`); el piloto puede elegir otra. Los e2e usan `XPR_XPLANE_DIR` para no tocar nunca un X-Plane real. | Código de XOP (`findInstallations`). |
-| D14 | **Esta app también registra `.pylonrace`** (Juan, 2026-10-25): con ambas instaladas, el doble clic abre la que se instaló última, y el README lo dice. Ambas importan el archivo igual. | Quien sólo vuela X-Plane gana el doble clic; quien tiene las dos sigue teniendo Import. |
-| D15 | **El tamaño de los pilones es de la pista** (Juan, 2026-10-24): `rules.pylonSize`, `standard` (los modelos de siempre, 15–25 m) o `tall` (todos al doble de alto **y** de ancho, misma pintura: 30–50 m). Viaja en el `.pylonrace`; Pylon Racer lo descarta al abrir, como toda clave que no conoce. El radio de "pilón tocado" crece lo mismo que creció la base de cada modelo (`pylonHitRadiusFor`: el rojo pasa de 5 a 6,2 m), así la distancia que se pide al costado del pilón no cambia y un toque nunca queda dentro del pilón. **Ranking separado:** `pylonSize` entra en la revisión cuando no es `standard`, igual que la altura de cada modelo, así que cambiarlo abre otro ranking y volver a Standard recupera el anterior; las pistas y carreras de antes conservan su revisión. Los modelos altos van en el pack como `pylon_<id>_tall.obj/.png`; el `sceneryId` de Standard no cambió. | En un sim cuesta ver un pilón de 15 m de lejos. Dos tamaños bastan para elegir sin pensar; un pilón sólo más alto sería un poste. Tiempos con pilones de distinta altura no miden lo mismo (D11). |
+| D1 | **Separate app, not an "X-Plane mode" inside Pylon Racer** (Juan, 2026-10-24). | Same as XOP with respect to PCT (XOP D1): each app speaks its simulator's language from the first commit, and the already published Aerofly 1.0 does not get dirtied with `if (xplane)` branches. |
+| D2 | **Name: XP Pylon Racer** (Juan confirmed it on 2026-10-25), repo `jlgabriel/xp12-pylon-racer`, public since 1.0. | Follows XOP's pattern (`xp12-object-placer`, "XP Object Placer"). |
+| D3 | **X-Plane vocabulary from the first commit**: pack, DSF, OBJ8, dataref, RPOS. | No POI, `.tsl`, `autoheight` or `<coord>_pr_` folders: they are Aerofly concepts (LINEAGE). |
+| D4 | **GPL-3.0-or-later.** | Allows copying code from Pylon Racer and XOP (same author, same license). |
+| D5 | **Zero third-party assets. The app generates the pylons** (its own OBJ8 + PNG, `src/core/pylon/`). | krzysk1's Reno ones and Rodeo's are Aerofly `.tmb`: they do not work in X-Plane, and Rodeo's permission was for Pylon Racer. A generated pylon has **exact** height and radius, which is just what the "pylon touched" rule asks for. If an artist offers an OBJ8 pylon later, it gets added without changing the model. |
+| D6 | **Probe before designing** (XOP D6). | Every hard fact about the sim is measured with a probe that cannot come out right by chance (positive control). The v0.0 probes are in `probes/`. |
+| D7 | **Same `.pylonrace` course format.** A course made in one app opens in the other. | It is the only thing that crosses between the two simulators. Aerofly's pylon ids (`red`, `rodeo-reno`…) are translated to a generated pylon of the same color and role; none is lost. |
+| D8 | **Rankings separate per simulator.** Aerofly times are neither imported nor compared. | Different physics, terrain and data rate: an AFS4 time and an X-Plane one do not measure the same thing. |
+| D9 | **Inherited from Pylon Racer, not reopened:** no server; individual app (only courses are shared); no medals, ghost or sound; UI in English; design on tokens. (The docs were in Spanish until 2026-10-31; now everything on GitHub is in English.) | Juan's decisions of 2026-10-24 for Pylon Racer. |
+| D10 | **Inherited from XOP, not reopened:** the app writes the binary DSF, without DSFTool (XOP D10); the installer writes the `scenery_packs.ini` line, with backup (XOP D8); install and uninstall with X-Plane closed (XOP D16); the installer only touches its own folders with a marker. | Measured and published in XOP 1.0–1.4. |
+| D11 | **Each pylon model knows its height, at the size the course asks for (D15); the course's `pylonHeightM` is not used** (it stays in the format, for compatibility). The designer no longer shows it. | Generated pylons. Consequence: the **revision** of the same course is different in each app (height enters how it is scored), which fits D8. |
+| D12 | **Aircraft class by ICAO code** (`acf_ICAO`), case-insensitive. The table was read from the `.acf` files of Juan's 12.4.3 installation, never from memory. | X-Plane has no fixed folder ids. An unknown aircraft: the pilot picks the class, remembered by its code. |
+| D13 | **X-Plane finds itself** (first usable installation in `x-plane_install_12.txt`); the pilot can pick another. The e2e tests use `XPR_XPLANE_DIR` so they never touch a real X-Plane. | XOP's code (`findInstallations`). |
+| D14 | **This app also registers `.pylonrace`** (Juan, 2026-10-25): with both installed, double-click opens the one installed last, and the README says so. Both import the file the same. | Whoever flies only X-Plane gets the double-click; whoever has both still has Import. |
+| D15 | **Pylon size belongs to the course** (Juan, 2026-10-24): `rules.pylonSize`, `standard` (the usual models, 15–25 m) or `tall` (all at double the height **and** width, same paint: 30–50 m). It travels in the `.pylonrace`; Pylon Racer drops it on opening, like any key it does not know. The "pylon touched" radius grows the same as each model's base grew (`pylonHitRadiusFor`: the red one goes from 5 to 6.2 m), so the distance asked at the pylon's side does not change and a touch never falls inside the pylon. **Separate ranking:** `pylonSize` enters the revision when it is not `standard`, like each model's height, so changing it opens another ranking and going back to Standard recovers the previous one; earlier courses and races keep their revision. The tall models go in the pack as `pylon_<id>_tall.obj/.png`; Standard's `sceneryId` did not change. | In a sim a 15 m pylon is hard to see from far away. Two sizes are enough to choose without thinking; a pylon that is only taller would be a pole. Times with pylons of different height do not measure the same thing (D11). |
 
 ---
 
-## 3. Integración con X-Plane 12
+## 3. X-Plane 12 integration
 
-### Datos del vuelo: tres puertas, a medir en H0
+### Flight data: three doors, to measure in H0
 
-| | **RPOS** (UDP 49000) | **Web API** (WebSocket 8086) | **Puerto 49002** |
+| | **RPOS** (UDP 49000) | **Web API** (WebSocket 8086) | **Port 49002** |
 |---|---|---|---|
-| Fuente | `Instructions/Exchanging Data with X-Plane.rtfd` (en la instalación) | developer.x-plane.com, "X-Plane Web API" | sin documentar para X-Plane 12 |
-| Versión | todas | **12.1.1+** | — |
-| Tasa | **la que pidas** (`RPOS\0` + `"40\0"`); tope: los FPS del sim | **10 Hz** según Laminar, y sólo los valores que cambian | ? |
-| Posición | lon/lat/elevación en **double** | double (JSON) | ? |
-| Altura | **AGL real** (`y_agl_mtr`) | `y_agl` | ? |
-| Actitud | pitch, **rumbo verdadero**, roll (float, grados) | `true_theta/psi/phi` | ? |
-| Velocidad | vx este, vy arriba, vz **sur** (m/s) + velocidades angulares | `groundspeed`, `hpath` | ? |
-| Avión | **no** | `acf_ICAO`, `acf_relative_path`, `acf_ui_name` | ? |
-| Replay | sigue mandando (posiciones del replay) | `sim/time/is_in_replay` (0.2) | ? |
-| Suscriptores | **uno**: el último que pidió (0.2, §0) | REST: sin límite | ? |
-| Requiere | nada; no desactivar el tráfico entrante | no marcar "Disable Incoming Traffic" en Settings › Network | una opción en Settings › Network, si existe |
+| Source | `Instructions/Exchanging Data with X-Plane.rtfd` (in the installation) | developer.x-plane.com, "X-Plane Web API" | undocumented for X-Plane 12 |
+| Version | all | **12.1.1+** | — |
+| Rate | **whatever you ask** (`RPOS\0` + `"40\0"`); cap: the sim's FPS | **10 Hz** according to Laminar, and only the values that change | ? |
+| Position | lon/lat/elevation as **double** | double (JSON) | ? |
+| Height | **real AGL** (`y_agl_mtr`) | `y_agl` | ? |
+| Attitude | pitch, **true heading**, roll (float, degrees) | `true_theta/psi/phi` | ? |
+| Velocity | vx east, vy up, vz **south** (m/s) + angular rates | `groundspeed`, `hpath` | ? |
+| Aircraft | **no** | `acf_ICAO`, `acf_relative_path`, `acf_ui_name` | ? |
+| Replay | keeps sending (replay positions) | `sim/time/is_in_replay` (0.2) | ? |
+| Subscribers | **one**: the last that asked (0.2, §0) | REST: no limit | ? |
+| Requires | nothing; do not disable incoming traffic | do not tick "Disable Incoming Traffic" in Settings › Network | an option in Settings › Network, if it exists |
 
-**Hipótesis (a confirmar en H0):** RPOS a 40 Hz alimenta la carrera, igual que la DLL en Aerofly,
-y la Web API se consulta una vez por vuelo para saber qué avión es. Si RPOS entrega cerca de 40 Hz,
-X-Plane queda mejor servido que Aerofly por UDP (4,9 Hz) y sin instalar nada.
+**Hypothesis (to confirm in H0):** RPOS at 40 Hz feeds the race, like the DLL in Aerofly, and the
+Web API is queried once per flight to learn which aircraft it is. If RPOS delivers close to 40 Hz,
+X-Plane is better served than Aerofly over UDP (4.9 Hz) and with nothing to install.
 
-Lecciones de Aerofly que la sonda verifica sola (`probes/H0/analyze.ts`), sin depender de que
-alguien mire una flecha:
+Lessons from Aerofly that the probe verifies on its own (`probes/H0/analyze.ts`), without depending
+on someone looking at an arrow:
 
-- **El rumbo es un rumbo de brújula, no un ángulo matemático.** En Aerofly la DLL entregaba
-  `90 − rumbo` y lo cazó Juan en KDAG (2026-10-18). Aquí se compara contra el track que dibujan las
-  propias posiciones, y contra la lectura alternativa.
-- **Roll positivo = ala derecha abajo**, comprobado contra el sentido en que gira el track.
-- **vz apunta al sur**, como dice el documento (los ejes de OBJ8 también: XOP lo verificó).
-- **Qué pasa en el menú y en pausa** (en Aerofly, posición 0,0 en el menú: `isNullIsland`).
-- **Jitter de llegada:** RPOS no trae la hora del sim. El hub fecha cada muestra con el reloj
-  monotónico del main, como en Pylon Racer. H0 mide cuánto bailan los intervalos.
+- **Heading is a compass heading, not a mathematical angle.** In Aerofly the DLL delivered
+  `90 − heading` and Juan caught it at KDAG (2026-10-18). Here it is compared against the track
+  drawn by the positions themselves, and against the alternative reading.
+- **Roll positive = right wing down**, checked against the direction the track turns.
+- **vz points south**, as the document says (OBJ8 axes too: XOP verified it).
+- **What happens in the menu and when paused** (in Aerofly, position 0,0 in the menu:
+  `isNullIsland`).
+- **Arrival jitter:** RPOS does not carry the sim's time. The hub timestamps each sample with the
+  main process's monotonic clock, as in Pylon Racer. H0 measures how much the intervals wander.
 
-### Escenario: un pack por pista
+### Scenery: one pack per course
 
 ```
 Custom Scenery/XPR_<slug>/
-  objects/pylon_<color>.obj + .png     generados, sólo los colores que usa la pista
-                                       (pylon_<color>_tall con pilones altos, D15)
-  Earth nav data/<bloque>/<tile>.dsf   uno por tile tocado (groupByTile de XOP)
-  pylon-racer.json                     marcador: el instalador sólo toca carpetas con él
+  objects/pylon_<color>.obj + .png     generated, only the colors the course uses
+                                       (pylon_<color>_tall with tall pylons, D15)
+  Earth nav data/<block>/<tile>.dsf    one per touched tile (XOP's groupByTile)
+  pylon-racer.json                     marker: the installer only touches folders with it
 ```
 
-- **Sin elevación:** un `OBJECT` de DSF se apoya en la malla que tenga debajo (XOP,
-  `reference/dsf-overlay.md`). No hace falta Open-Meteo para plantar pilones.
-- `OBJECT_DEF` con ruta **relativa al pack** (`objects/pylon_red.obj`). XOP sólo escribió rutas de
-  librería; el DSF de la sonda H1 ya pasó por DSFTool sin errores, falta que X-Plane lo vuele.
-- El prefijo `XPR_` es provisional (lo usa la sonda).
+- **No elevation:** a DSF `OBJECT` rests on whatever mesh is under it (XOP,
+  `reference/dsf-overlay.md`). Open-Meteo is not needed to plant pylons.
+- `OBJECT_DEF` with a path **relative to the pack** (`objects/pylon_red.obj`). XOP only wrote
+  library paths; the H1 probe's DSF already went through DSFTool without errors, it remains for
+  X-Plane to fly it.
+- The `XPR_` prefix is provisional (the probe uses it).
 
-### Altura y terreno
+### Height and terrain
 
-Con RPOS el AGL viene **del sim**: la ventana de altura se juzga contra el terreno real de X-Plane,
-sin el margen DEM-contra-sim que Aerofly obligaba a tener. Open-Meteo queda, como mucho, para
-mostrar el relieve en el diseñador.
+With RPOS the AGL comes **from the sim**: the height window is judged against X-Plane's real
+terrain, without the DEM-versus-sim margin that Aerofly forced us to keep. Open-Meteo stays, at
+most, to show the relief in the designer.
 
-### Clases de avión
+### Aircraft classes
 
-En X-Plane no hay ids de carpeta fijos como en Aerofly: cualquiera instala cualquier `.acf`. La
-tabla de clases se arma con **`acf_ICAO`** (C172, PTS2, E330…), con los valores **reales** que
-entregue H0 y nunca escritos de memoria (regla de PCT). Un avión desconocido: el piloto elige la
-clase y queda recordada por `acf_relative_path`. Ese flujo ya existe en Pylon Racer.
-
----
-
-## 4. Arquitectura
-
-Igual que Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite, Node 24):
-
-- `src/core/` puro y testeable. **Se porta de Pylon Racer:** `course/` (modelo, revisión FNV,
-  `raceSequence`, ediciones), `race/` (cruce de segmentos, interpolación, reglas), `run/`,
-  `session/`, `ranking/` (salvo `classes.ts`), `demo/`. **Se copia de XOP:** `dsf/`, `geo/` (ya
-  está), `airports/` (búsqueda en el `apt.dat` del usuario). **Nuevo:** `pylon/` (OBJ8 + PNG, ya
-  está), `telemetry/rpos.ts` y `telemetry/webapi.ts`, `export/pack.ts` (plan puro del pack).
-- `src/main/`: `ipc.ts` como única frontera, hub de telemetría con reloj monotónico, controlador de
-  carrera; **de XOP:** `installPack`, `sceneryPacksIni`, `findInstallations` (lee
-  `x-plane_install_12.txt`, que en este computador lista tres instalaciones).
-- `src/renderer/`: el de Pylon Racer, tokens y todo; cambian los textos que nombran a Aerofly.
+X-Plane has no fixed folder ids like Aerofly: anyone installs any `.acf`. The class table is built
+from **`acf_ICAO`** (C172, PTS2, E330…), with the **real** values that H0 delivers and never
+written from memory (PCT rule). An unknown aircraft: the pilot picks the class and it is remembered
+by `acf_relative_path`. That flow already exists in Pylon Racer.
 
 ---
 
-## 5. Plan de versiones
+## 4. Architecture
 
-| Versión | Qué | Estado (2026-10-25) |
+Same as Pylon Racer (Electron + TS + React 19 + Zustand 5 + zod, electron-vite, Node 24):
+
+- `src/core/` pure and testable. **Ported from Pylon Racer:** `course/` (model, FNV revision,
+  `raceSequence`, edits), `race/` (segment crossing, interpolation, rules), `run/`, `session/`,
+  `ranking/` (except `classes.ts`), `demo/`. **Copied from XOP:** `dsf/`, `geo/` (already there),
+  `airports/` (search in the user's `apt.dat`). **New:** `pylon/` (OBJ8 + PNG, already there),
+  `telemetry/rpos.ts` and `telemetry/webapi.ts`, `export/pack.ts` (pure plan of the pack).
+- `src/main/`: `ipc.ts` as the only boundary, telemetry hub with monotonic clock, race controller;
+  **from XOP:** `installPack`, `sceneryPacksIni`, `findInstallations` (reads
+  `x-plane_install_12.txt`, which on this computer lists three installations).
+- `src/renderer/`: Pylon Racer's, tokens and all; the texts that name Aerofly change.
+
+---
+
+## 5. Version plan
+
+| Version | What | Status (2026-10-25) |
 |---|---|---|
-| v0.0 | Este documento + sondas H0–H2 | ✅ volado el 2026-10-24 |
-| v0.1 | Core portado de Pylon Racer + fuente RPOS | ✅ ~29,5 Hz en el sim |
-| v0.2 | Diseñador + instalación del pack | ✅ la Daggett Sprint instalada por la app se ve en X-Plane |
-| v0.3 | Carrera en vivo + ranking por clase | ✅ primera carrera: 29,13 s, Aerobatic |
-| v0.4 | Abrir `.pylonrace` de Pylon Racer | ✅ mismo formato, mismos ids de pilón, mismas pistas de ejemplo |
-| 0.2 | Los hallazgos del vuelo (§0): RPOS compartido, replay | ✅ volada: aviso en 7 s, replay ignorado, 29,02 s |
-| Pilones altos | `rules.pylonSize`: Standard o Tall ×2 (D15) | ✅ volados en KDAG: "muy buen tamaño" |
-| 1.0 | README de la 1.0, nombre y `.pylonrace` decididos, release | Mismo ciclo que XOP y PCT |
-| 1.4 | La carrera dentro de X-Plane: el plugin de la sonda H3, en un zip aparte | Compilado en los tres sistemas; la sonda, volada; esta forma, sin volar |
+| v0.0 | This document + probes H0–H2 | ✅ flown on 2026-10-24 |
+| v0.1 | Core ported from Pylon Racer + RPOS source | ✅ ~29.5 Hz in the sim |
+| v0.2 | Designer + pack installation | ✅ the Daggett Sprint installed by the app shows in X-Plane |
+| v0.3 | Live race + ranking by class | ✅ first race: 29.13 s, Aerobatic |
+| v0.4 | Open Pylon Racer's `.pylonrace` | ✅ same format, same pylon ids, same sample courses |
+| 0.2 | The flight's findings (§0): shared RPOS, replay | ✅ flown: warning in 7 s, replay ignored, 29.02 s |
+| Tall pylons | `rules.pylonSize`: Standard or Tall ×2 (D15) | ✅ flown at KDAG: "very good size" |
+| 1.0 | 1.0 README, name and `.pylonrace` decided, release | Same cycle as XOP and PCT |
+| 1.4 | The race inside X-Plane: the H3 probe's plugin, in a separate zip | Built on the three systems; the probe, flown; this form, not flown |
 
 ---
 
-## 6. Lo que hay que medir antes de diseñar en detalle
+## 6. What to measure before designing in detail
 
-| Pregunta | Sonda |
+| Question | Probe |
 |---|---|
-| ¿A qué tasa llega RPOS de verdad, en vuelo y en el menú? ¿Cuánto bailan los intervalos? | H0 |
-| ¿Rumbo de brújula? ¿Signo del roll? ¿vz al sur? | H0 (automático) |
-| ¿Qué dice la Web API del avión? ¿A qué tasa? ¿Qué llega al 49002? | H0 |
-| ¿Qué pasa con RPOS en pausa y en el menú? | H0 |
-| ¿Carga un DSF con `OBJECT_DEF` relativo al pack? ¿Se ven los pilones, con su pintura y apoyados en el suelo? ¿Desde qué distancia? | H1 |
-| ¿Las posiciones de RPOS y los pilones del DSF son el mismo mundo, al metro? | H2 |
+| At what rate does RPOS really arrive, in flight and in the menu? How much do the intervals wander? | H0 |
+| Compass heading? Roll sign? vz south? | H0 (automatic) |
+| What does the Web API say about the aircraft? At what rate? What arrives on 49002? | H0 |
+| What happens with RPOS when paused and in the menu? | H0 |
+| Does a DSF with a pack-relative `OBJECT_DEF` load? Do the pylons show, with their paint and resting on the ground? From what distance? | H1 |
+| Are the RPOS positions and the DSF pylons the same world, to the meter? | H2 |
 
-Todo cabe en **un vuelo de unos 15 minutos**: [probes/README.md](../probes/README.md).
+It all fits in **a flight of about 15 minutes**: [probes/README.md](../probes/README.md).

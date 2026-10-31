@@ -1,49 +1,49 @@
-# Sonda H2: ¿la posición de RPOS y los pilones del DSF son el mismo mundo?
+# Probe H2: are RPOS's position and the DSF's pylons the same world?
 
-**La pregunta:** cuando Juan dice "pasé cerca del pilón derecho", ¿el log dice lo mismo, al metro?
+**The question:** when Juan says "I passed near the right pylon", does the log say the same, to the
+meter?
 
-Si no, ninguna regla de la carrera sirve: una puerta "saltada" podría ser un error de coordenadas y
-no de pilotaje. En Aerofly esto nunca se midió directo.
+If not, no race rule is worth anything: a "skipped" gate could be a coordinate error and not a
+piloting one. In Aerofly this was never measured directly.
 
-## El diseño
+## The design
 
-`gates.ts` toma el `rpos.csv` de la corrida de H0 y, para cada par de muestras que cruza la línea
-de una de las puertas de H1 (`probes/course.ts`, los mismos números que usó el DSF), da:
+`gates.ts` takes the `rpos.csv` of the H0 run and, for each pair of samples that crosses the line of
+one of H1's gates (`probes/course.ts`, the same numbers the DSF used), gives:
 
-- **a cuántos metros del pilón izquierdo** cruzó (0 = izquierdo, 40 = derecho, volando la 17L);
-- la altura AGL y el alabeo en el cruce (interpolados);
-- la **distancia mínima a cada pilón** en ±3 s, la base para el radio de "pilón tocado".
+- **how many meters from the left pylon** it crossed (0 = left, 40 = right, flying 17L);
+- the AGL height and the bank at the crossing (interpolated);
+- the **minimum distance to each pylon** within ±3 s, the basis for the "pylon touched" radius.
 
-Las cuentas son a propósito simples: un plano local por puerta y un cruce de segmentos. El motor
-de verdad llega desde Pylon Racer en la v0.1; aquí sólo tiene que ser obviamente correcto.
-Probado con el X-Plane falso, que pasa a 12 m a la derecha del eje: devuelve **32,0 m** en las
-tres puertas.
+The math is deliberately simple: a local plane per gate and a segment crossing. The real engine
+arrives from Pylon Racer in v0.1; here it only has to be obviously correct. Tested with the fake
+X-Plane, which passes 12 m to the right of the axis: it returns **32.0 m** at all three gates.
 
-## Cómo se lee
+## How to read it
 
-Comparar cada fila con la nota de Juan:
+Compare each row with Juan's note:
 
-| Juan anotó | Esperado en "from left" |
+| Juan noted | Expected in "from left" |
 |---|---|
-| cerca del izquierdo | 0 – 13 m |
-| al centro | 13 – 27 m |
-| cerca del derecho | 27 – 40 m |
+| near the left | 0 – 13 m |
+| center | 13 – 27 m |
+| near the right | 27 – 40 m |
 
-Las tres coinciden ⇒ ✅ el mundo de RPOS y el del DSF coinciden a la escala que importa (los DSF
-de XOP cuantizan a ~21 cm). Una puerta que no coincide por mucho ⇒ revisar con la captura antes de
-sacar conclusiones.
+All three match ⇒ ✅ RPOS's world and the DSF's world coincide at the scale that matters (XOP's DSFs
+quantize to ~21 cm). A gate that is off by a lot ⇒ check against the screenshot before drawing
+conclusions.
 
-## Resultado: volado el 2026-10-24, X-Plane 12.4.3 ✅
+## Result: flown 2026-10-24, X-Plane 12.4.3 ✅
 
-| Puerta | Desde el izquierdo | AGL | Lo que muestra el replay de Juan |
+| Gate | From the left | AGL | What Juan's replay shows |
 |---|---|---|---|
-| 1 verde | 20,0 m (centro exacto) | 12,7 m | el avión centrado entre los dos pilones |
-| 2 roja | 15,1 m (5 m a la izquierda) | 9,7 m | el avión claramente a la izquierda del centro |
-| 3 naranja | 18,9 m (casi al centro) | 9,0 m | apenas a la izquierda |
+| 1 green | 20.0 m (exact center) | 12.7 m | the aircraft centered between the two pylons |
+| 2 red | 15.1 m (5 m to the left) | 9.7 m | the aircraft clearly left of center |
+| 3 orange | 18.9 m (almost center) | 9.0 m | just slightly left |
 
-En vez de notas, Juan mandó tres capturas del replay de X-Plane con la cámara detrás del avión en
-cada puerta. Es mejor referencia que una nota de memoria, y las tres coinciden con el log en lado y
-en orden de magnitud. **La posición de RPOS y los pilones del DSF son el mismo mundo.**
+Instead of notes, Juan sent three screenshots of the X-Plane replay with the camera behind the
+aircraft at each gate. That is a better reference than a note from memory, and all three match the
+log in side and in order of magnitude. **RPOS's position and the DSF's pylons are the same world.**
 
-Lo confirmó después la carrera real en KDAG: la Daggett Sprint, en el mismo Extra, terminó limpia en
-29,13 s, con las cinco pasadas a menos de 6 m del centro de cada puerta.
+The real race at KDAG confirmed it later: the Daggett Sprint, in the same Extra, finished clean in
+29.13 s, with all five passes within 6 m of the center of each gate.
