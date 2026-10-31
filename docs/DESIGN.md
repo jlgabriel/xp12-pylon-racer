@@ -16,7 +16,8 @@ time. The minimap's blue trail showed only the last minute of a 3-minute run: ke
 fixes, inherited from Pylon Racer), RPOS's ~30 Hz filled it in 80 s. It now keeps a point every 10 m
 (`TRAIL_STEP_M`), up to 30 km; seen in the renderer preview, not yet in a flight. The docs were
 translated to English: everything on GitHub is in English (Juan, 2026-10-31). Tag `v1.7.0`, same
-workflow; the plugin does not change except for the version number.
+workflow, published 2026-10-31 with the six files; the plugin does not change except for the
+version number.
 
 **1.6.0, 2026-10-30.** 1.5 plus Export to Shirley with one trigger per gate, which calls the gate
 as you reach it, and one race phase per lap: below in *After 1.5*. Not flown; the trigger format was
