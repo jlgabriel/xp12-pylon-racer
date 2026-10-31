@@ -11,7 +11,7 @@
 
 **Unreleased (2026-10-31).** Turn pylons get invisible gates for Shirley along their pass line (below
 in *After 1.5*), **flown the same day** at Daggett Air Show: every gate and both pylons called once,
-on time. Multi-lap phases still not flown. The docs were translated to English: everything on
+on time; the multi-lap phases flown too, at Daggett Precision Cup, both handovers in time. The docs were translated to English: everything on
 GitHub is in English (Juan, 2026-10-31). The minimap's blue trail showed only the last minute of a
 3-minute run: kept by count (2,400 fixes, inherited from Pylon Racer), RPOS's ~30 Hz filled it in
 80 s. It now keeps a point every 10 m (`TRAIL_STEP_M`), up to 30 km.
@@ -483,10 +483,19 @@ airplane.team/share/8Wby4PTp):
 | Rough edges | `Brief` → `Race` happened on "Let's go" before takeoff, so the 1 NM wake-up was not needed. Twice Shirley's own sentence was cut by a canned call ("Pylon…", "Pylon six passed"). |
 | App | **3:23.03**, the first Skyhawk record on the course: +8 s for the knife-edge and inverted gates (3, 4, 10) flown wings level and gate 8 too low. |
 
-Still to fly: a multi-lap course (Daggett Precision Cup), where the risk is that the phase change,
-which Shirley decides and takes a few seconds, arrives late for the next gate; Daggett without
-speaking to Shirley at all (the 1 NM wake-up); the Extra, with gates every 3 to 5 s, in case the
-texts step on each other; and Precise, which Alex thinks may work better.
+**Flown on 2026-10-31, laps** (Daggett Precision Cup, 2 laps, a race plane, Shirley on Quick;
+airplane.team/share/Akgyq6FS):
+
+| Test | Result |
+|---|---|
+| Phases | `Race1` (the start alone) → `Race2` → `Race3` → `Debrief`, each switch right after its call: Shirley moved to `Race2` with "Start gate!" and to `Race3` with "Lap 2!", and "Gate 2!" came 9 s and 11 s later. The handover was in time both laps. |
+| Every gate called | All 21 canned calls, once each and in order, both turn pylons of each corner included: start 14:51:57, then every 5–10 s, "Lap 2!" 14:53:35, finish 14:55:19. |
+| Rough edges | At 5–10 s between gates the canned calls cut most of Shirley's own sentences halfway ("Start bending it", "Pylon nine is coming"). Getting to the start took four minutes of coaching: Juan did not see where the start gate was, and Shirley's directions ("off your left wing") came late for a fast aircraft. |
+| App | **3:32.36**, the first time on the course; the knife-edge gates (3 and 8, both laps) flown flat. |
+
+Still to fly: Daggett without speaking to Shirley at all (the 1 NM wake-up), and Precise, which Alex
+thinks may work better. Worth trying: shorter comments between calls on fast courses (Shirley's
+"Extra Concise" option, or the prompt asking for a few words).
 
 ### RREF as an alternative to RPOS (not adopted)
 
