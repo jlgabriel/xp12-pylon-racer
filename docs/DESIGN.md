@@ -10,8 +10,9 @@
 ## 0. Status (2026-10-30, v1.6.0: Shirley calls every gate)
 
 **Unreleased (2026-10-31).** Turn pylons get invisible gates for Shirley along their pass line (below
-in *After 1.5*), not flown yet. The docs were translated to English: everything on GitHub is in
-English (Juan, 2026-10-31).
+in *After 1.5*), **flown the same day** at Daggett Air Show: every gate and both pylons called once,
+on time. Multi-lap phases still not flown. The docs were translated to English: everything on
+GitHub is in English (Juan, 2026-10-31).
 
 **1.6.0, 2026-10-30.** 1.5 plus Export to Shirley with one trigger per gate, which calls the gate
 as you reach it, and one race phase per lap: below in *After 1.5*. Not flown; the trigger format was
@@ -466,10 +467,24 @@ one.
 - `challengeTimer` and `recordFlightData` stay on each race phase; the schema says the data is only
   deleted when going from false to true, so going from `Race1` to `Race2` loses nothing.
 
-Still to fly: Daggett without asking Shirley anything; a multi-lap course (Munich Diamond: `Race1`
-up to g3 of lap 1), where the risk is that the phase change, which Shirley decides and takes a few
-seconds, arrives late for the next gate; the Extra, with gates every 3 to 5 s, in case the texts
-step on each other; and Precise, which Alex thinks may work better.
+**Flown on 2026-10-31** (Daggett Air Show, Cessna 172SP, Shirley on Quick, the invisible-gates
+challenge pasted from the export; the app was 1.5.0, whose judging is the same; shared flight
+airplane.team/share/8Wby4PTp):
+
+| Test | Result |
+|---|---|
+| A first try | Shirley got no telemetry although she said "X-Plane Websocket Connected": she stayed in `Brief` the whole race. A new call, with Shirley connected before the app, worked. The app does not use the WebSocket (RPOS and plain REST calls), so it is probably not the cause. |
+| Production accepts the triggers | The call page lists the phase's triggers under "Wake-up Triggers". |
+| Every gate called | All twelve canned calls, each once, in order: start 14:25:18, then every 13–15 s, pylon 6 after 28 s, pylon 7 after 31 s, finish 14:28:31. 193 s from start to finish on Shirley's clock against 195.03 s of flight in the app (3:23.03 with +8 s), so the calls come about a second early, as designed. |
+| Turn pylons | "Pylon 6!" and "Pylon 7!" came once each as Juan crossed their pass lines: the invisible gates work, and no double call. |
+| What comes next | "Gate 5! Pylon next, keep it on your right." Shirley followed the calls with her own short comments, as the prompt asks. |
+| Rough edges | `Brief` → `Race` happened on "Let's go" before takeoff, so the 1 NM wake-up was not needed. Twice Shirley's own sentence was cut by a canned call ("Pylon…", "Pylon six passed"). |
+| App | **3:23.03**, the first Skyhawk record on the course: +8 s for the knife-edge and inverted gates (3, 4, 10) flown wings level and gate 8 too low. |
+
+Still to fly: a multi-lap course (Daggett Precision Cup), where the risk is that the phase change,
+which Shirley decides and takes a few seconds, arrives late for the next gate; Daggett without
+speaking to Shirley at all (the 1 NM wake-up); the Extra, with gates every 3 to 5 s, in case the
+texts step on each other; and Precise, which Alex thinks may work better.
 
 ### RREF as an alternative to RPOS (not adopted)
 
