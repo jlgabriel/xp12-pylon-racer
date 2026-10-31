@@ -12,7 +12,9 @@
 **Unreleased (2026-10-31).** Turn pylons get invisible gates for Shirley along their pass line (below
 in *After 1.5*), **flown the same day** at Daggett Air Show: every gate and both pylons called once,
 on time. Multi-lap phases still not flown. The docs were translated to English: everything on
-GitHub is in English (Juan, 2026-10-31).
+GitHub is in English (Juan, 2026-10-31). The minimap's blue trail showed only the last minute of a
+3-minute run: kept by count (2,400 fixes, inherited from Pylon Racer), RPOS's ~30 Hz filled it in
+80 s. It now keeps a point every 10 m (`TRAIL_STEP_M`), up to 30 km.
 
 **1.6.0, 2026-10-30.** 1.5 plus Export to Shirley with one trigger per gate, which calls the gate
 as you reach it, and one race phase per lap: below in *After 1.5*. Not flown; the trigger format was
