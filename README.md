@@ -95,6 +95,26 @@ Want to see it first? **Watch demo** flies any course for you, no simulator need
 | **KDAG Air Race Pylons** | Daggett, **KDAG** | The 15, 18 and 25 m air-race pylons |
 | **Munich Sprint** / **Munich Diamond** | Munich, **EDDM** | A straight sprint, and two laps of a diamond |
 
+### In the air
+
+Jugac64's Extra 330SC up the Osorno Spiral Ascent, seen in the replay after the run (34 gates and
+1,700 m of climb, only for the brave), and down the Grand Canyon West River Run.
+
+<table>
+<tr>
+<td width="50%"><img src="media/osorno-summit.jpg" alt="The Extra between two tall pylons on the summit of the Osorno volcano"><br><sub>Between two pylons on the summit, 2,660 m up</sub></td>
+<td width="50%"><img src="media/osorno-knife-edge.jpg" alt="The Extra in knife edge between two pylons near the summit"><br><sub>Knife edge between two pylons near the top</sub></td>
+</tr>
+<tr>
+<td><img src="media/osorno-turn.jpg" alt="The Extra rounding a pylon above the snowline, with lakes and forest below"><br><sub>Round a pylon above the snowline</sub></td>
+<td><img src="media/osorno-climb.jpg" alt="The Extra climbing the snowy slope, with the in-sim display showing the spiral"><br><sub>Climbing the slope; top right, the in-sim display</sub></td>
+</tr>
+<tr>
+<td><img src="media/osorno-start.jpg" alt="The Extra low over the forest, the Osorno volcano behind"><br><sub>Low over the forest at the foot of the volcano</sub></td>
+<td><img src="media/grand-canyon-gate.jpg" alt="Through a gate on the Colorado River, from the Extra's cockpit"><br><sub>Through a gate on the Colorado River at 265 km/h</sub></td>
+</tr>
+</table>
+
 ## Racing
 
 ![Racing the Stead Pylon Oval: the next gate, which way to turn, the minimap](media/racing.png)
